@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Конфигуратор ПК</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0d1117;
+      --bg-card: #161b22;
+      --bg-input: #0d1117;
+      --border: #30363d;
+      --accent: #2f81f7;
+      --accent-hover: #1f6feb;
+      --text: #c9d1d9;
+      --text-bright: #f0f6fc;
+      --text-muted: #8b949e;
+      --success: #238636;
+      --warning: #9e6a03;
+      --danger: #da3633;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 25px 15px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 6px;
+    }
+
+    p.desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: var(--text-bright);
+      border-color: var(--accent);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .grid-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    select, input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-bright);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+    }
+
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .specs-table th, .specs-table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .specs-table th {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 600;
+      width: 25%;
+    }
+
+    .specs-table td {
+      color: var(--text-bright);
+    }
+
+    .result-section {
+      display: none;
+      margin-top: 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .result-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .tag-ok { background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid var(--success); }
+    .tag-warn { background: rgba(158, 106, 3, 0.2); color: #d29922; border: 1px solid var(--warning); }
+    .tag-danger { background: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid var(--danger); }
+
+    .summary-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.5;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin-top: 12px;
+    }
+
+    .details-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .detail-item {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      border-radius: 6px;
+    }
+
+    .detail-item h4 {
+      font-size: 0.9rem;
+      color: var(--text-bright);
+      margin-bottom: 4px;
+    }
+
+    .detail-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <header>
+    <h1>Конфигуратор ПК</h1>
+    <p class="desc">Подбор оптимальной конфигурации под бюджет и анализ совместимости комплектующих.</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('budgetTab', this)">Подбор по бюджету</button>
+    <button class="tab-btn" onclick="switchTab('upgradeTab', this)">Анализ баланса и апгрейда</button>
+  </div>
+
+  <!-- ВКЛАДКА 1: ПОДБОР ПО БЮДЖЕТУ -->
+  <div id="budgetTab" class="card tab-content active">
+    <div class="field" style="margin-bottom: 16px;">
+      <label for="budgetInput">Сумма на системный блок (в рублях):</label>
+      <input type="number" id="budgetInput" placeholder="Введите сумму" min="1000" step="1000" value="50000">
+    </div>
+    <button class="btn-submit" onclick="generateBuildByBudget()">Рассчитать конфигурацию</button>
+
+    <div id="budgetResult" class="result-section">
+      <div class="result-header">
+        <div class="result-title" id="buildCategoryName">Бюджет: 0 ₽</div>
+        <div class="tag tag-ok" id="buildPriceTag">0 ₽</div>
+      </div>
+      
+      <table class="specs-table">
+        <tbody>
+          <tr><th>Процессор</th><td id="bCpu">-</td></tr>
+          <tr><th>Охлаждение</th><td id="bCooler">-</td></tr>
+          <tr><th>Материнская плата</th><td id="bMotherboard">-</td></tr>
+          <tr><th>Видеокарта</th><td id="bGpu">-</td></tr>
+          <tr><th>ОЗУ</th><td id="bRam">-</td></tr>
+          <tr><th>Накопитель</th><td id="bStorage">-</td></tr>
+          <tr><th>Блок питания</th><td id="bPsu">-</td></tr>
+          <tr><th>Корпус</th><td id="bCase">-</td></tr>
+        </tbody>
+      </table>
+
+      <div class="summary-text" id="buildNotes">Пояснение появится здесь.</div>
+    </div>
+  </div>
+
+  <!-- ВКЛАДКА 2: АНАЛИЗ БАЛАНСА -->
+  <div id="upgradeTab" class="card tab-content">
+    <div class="grid-form">
+      <div class="field">
+        <label for="cCpu">Процессор:</label>
+        <select id="cCpu">
+          <option value="legacy">LGA 775 (Core 2 Quad) / Athlon II / Phenom II</option>
+          <option value="fx_series">AMD FX-4300 / FX-6300 / FX-8350 (AM3+)</option>
+          <option value="intel_lga1155">Core i5-2500 / i5-3570 / i7-3770 (LGA 1155)</option>
+          <option value="xeon_v3">Xeon E5-2670 v3 / E5-2680 v4 (LGA 2011-3)</option>
+          <option value="ryzen_zen1">AMD Ryzen 5 1600 / 2600 (AM4)</option>
+          <option value="intel_mid_old">Core i3-10100F / i3-12100F / i5-10400F</option>
+          <option value="ryzen_am4_main" selected>AMD Ryzen 5 3600 / Ryzen 5 5500 / Ryzen 5 5600</option>
+          <option value="intel_lga1700">Intel Core i5-12400F / i5-13400F / i5-14400F</option>
+          <option value="ryzen_am4_top">AMD Ryzen 7 5700X3D / 5800X3D (AM4)</option>
+          <option value="am5_base">AMD Ryzen 5 7500F / Ryzen 5 7600 (AM5)</option>
+          <option value="am5_intel_top">AMD Ryzen 7 7800X3D / Core i7-14700K</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cGpu">Видеокарта:</label>
+        <select id="cGpu">
+          <option value="gpu_retro">Встроенное видео / GT 710 / GT 730</option>
+          <option value="gpu_budget_low">GTX 650 / GTX 750 Ti / HD 7770 / GT 1030</option>
+          <option value="gpu_budget_old">GTX 950 / GTX 960 / GTX 1050 Ti</option>
+          <option value="gpu_polaris" selected>RX 580 8GB (2048SP) / GTX 1060 6GB</option>
+          <option value="gpu_entry">GTX 1660 Super / GTX 1660 Ti / RTX 2060 6GB</option>
+          <option value="gpu_mid">Radeon RX 6600 8GB / RTX 3060 12GB / RTX 4060 8GB</option>
+          <option value="gpu_mid_high">RTX 4060 Ti / RX 6700 XT / RX 7700 XT 12GB</option>
+          <option value="gpu_high">RTX 4070 / RTX 4070 Super 12GB / RX 7800 XT 16GB</option>
+          <option value="gpu_enthusiast">RTX 4080 Super 16GB / RX 7900 XT</option>
+          <option value="gpu_top">GeForce RTX 4090 24GB</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cRam">Оперативная память:</label>
+        <select id="cRam">
+          <option value="4">4 ГБ (DDR2 / DDR3)</option>
+          <option value="8">8 ГБ (Single Channel)</option>
+          <option value="8_dual">8 ГБ (2x4 ГБ Dual)</option>
+          <option value="16" selected>16 ГБ (2x8 ГБ Dual)</option>
+          <option value="32">32 ГБ (2x16 ГБ Dual)</option>
+          <option value="64">64 ГБ и более</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cPsu">Мощность БП (Вт):</label>
+        <input type="number" id="cPsu" value="700" step="50">
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="analyzeConfiguration()">Проверить конфигурацию</button>
+
+    <div id="upgradeResult" class="result-section">
+      <div class="result-header">
+        <div class="result-title" id="analysisTitle">Результат анализа</div>
+        <div class="tag" id="analysisTag">Статус</div>
+      </div>
+      <div class="details-list" id="analysisDetails"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // БАЗА СБОРОК С ТОЧНОЙ СРЕДНЕЙ СТОИМОСТЬЮ (baseCost)
+  const buildsDatabase = [
+    {
+      baseCost: 3000,
+      cpu: "Intel Core 2 Quad Q6600 (б/у в сборе) ~ 500 ₽",
+      cooler: "Боксовый кулер ~ 200 ₽",
+      mb: "LGA 775 (G31/G41) ~ 700 ₽",
+      gpu: "Встроенное видеоядро Intel GMA (0 ₽)",
+      ram: "4 GB (2x2GB) DDR2/DDR3 ~ 400 ₽",
+      storage: "HDD 160-250 GB SATA ~ 400 ₽",
+      psu: "Комплектный БП 350W ~ 500 ₽",
+      case: "Офисный корпус со вторички (в комплекте)",
+      notes: "Готовый системный блок со вторичного рынка под документы, веб-серфинг и ретро-игры."
+    },
+    {
+      baseCost: 10000,
+      cpu: "Intel Core i3-2100 / i5-2400 (LGA 1155) ~ 1 100 ₽",
+      cooler: "Кулер 2 теплотрубки ~ 500 ₽",
+      mb: "H61 LGA 1155 ~ 1 800 ₽",
+      gpu: "GeForce GTX 750 Ti 2GB (б/у) ~ 3 200 ₽",
+      ram: "8 GB (2x4GB) DDR3 1600 MHz ~ 900 ₽",
+      storage: "SATA SSD 240 GB ~ 1 700 ₽",
+      psu: "FSP 450W / Accord 450W ~ 900 ₽",
+      case: "Б/у ATX корпус ~ 400 ₽",
+      notes: "Базовый системник под нетребовательный киберспорт (Dota 2, Танки, CS2 на низких в 720p/900p, GTA V на средних)."
+    },
+    {
+      baseCost: 20000,
+      cpu: "Intel Xeon E5-2670 v3 (12 ядер / 24 потока) ~ 1 200 ₽",
+      cooler: "Башенный кулер 4 трубки ~ 1 400 ₽",
+      mb: "X99 LGA 2011-3 (Machinist) ~ 4 100 ₽",
+      gpu: "AMD Radeon RX 580 8GB (2048SP) ~ 6 200 ₽",
+      ram: "16 GB (2x8GB) DDR4 ECC REG ~ 2 000 ₽",
+      storage: "512 GB M.2 NVMe SSD ~ 2 800 ₽",
+      psu: "1stPlayer Black.Sir 500W / Deepcool PF450 ~ 3 000 ₽",
+      case: "Бюджетный корпус с сеткой ~ 1 800 ₽",
+      notes: "Доступная платформа для 1080p гейминга. 16 ГБ оперативной памяти и 8 ГБ видеопамяти тянут большинство современных игр."
+    },
+    {
+      baseCost: 35000,
+      cpu: "AMD Ryzen 5 2600 / Ryzen 5 3600 (б/у) ~ 4 800 ₽",
+      cooler: "ID-COOLING SE-214-XT ~ 1 500 ₽",
+      mb: "A520M / B450M (MSI / Gigabyte) ~ 5 300 ₽",
+      gpu: "GeForce GTX 1660 Super 6GB (б/у) ~ 11 000 ₽",
+      ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 000 ₽",
+      storage: "512 GB M.2 NVMe SSD ~ 3 200 ₽",
+      psu: "Deepcool PF500 (500W) ~ 3 500 ₽",
+      case: "Корпус с вентиляцией ~ 2 200 ₽",
+      notes: "Платформа AM4 с возможностью дальнейшей установки Ryzen 5 5600 без замены материнской платы и оперативной памяти."
+    },
+    {
+      baseCost: 50000,
+      cpu: "Intel Core i3-12100F (OEM) ~ 7 800 ₽",
+      cooler: "ID-COOLING SE-214-XT Basic ~ 1 600 ₽",
+      mb: "H610M (MSI PRO H610M-E) ~ 6 800 ₽",
+      gpu: "AMD Radeon RX 6500 XT (новая) или б/у RTX 2060 Super 8GB ~ 16 000 ₽",
+      ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
+      storage: "512 GB M.2 NVMe ~ 3 800 ₽",
+      psu: "Deepcool PK500D (Bronze) ~ 4 200 ₽",
+      case: "Prime Box / AeroCool с вертушками ~ 3 500 ₽",
+      notes: "Полностью новая сборка на актуальном сокете LGA 1700. Высокий фреймрейт в CS2, Valorant и Dota 2."
+    },
+    {
+      baseCost: 60000,
+      cpu: "AMD Ryzen 5 3600 или Ryzen 5 5500 (OEM) ~ 8 500 ₽",
+      cooler: "ID-COOLING SE-214-XT ~ 1 600 ₽",
+      mb: "B450M (MSI B450M-A PRO MAX II) ~ 6 200 ₽",
+      gpu: "AMD Radeon RX 6600 8GB (Sapphire Pulse) ~ 25 500 ₽",
+      ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
+      storage: "512 GB M.2 NVMe PCIe 3.0 ~ 3 800 ₽",
+      psu: "Deepcool PK600D (600W Bronze) ~ 5 400 ₽",
+      case: "Cougar MG140 Air / Montech AIR 100 ~ 4 100 ₽",
+      notes: "Оптимальный конфиг для Full HD. Блок питания на 600W Bronze с запасом. RX 6600 тянет Cyberpunk 2077 и RDR 2 на высоких настройках."
+    },
+    {
+      baseCost: 70000,
+      cpu: "AMD Ryzen 5 5500 / 3600 (OEM) ~ 8 500 ₽",
+      cooler: "ID-COOLING SE-214-XT ~ 1 600 ₽",
+      mb: "B450M (ASRock B450M Pro4 / MSI) ~ 6 500 ₽",
+      gpu: "AMD Radeon RX 6600 8GB ~ 25 500 ₽",
+      ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
+      storage: "1 TB M.2 NVMe PCIe 3.0 (ADATA Legend 800) ~ 6 400 ₽",
+      psu: "Deepcool PK650D (650W Bronze) ~ 5 800 ₽",
+      case: "Montech AIR 100 Lite ~ 4 400 ₽",
+      notes: "Сбалансированная сборка с быстрым накопителем емкостью 1 ТБ и надежным блоком питания на 650W."
+    },
+    {
+      baseCost: 85000,
+      cpu: "AMD Ryzen 5 5600 (OEM, кэш 32 МБ) ~ 11 500 ₽",
+      cooler: "ID-COOLING SE-224-XTS / Deepcool AG400 ~ 2 300 ₽",
+      mb: "B550M (GIGABYTE B550M DS3H) ~ 9 800 ₽",
+      gpu: "NVIDIA GeForce RTX 4060 8GB (Palit Dual) ~ 34 500 ₽",
+      ram: "32 GB (2x16GB) DDR4 3600 MHz CL18 ~ 8 800 ₽",
+      storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 200 ₽",
+      psu: "Deepcool PK650D (650W Bronze) ~ 5 800 ₽",
+      case: "Montech AIR 100 ARGB ~ 5 400 ₽",
+      notes: "Идеальный баланс процессора и видеокарты: шина PCIe 4.0, 32 ГБ памяти, поддержка DLSS 3 и генерации кадров."
+    },
+    {
+      baseCost: 95000,
+      cpu: "AMD Ryzen 5 5600 (OEM) ~ 11 500 ₽",
+      cooler: "Deepcool AG400 ~ 2 300 ₽",
+      mb: "B550M (GIGABYTE DS3H) ~ 9 800 ₽",
+      gpu: "GeForce RTX 4060 Ti 8GB или RX 6750 GRE 12GB ~ 43 000 ₽",
+      ram: "32 GB (2x16GB) DDR4 3600 MHz ~ 8 800 ₽",
+      storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 200 ₽",
+      psu: "Deepcool PK650D (650W Bronze) ~ 5 800 ₽",
+      case: "Montech AIR 100 ARGB ~ 5 400 ₽",
+      notes: "Усиленная видеокарта под максимальные настройки графики в 1080p и стабильный фреймрейт в 1440p."
+    },
+    {
+      baseCost: 105000,
+      cpu: "AMD Ryzen 5 7500F (OEM, Zen 4) ~ 15 000 ₽",
+      cooler: "Thermalright Assassin King 120 SE ~ 2 500 ₽",
+      mb: "B650M (ASRock B650M-HDV/M.2) ~ 13 000 ₽",
+      gpu: "GeForce RTX 4060 8GB / RX 7600 XT 16GB ~ 35 500 ₽",
+      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
+      storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 500 ₽",
+      psu: "Montech Century 650W Gold ~ 6 800 ₽",
+      case: "Montech Air 100 ~ 5 500 ₽",
+      notes: "Платформа Socket AM5 с DDR5 памятью и золотым блоком питания. Прямой путь апгрейда до X3D-процессоров."
+    },
+    {
+      baseCost: 125000,
+      cpu: "AMD Ryzen 5 7500F (OEM) ~ 15 000 ₽",
+      cooler: "Deepcool AG400 Plus ~ 2 600 ₽",
+      mb: "B650M (MSI B650M Gaming Plus) ~ 14 500 ₽",
+      gpu: "AMD Radeon RX 7700 XT 12GB ~ 48 500 ₽",
+      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
+      storage: "1 TB M.2 PCIe 4.0 ~ 7 500 ₽",
+      psu: "750W Montech Century Gold ~ 8 800 ₽",
+      case: "Montech Air 903 Base ~ 6 800 ₽",
+      notes: "12 ГБ видеопамяти и БП на 750W Gold. Уверенная работа в 2K (2560x1440) на ультра-настройках."
+    },
+    {
+      baseCost: 165000,
+      cpu: "AMD Ryzen 5 7600X / Ryzen 7 7700 ~ 22 000 ₽",
+      cooler: "Thermalright Peerless Assassin 120 SE ~ 4 500 ₽",
+      mb: "B650 (GIGABYTE B650 Gaming X AX) ~ 18 500 ₽",
+      gpu: "NVIDIA GeForce RTX 4070 Super 12GB ~ 69 000 ₽",
+      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
+      storage: "2 TB M.2 NVMe PCIe 4.0 ~ 15 000 ₽",
+      psu: "750W ATX 3.0 Gold (Montech Titan Gold) ~ 11 800 ₽",
+      case: "Lian Li Lancool 216 ~ 10 500 ₽",
+      notes: "Высокий фреймрейт в 1440p на ультра-настройках с трассировкой лучей. Блок питания стандарта ATX 3.0."
+    },
+    {
+      baseCost: 250000,
+      cpu: "AMD Ryzen 7 7800X3D (3D V-Cache) ~ 41 000 ₽",
+      cooler: "СЖО 360мм (Arctic Liquid Freezer III) ~ 13 500 ₽",
+      mb: "B650E / X670E (ASRock Steel Legend) ~ 28 000 ₽",
+      gpu: "NVIDIA GeForce RTX 4080 Super 16GB ~ 119 000 ₽",
+      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 14 000 ₽",
+      storage: "2 TB M.2 PCIe 4.0 (7000+ МБ/с) ~ 15 500 ₽",
+      psu: "850W-1000W ATX 3.0 Gold ~ 16 500 ₽",
+      case: "Lian Li O11 Vision ~ 15 500 ₽",
+      notes: "Топовая сборка для игр в 4K и соревновательного киберспорта. 7800X3D дает стабильный минимальный FPS."
+    }
+  ];
+
+  // ПОДБОР СБОРКИ С УМНОЙ ВИЛКОЙ ЦЕН
+  function generateBuildByBudget() {
+    const budget = parseInt(document.getElementById('budgetInput').value) || 0;
+    const resBox = document.getElementById('budgetResult');
+
+    if (budget < 1000) {
+      alert("Введите бюджет от 1 000 рублей.");
+      return;
+    }
+
+    // Ищем сборку с минимальной разницей к введенной сумме
+    let selectedBuild = buildsDatabase[0];
+    let minDiff = Math.abs(budget - buildsDatabase[0].baseCost);
+
+    for (let i = 1; i < buildsDatabase.length; i++) {
+      const diff = Math.abs(budget - buildsDatabase[i].baseCost);
+      if (diff < minDiff) {
+        minDiff = diff;
+        selectedBuild = buildsDatabase[i];
+      }
+    }
+
+    // Формируем вилку от введенного бюджета: ±3..5% (например, 50к -> 48 000 - 52 000 ₽)
+    const rangeLow = Math.round((budget * 0.96) / 500) * 500;
+    const rangeHigh = Math.round((budget * 1.04) / 500) * 500;
+    const tagText = `${rangeLow.toLocaleString('ru-RU')} - ${rangeHigh.toLocaleString('ru-RU')} ₽`;
+
+    document.getElementById('buildCategoryName').textContent = "Бюджет: " + budget.toLocaleString('ru-RU') + " ₽";
+    document.getElementById('buildPriceTag').textContent = tagText;
+    
+    document.getElementById('bCpu').textContent = selectedBuild.cpu;
+    document.getElementById('bCooler').textContent = selectedBuild.cooler;
+    document.getElementById('bMotherboard').textContent = selectedBuild.mb;
+    document.getElementById('bGpu').textContent = selectedBuild.gpu;
+    document.getElementById('bRam').textContent = selectedBuild.ram;
+    document.getElementById('bStorage').textContent = selectedBuild.storage;
+    document.getElementById('bPsu').textContent = selectedBuild.psu;
+    document.getElementById('bCase').textContent = selectedBuild.case;
+    document.getElementById('buildNotes').textContent = selectedBuild.notes;
+
+    resBox.style.display = 'block';
+  }
+
+  // АНАЛИЗАТОР БАЛАНСА
+  const cpuPower = {
+    legacy: 1, fx_series: 1, intel_lga1155: 2, xeon_v3: 2, ryzen_zen1: 2,
+    intel_mid_old: 3, ryzen_am4_main: 4, intel_lga1700: 4,
+    ryzen_am4_top: 5, am5_base: 5, am5_intel_top: 6
+  };
+
+  const gpuPower = {
+    gpu_retro: 0, gpu_budget_low: 1, gpu_budget_old: 2, gpu_polaris: 2,
+    gpu_entry: 3, gpu_mid: 4, gpu_mid_high: 5,
+    gpu_high: 6, gpu_enthusiast: 7, gpu_top: 8
+  };
+
+  const tdpEstimate = {
+    gpu_retro: 30, gpu_budget_low: 65, gpu_budget_old: 90, gpu_polaris: 160,
+    gpu_entry: 125, gpu_mid: 160, gpu_mid_high: 220,
+    gpu_high: 240, gpu_enthusiast: 320, gpu_top: 450
+  };
+
+  function analyzeConfiguration() {
+    const cpu = document.getElementById('cCpu').value;
+    const gpu = document.getElementById('cGpu').value;
+    const ram = document.getElementById('cRam').value;
+    const psu = parseInt(document.getElementById('cPsu').value) || 450;
+
+    const cP = cpuPower[cpu];
+    const gP = gpuPower[gpu];
+
+    const resBox = document.getElementById('upgradeResult');
+    const title = document.getElementById('analysisTitle');
+    const tag = document.getElementById('analysisTag');
+    const details = document.getElementById('analysisDetails');
+
+    details.innerHTML = '';
+    resBox.style.display = 'block';
+
+    if (cP > gP + 1) {
+      title.textContent = "Упор в видеокарту (GPU Bottleneck)";
+      tag.textContent = "Требуется апгрейд GPU";
+      tag.className = "tag tag-warn";
+      addDetail("Потенциал процессора сдерживается видеокартой", 
+        "Процессор способен обеспечить существенно более высокий фреймрейт. В требовательных играх видеокарта загружена на 99-100%, являясь сдерживающим звеном. Рекомендуется апгрейд видеокарты.");
+    } else if (gP > cP + 1) {
+      title.textContent = "Упор в процессор (CPU Bottleneck)";
+      tag.textContent = "Требуется апгрейд CPU/Платформы";
+      tag.className = "tag tag-danger";
+      addDetail("Процессор сдерживает видеокарту", 
+        "Производительности процессора недостаточно для полноценной загрузки видеокарты в современных играх. Возможны нестабильный фреймтайм, статтеры и резкие просадки FPS. Требуется замена процессора или платформы.");
+    } else {
+      title.textContent = "Сбалансированная связка";
+      tag.textContent = "Баланс соблюден";
+      tag.className = "tag tag-ok";
+      addDetail("Компоненты подобраны оптимально", 
+        "Производительность процессора и видеокарты находится в одном технологическом классе. Система выдает максимальный КПД на каждый затраченный рубль.");
+    }
+
+    if (ram === '4') {
+      addDetail("Критический дефицит ОЗУ", 
+        "4 ГБ недостаточно даже для комфортного серфинга. Windows будет непрерывно обращаться к файлу подкачки на диске. Необходим апгрейд минимум до 8-16 ГБ.");
+    } else if (ram === '8') {
+      addDetail("Одноканальный режим (Single Channel) и малый объем", 
+        "8 ГБ в одноканале приводят к просадке пропускной способности памяти почти в два раза. Добавление второго модуля даст мгновенный прирост минимального фреймрейта.");
+    } else if (ram === '8_dual') {
+      addDetail("Двухканальный режим активен, объем на пределе", 
+        "8 ГБ в двухканале достаточно для базовых и киберспортивных игр, но в тяжелых проектах данные сбрасываются в файл подкачки. Рекомендуется расширение до 16 ГБ.");
+    } else if (ram === '16') {
+      addDetail("ОЗУ: оптимальный стандарт для 1080p", 
+        "16 ГБ в Dual Channel закрывают требования большинства современных игр. В будущем для тяжелых задач возможен апгрейд до 32 ГБ.");
+    } else {
+      addDetail("ОЗУ: полный запас", 
+        "32 ГБ и более гарантируют полное отсутствие упора в оперативную память как в играх, так и в софте.");
+    }
+
+    const totalTdp = tdpEstimate[gpu] + (cP >= 5 ? 120 : 70) + 60;
+    const minSafePsu = Math.ceil((totalTdp * 1.4) / 50) * 50;
+
+    if (psu < totalTdp) {
+      addDetail("Критическая нехватка мощности блока питания", 
+        `Расчетная пиковая нагрузка конфигурации составляет около ${totalTdp} Вт, а номинал БП — ${psu} Вт. Высокий риск срабатывания защит (OCP/OPP) или отключения ПК под нагрузкой. Необходим блок от ${minSafePsu} Вт.`);
+    } else if (psu >= 650 && totalTdp <= 330) {
+      addDetail("Блок питания имеет отличный резерв мощности", 
+        `Потребление текущей системы около ${totalTdp} Вт. Блок питания на ${psu} Вт обеспечивает солидный запас, работает в зоне высокого КПД и позволит установить более мощную видеокарту без замены БП.`);
+    } else {
+      addDetail("Мощность блока питания в норме", 
+        `БП на ${psu} Вт полностью покрывает расчетное энергопотребление (~${totalTdp} Вт) с учетом необходимого резерва.`);
+    }
+  }
+
+  function addDetail(heading, text) {
+    const container = document.getElementById('analysisDetails');
+    const div = document.createElement('div');
+    div.className = 'detail-item';
+    div.innerHTML = `<h4>${heading}</h4><p>${text}</p>`;
+    container.appendChild(div);
+  }
+</script>
+</body>
+</html>
