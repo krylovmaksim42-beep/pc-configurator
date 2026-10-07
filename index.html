@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Конфигуратор ПК</title>
+  <title>Конфигуратор ПК — Инженерный хаб</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-main: #f8fafc;
@@ -21,6 +21,7 @@
       --success: #238636;
       --warning: #b45309;
       --danger: #dc2626;
+      --badge-bg: rgba(46, 160, 67, 0.08);
     }
 
     * {
@@ -34,14 +35,14 @@
       background-color: var(--bg-main);
       color: var(--text);
       min-height: 100vh;
-      padding: 20px 12px;
+      padding: 24px 14px;
       display: flex;
       justify-content: center;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* АНИМИРОВАННЫЙ ФОН */
+    /* АНИМИРОВАННЫЙ ТЕХНОЛОГИЧНЫЙ ФОН */
     .bg-particles {
       position: fixed;
       top: 0;
@@ -55,69 +56,101 @@
 
     .floating-item {
       position: absolute;
-      opacity: 0.14;
-      animation: floatMotion 22s ease-in-out infinite alternate;
+      opacity: 0.13;
+      animation: floatMotion 24s ease-in-out infinite alternate;
     }
 
-    .blur-sm { filter: blur(4px); }
-    .blur-md { filter: blur(6px); }
+    .blur-sm { filter: blur(3px); }
+    .blur-md { filter: blur(5px); }
 
-    .pos-1 { top: 4%; left: 3%; animation-duration: 20s; }
-    .pos-2 { top: 62%; left: 4%; animation-duration: 26s; animation-delay: -3s; }
-    .pos-3 { top: 8%; right: 4%; animation-duration: 22s; animation-delay: -5s; }
-    .pos-4 { top: 48%; right: 3%; animation-duration: 24s; animation-delay: -2s; }
-    .pos-5 { top: 84%; left: 28%; animation-duration: 28s; animation-delay: -7s; }
-    .pos-6 { top: 28%; right: 20%; animation-duration: 25s; animation-delay: -4s; }
-    .pos-7 { top: 76%; right: 10%; animation-duration: 27s; animation-delay: -6s; }
-    .pos-8 { top: 20%; left: 16%; animation-duration: 23s; animation-delay: -8s; }
-    .pos-9 { top: 40%; left: 2%; animation-duration: 29s; animation-delay: -1s; }
-    .pos-10 { top: 90%; right: 35%; animation-duration: 21s; animation-delay: -9s; }
-    .pos-11 { top: 12%; left: 45%; animation-duration: 24s; animation-delay: -3s; }
+    .pos-1 { top: 3%; left: 3%; animation-duration: 20s; }
+    .pos-2 { top: 58%; left: 4%; animation-duration: 26s; animation-delay: -3s; }
+    .pos-3 { top: 6%; right: 4%; animation-duration: 22s; animation-delay: -5s; }
+    .pos-4 { top: 44%; right: 3%; animation-duration: 24s; animation-delay: -2s; }
+    .pos-5 { top: 82%; left: 25%; animation-duration: 28s; animation-delay: -7s; }
+    .pos-6 { top: 25%; right: 18%; animation-duration: 25s; animation-delay: -4s; }
+    .pos-7 { top: 72%; right: 8%; animation-duration: 27s; animation-delay: -6s; }
+    .pos-8 { top: 18%; left: 14%; animation-duration: 23s; animation-delay: -8s; }
+    .pos-9 { top: 38%; left: 2%; animation-duration: 29s; animation-delay: -1s; }
+    .pos-10 { top: 88%; right: 30%; animation-duration: 21s; animation-delay: -9s; }
+    .pos-11 { top: 10%; left: 42%; animation-duration: 25s; animation-delay: -3s; }
 
     @keyframes floatMotion {
       0% { transform: translateY(0) rotate(0deg) scale(1); }
-      50% { transform: translateY(-40px) rotate(12deg) scale(1.04); }
-      100% { transform: translateY(30px) rotate(-8deg) scale(0.96); }
+      50% { transform: translateY(-38px) rotate(10deg) scale(1.03); }
+      100% { transform: translateY(28px) rotate(-6deg) scale(0.97); }
     }
 
     .wrapper {
       width: 100%;
-      max-width: 920px;
+      max-width: 960px;
       position: relative;
       z-index: 1;
     }
 
     header {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 12px;
+      padding-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    h1 {
-      font-size: 1.55rem;
-      font-weight: 700;
+    .brand-box h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
       color: var(--text-bright);
-      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    p.desc {
+    .brand-box p.desc {
       font-size: 0.88rem;
       color: var(--text-muted);
-      line-height: 1.4;
+      margin-top: 3px;
     }
 
-    /* АДАПТИВНАЯ НАВИГАЦИЯ ДЛЯ ТЕЛЕФОНА И ПК */
+    .system-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      background: var(--badge-bg);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* СКРОЛЛ-ЛЕНТА ВКЛАДОК */
     .tabs-wrapper {
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       scrollbar-width: none;
     }
 
-    .tabs-wrapper::-webkit-scrollbar {
-      display: none;
-    }
+    .tabs-wrapper::-webkit-scrollbar { display: none; }
 
     .tabs {
       display: flex;
@@ -130,46 +163,46 @@
       background: #ffffff;
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      padding: 10px 14px;
-      border-radius: 6px;
+      padding: 10px 16px;
+      border-radius: 8px;
       font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.15s ease;
+      transition: all 0.2s ease;
       white-space: nowrap;
       flex: 1;
       text-align: center;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--border);
+      color: var(--text-bright);
     }
 
     .tab-btn.active {
       background: var(--bg-card);
       color: var(--accent);
       border-color: var(--border);
-      box-shadow: 0 2px 6px rgba(46, 160, 67, 0.15);
+      box-shadow: 0 2px 8px rgba(46, 160, 67, 0.16);
     }
 
     .card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     }
 
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
     .grid-form {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
     }
 
     .field {
@@ -188,7 +221,7 @@
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
       color: var(--text-bright);
-      padding: 9px 11px;
+      padding: 10px 12px;
       border-radius: 6px;
       font-size: 0.88rem;
       outline: none;
@@ -206,74 +239,88 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      padding: 12px;
+      padding: 13px;
       border-radius: 6px;
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: background-color 0.2s;
-      box-shadow: 0 2px 8px rgba(46, 160, 67, 0.25);
+      transition: background-color 0.2s, transform 0.1s;
+      box-shadow: 0 3px 10px rgba(46, 160, 67, 0.25);
     }
 
-    .btn-submit:hover {
-      background: var(--accent-hover);
-    }
+    .btn-submit:hover { background: var(--accent-hover); }
+    .btn-submit:active { transform: scale(0.99); }
 
     .table-container {
       width: 100%;
       overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      margin-top: 14px;
     }
 
     .specs-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 14px;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
     }
 
     .specs-table th, .specs-table td {
-      border: 1px solid var(--border-subtle);
-      padding: 9px 11px;
+      padding: 10px 12px;
       text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .specs-table tr:last-child th, .specs-table tr:last-child td {
+      border-bottom: none;
     }
 
     .specs-table th {
-      background: rgba(46, 160, 67, 0.06);
+      background: rgba(46, 160, 67, 0.05);
       color: var(--text-bright);
-      font-weight: 600;
-      width: 28%;
+      font-weight: 700;
+      width: 24%;
+      border-right: 1px solid var(--border-subtle);
     }
 
     .specs-table td {
       color: var(--text);
     }
 
+    .spec-sub {
+      display: block;
+      font-size: 0.77rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
     .result-section {
       display: none;
-      margin-top: 18px;
+      margin-top: 20px;
       border-top: 1px solid var(--border-subtle);
-      padding-top: 18px;
+      padding-top: 20px;
     }
 
     .result-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       gap: 10px;
     }
 
     .result-title {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-bright);
     }
 
     .tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      padding: 5px 10px;
-      border-radius: 4px;
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      border-radius: 6px;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -288,13 +335,13 @@
       line-height: 1.5;
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
-      padding: 11px 13px;
-      border-radius: 6px;
-      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-top: 14px;
     }
 
     .details-list {
-      margin-top: 12px;
+      margin-top: 14px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -303,25 +350,25 @@
     .detail-item {
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
-      padding: 11px 13px;
-      border-radius: 6px;
+      padding: 12px 14px;
+      border-radius: 8px;
     }
 
     .detail-item h4 {
       font-size: 0.88rem;
       color: var(--text-bright);
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
 
     .detail-item p {
       font-size: 0.83rem;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .fps-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 12px;
       margin-top: 14px;
     }
@@ -329,12 +376,12 @@
     .fps-card {
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      padding: 12px;
+      border-radius: 8px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
     }
 
     .fps-card-top {
@@ -345,13 +392,14 @@
 
     .game-name {
       font-weight: 700;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       color: var(--text-bright);
     }
 
     .game-setting {
       font-size: 0.78rem;
       color: var(--text-muted);
+      margin-top: 2px;
     }
 
     .fps-value-box {
@@ -362,7 +410,7 @@
 
     .fps-number {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 700;
       color: var(--accent);
     }
@@ -373,17 +421,89 @@
       font-weight: 600;
     }
 
+    .roi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .roi-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .roi-card.best-pick {
+      border: 2px solid var(--border);
+      box-shadow: 0 4px 16px rgba(46, 160, 67, 0.2);
+    }
+
+    .best-badge {
+      position: absolute;
+      top: -10px;
+      right: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .roi-header {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--text-bright);
+    }
+
+    .roi-upgrade-detail {
+      font-size: 0.84rem;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .roi-metric {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+
+    /* ШКАЛА VRM ТЕМПЕРАТУРЫ */
+    .vrm-meter {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .vrm-bar {
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease, background-color 0.4s ease;
+    }
+
     @media (max-width: 600px) {
       body { padding: 12px 8px; }
       .card { padding: 14px; }
       h1 { font-size: 1.35rem; }
       .tab-btn { padding: 8px 12px; font-size: 0.82rem; }
-      .specs-table th { width: 34%; }
+      .specs-table th { width: 32%; }
     }
   </style>
 </head>
 <body>
 
+<!-- РАСШИРЕННЫЙ ФОН: ПРОЦЕССОРЫ, ПЛАТЫ, ВИДЕОКАРТЫ, M.2, ПИТАНИЕ И КУЛЕРЫ -->
 <div class="bg-particles">
   <svg class="floating-item blur-sm pos-1" width="110" height="110" viewBox="0 0 100 100" fill="none">
     <rect x="6" y="6" width="88" height="88" rx="8" stroke="#2ea043" stroke-width="3"/>
@@ -429,12 +549,15 @@
     <circle cx="84" cy="84" r="3" fill="#2ea043"/>
   </svg>
 
-  <svg class="floating-item blur-sm pos-6" width="160" height="80" viewBox="0 0 160 70" fill="none">
-    <rect x="6" y="8" width="148" height="54" rx="6" stroke="#2ea043" stroke-width="2.5"/>
-    <circle cx="110" cy="35" r="18" stroke="#2ea043" stroke-width="2.5"/>
-    <line x1="25" y1="25" x2="65" y2="25" stroke="#2ea043" stroke-width="2"/>
-    <line x1="25" y1="35" x2="65" y2="35" stroke="#2ea043" stroke-width="2"/>
-    <line x1="25" y1="45" x2="65" y2="45" stroke="#2ea043" stroke-width="2"/>
+  <!-- Башенный кулер с теплотрубками -->
+  <svg class="floating-item blur-sm pos-6" width="130" height="130" viewBox="0 0 100 100" fill="none">
+    <rect x="20" y="15" width="60" height="60" rx="4" stroke="#2ea043" stroke-width="2.5"/>
+    <line x1="20" y1="28" x2="80" y2="28" stroke="#2ea043" stroke-width="1.5"/>
+    <line x1="20" y1="40" x2="80" y2="40" stroke="#2ea043" stroke-width="1.5"/>
+    <line x1="20" y1="52" x2="80" y2="52" stroke="#2ea043" stroke-width="1.5"/>
+    <line x1="20" y1="64" x2="80" y2="64" stroke="#2ea043" stroke-width="1.5"/>
+    <path d="M30 75 L30 88 M45 75 L45 88 M55 75 L55 88 M70 75 L70 88" stroke="#2ea043" stroke-width="2"/>
+    <rect x="25" y="88" width="50" height="6" fill="#2ea043"/>
   </svg>
 
   <svg class="floating-item blur-md pos-7" width="130" height="130" viewBox="0 0 120 120" fill="none">
@@ -480,16 +603,23 @@
 
 <div class="wrapper">
   <header>
-    <h1>Конфигуратор ПК</h1>
-    <p class="desc">Подбор сборки под бюджет, проверка совместимости связок CPU/GPU и расчет FPS в популярных играх.</p>
+    <div class="brand-box">
+      <h1>Конфигуратор ПК</h1>
+      <p class="desc">Экспертный подбор спецификаций, аппаратная диагностика, расчёт FPS и температурных режимов VRM.</p>
+    </div>
+    <div class="system-status">
+      <div class="status-dot"></div> БАЗА: 2026 АКТИВНА
+    </div>
   </header>
 
   <!-- СКРОЛЛ-ЛЕНТА ВКЛАДОК -->
   <div class="tabs-wrapper">
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('budgetTab', this)">Подбор по бюджету</button>
-      <button class="tab-btn" onclick="switchTab('upgradeTab', this)">Баланс и апгрейд</button>
+      <button class="tab-btn" onclick="switchTab('upgradeTab', this)">Баланс и узкие места</button>
       <button class="tab-btn" onclick="switchTab('fpsTab', this)">Калькулятор FPS</button>
+      <button class="tab-btn" onclick="switchTab('roiTab', this)">Вектор апгрейда (ROI)</button>
+      <button class="tab-btn" onclick="switchTab('vrmTab', this)">🔥 Термонагрузка VRM</button>
     </div>
   </div>
 
@@ -497,9 +627,9 @@
   <div id="budgetTab" class="card tab-content active">
     <div class="field" style="margin-bottom: 14px;">
       <label for="budgetInput">Сумма на системный блок (в рублях):</label>
-      <input type="number" id="budgetInput" placeholder="Введите сумму (от 1000 до 700 000+)" min="1000" step="5000" value="85000">
+      <input type="number" id="budgetInput" placeholder="Введите сумму (от 3 000 до 650 000+)" min="1000" step="5000" value="85000">
     </div>
-    <button class="btn-submit" onclick="generateBuildByBudget()">Рассчитать конфигурацию</button>
+    <button class="btn-submit" onclick="generateBuildByBudget()">Рассчитать детальную конфигурацию</button>
 
     <div id="budgetResult" class="result-section">
       <div class="result-header">
@@ -510,19 +640,43 @@
       <div class="table-container">
         <table class="specs-table">
           <tbody>
-            <tr><th>Процессор</th><td id="bCpu">-</td></tr>
-            <tr><th>Охлаждение</th><td id="bCooler">-</td></tr>
-            <tr><th>Материнская плата</th><td id="bMotherboard">-</td></tr>
-            <tr><th>Видеокарта</th><td id="bGpu">-</td></tr>
-            <tr><th>ОЗУ</th><td id="bRam">-</td></tr>
-            <tr><th>Накопитель</th><td id="bStorage">-</td></tr>
-            <tr><th>Блок питания</th><td id="bPsu">-</td></tr>
-            <tr><th>Корпус</th><td id="bCase">-</td></tr>
+            <tr>
+              <th>Процессор (CPU)</th>
+              <td><span id="bCpu">-</span><span class="spec-sub" id="bCpuSub">-</span></td>
+            </tr>
+            <tr>
+              <th>Охлаждение</th>
+              <td><span id="bCooler">-</span><span class="spec-sub" id="bCoolerSub">-</span></td>
+            </tr>
+            <tr>
+              <th>Материнская плата</th>
+              <td><span id="bMotherboard">-</span><span class="spec-sub" id="bMotherboardSub">-</span></td>
+            </tr>
+            <tr>
+              <th>Видеокарта (GPU)</th>
+              <td><span id="bGpu">-</span><span class="spec-sub" id="bGpuSub">-</span></td>
+            </tr>
+            <tr>
+              <th>Оперативная память (RAM)</th>
+              <td><span id="bRam">-</span><span class="spec-sub" id="bRamSub">-</span></td>
+            </tr>
+            <tr>
+              <th>Накопитель (SSD NVMe)</th>
+              <td><span id="bStorage">-</span><span class="spec-sub" id="bStorageSub">-</span></td>
+            </tr>
+            <tr>
+              <th>Блок питания (PSU)</th>
+              <td><span id="bPsu">-</span><span class="spec-sub" id="bPsuSub">-</span></td>
+            </tr>
+            <tr>
+              <th>Корпус и вентиляция</th>
+              <td><span id="bCase">-</span><span class="spec-sub" id="bCaseSub">-</span></td>
+            </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="summary-text" id="buildNotes">Пояснение появится здесь.</div>
+      <div class="summary-text" id="buildNotes">Техническое обоснование появится здесь.</div>
     </div>
   </div>
 
@@ -678,6 +832,114 @@
       </div>
     </div>
   </div>
+
+  <!-- ВКЛАДКА 4: СИМУЛЯТОР АПГРЕЙДА (ROI) -->
+  <div id="roiTab" class="card tab-content">
+    <div class="grid-form">
+      <div class="field">
+        <label for="curCpu">Текущий процессор:</label>
+        <select id="curCpu">
+          <option value="1">LGA 775 / Core 2 Quad / FX-серия</option>
+          <option value="2">Core i5-2400 / i5-3570 / Xeon E5-2670v3</option>
+          <option value="3">Ryzen 5 1600 / 2600 / Core i3-10100F</option>
+          <option value="4" selected>Ryzen 5 3600 / 5500 / Core i5-10400F</option>
+          <option value="5">Ryzen 5 5600 / Core i5-12400F</option>
+          <option value="6">Ryzen 7 5700X3D / Ryzen 5 7500F</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="curGpu">Текущая видеокарта:</label>
+        <select id="curGpu">
+          <option value="1">GTX 750 Ti / GT 1030</option>
+          <option value="2" selected>RX 580 8GB / GTX 1060 6GB</option>
+          <option value="3">GTX 1660 Super / RTX 2060</option>
+          <option value="4">Radeon RX 6600 / RTX 3060 12GB</option>
+          <option value="5">GeForce RTX 4060 / RX 7600</option>
+          <option value="6">RTX 4070 Super / RX 7800 XT</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="curPsu">Текущий блок питания (Вт):</label>
+        <input type="number" id="curPsu" value="500" step="50">
+      </div>
+
+      <div class="field">
+        <label for="upgBudget">Бюджет на апгрейд (в рублях):</label>
+        <input type="number" id="upgBudget" value="35000" step="5000">
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="calculateUpgradeROI()">Рассчитать самый выгодный апгрейд</button>
+
+    <div id="roiResult" class="result-section">
+      <div class="result-header">
+        <div class="result-title">Анализ путей модернизации</div>
+        <div class="tag tag-ok" id="roiTag">Рекомендация готова</div>
+      </div>
+
+      <div class="roi-grid" id="roiCardsContainer"></div>
+
+      <div class="summary-text" id="roiAdvice">
+        Алгоритм оценивает прирост производительности на каждый затраченный рубль с учетом необходимости сопутствующей замены блока питания или платформы.
+      </div>
+    </div>
+  </div>
+
+  <!-- ВКЛАДКА 5: КАЛЬКУЛЯТОР VRM И ТЕРМОНАГРУЗКИ (НОВЫЙ ПУНКТ) -->
+  <div id="vrmTab" class="card tab-content">
+    <div class="grid-form">
+      <div class="field">
+        <label for="vrmBoard">Материнская плата (чипсет и цепь питания):</label>
+        <select id="vrmBoard">
+          <option value="budget_bare">Бюджетная без радиаторов (H61 / H610 / A520, 4-6 фаз)</option>
+          <option value="mid_entry">Средняя с радиатором на SOC (B450M / B550M DS3H, 6-8 фаз)</option>
+          <option value="mid_good" selected>Качественная среднебюджетная (B550 AORUS / B650 Gaming, 8-10 фаз DrMOS)</option>
+          <option value="high_end">Продвинутая (B650E Steel Legend / Z790 Tomahawk, 12-16 фаз 80A)</option>
+          <option value="enthusiast">Топовая оверклокерская (X870E Hero / Z890 Taichi, 18-24 фазы 110A)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="vrmCpu">Процессор под нагрузкой:</label>
+        <select id="vrmCpu">
+          <option value="65">Энергоэффективный (65 Вт: i3-12100F, R5 5600, R5 7500F)</option>
+          <option value="105" selected>Средний игровой (105 Вт: R7 5700X3D, R7 7800X3D, i5-13400F)</option>
+          <option value="170">Высокопроизводительный (170-190 Вт: R9 7900X, i5-14600K, R7 9800X3D OC)</option>
+          <option value="250">Экстремальный (250-320 Вт: i7-14700K, i9-14900KS, Ultra 9 285K)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="vrmCaseAir">Тип охлаждения процессора:</label>
+        <select id="vrmCaseAir">
+          <option value="air_top">Башенный кулер с прямым обдувом сокета (воздушный)</option>
+          <option value="aio">СЖО / Водянка (нет прямого обдува радиаторов VRM)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="calculateVRM()">Рассчитать нагрев цепей питания VRM</button>
+
+    <div id="vrmResult" class="result-section">
+      <div class="result-header">
+        <div class="result-title">Оценка температурного режима VRM Mosfet</div>
+        <div class="tag" id="vrmStatusTag">Готово к расчету</div>
+      </div>
+
+      <div class="summary-text" id="vrmReadout">-</div>
+
+      <div style="margin-top:14px;">
+        <label style="font-weight:700;">Прогнозируемая температура мосфетов (°C под стресс-тестом):</label>
+        <div class="vrm-meter">
+          <div class="vrm-bar" id="vrmProgressBar"></div>
+        </div>
+      </div>
+
+      <div class="details-list" id="vrmRecommendations"></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -688,206 +950,247 @@
     btn.classList.add('active');
   }
 
-  // 1. БАЗА СБОРОК ПОД БЮДЖЕТ (ОТ 3000 ДО 650 000+ РУБЛЕЙ)
+  // 1. БАЗА СБОРОК С РАСШИРЕННЫМИ ХАРАКТЕРИСТИКАМИ
   const buildsDatabase = [
     {
       baseCost: 3000,
       cpu: "Intel Core 2 Quad Q6600 (б/у в сборе) ~ 500 ₽",
-      cooler: "Боксовый кулер ~ 200 ₽",
-      mb: "LGA 775 (G31/G41) ~ 700 ₽",
-      gpu: "Встроенное видеоядро Intel GMA (0 ₽)",
-      ram: "4 GB (2x2GB) DDR2/DDR3 ~ 400 ₽",
-      storage: "HDD 160-250 GB SATA ~ 400 ₽",
+      cpuSub: "4 ядра / 4 потока • 2.40 GHz • 8MB L2 • 65 нм • TDP 105W",
+      cooler: "Боксовый алюминиевый кулер Intel ~ 200 ₽",
+      coolerSub: "Радиальный радиатор • 2200 RPM • TDP до 95W",
+      mb: "LGA 775 (G31 / G41 чипсет) ~ 700 ₽",
+      mbSub: "DDR2/DDR3 слоты • PCIe 1.1 x16 • 3-фазное питание",
+      gpu: "Встроенное видеоядро Intel GMA 3100 (0 ₽)",
+      gpuSub: "DirectX 9.0c • Вывод изображения до 1920x1080",
+      ram: "4 GB (2x2GB) DDR2/DDR3 800-1333 MHz ~ 400 ₽",
+      ramSub: "Dual Channel • Пропускная способность ~10.6 ГБ/с",
+      storage: "HDD 160-250 GB SATA II (б/у) ~ 400 ₽",
+      storageSub: "7200 RPM • Буфер 8MB • Скорость чтения ~80 МБ/с",
       psu: "Комплектный БП 350W ~ 500 ₽",
-      case: "Офисный корпус со вторички (в комплекте)",
-      notes: "Готовый системный блок со вторичного рынка под документы, веб-серфинг и ретро-игры."
+      psuSub: "Линия 12V: до 220W • Пассивный PFC",
+      case: "Офисный стальной ATX корпус (б/у) ~ 300 ₽",
+      caseSub: "Глухой корпус без вертушек • Верхнее расположение БП",
+      notes: "Максимально доступное решение для базовой офисной работы, текстовых редакторов и старых ретро-игр 2000-х годов."
     },
     {
       baseCost: 10000,
       cpu: "Intel Core i3-2100 / i5-2400 (LGA 1155) ~ 1 100 ₽",
-      cooler: "Кулер 2 теплотрубки ~ 500 ₽",
-      mb: "H61 LGA 1155 ~ 1 800 ₽",
+      cpuSub: "4 ядра / 4 потока • Sandy Bridge 3.1 GHz • 6MB L3 • 32 нм",
+      cooler: "Кулер 2 теплотрубки (Deepcool GAMMAXX) ~ 500 ₽",
+      coolerSub: "92мм вентилятор • Прямой контакт • Рассеивание до 95W",
+      mb: "H61 LGA 1155 (б/у) ~ 1 800 ₽",
+      mbSub: "PCIe 2.0 x16 • 2 слота DDR3 • SATA 3Gb/s • 4 фазы питания",
       gpu: "GeForce GTX 750 Ti 2GB (б/у) ~ 3 200 ₽",
+      gpuSub: "GM107 Maxwell • 640 CUDA • 2GB GDDR5 • 128-bit • TDP 60W",
       ram: "8 GB (2x4GB) DDR3 1600 MHz ~ 900 ₽",
-      storage: "SATA SSD 240 GB ~ 1 700 ₽",
-      psu: "FSP 450W / Accord 450W ~ 900 ₽",
-      case: "Б/у ATX корпус ~ 400 ₽",
-      notes: "Базовый системник под нетребовательный киберспорт (Dota 2, Танки, CS2 на низких в 720p/900p, GTA V на средних)."
+      ramSub: "Dual Channel • Тайминги CL11 • ПСП ~25.6 ГБ/с",
+      storage: "SATA SSD 240 GB (новый) ~ 1 700 ₽",
+      storageSub: "SATA III 6Gb/s • Чтение: 520 МБ/с • Запись: 450 МБ/с",
+      psu: "FSP / Accord 450W (б/у) ~ 900 ₽",
+      psuSub: "КПД ~80% • 12V линия: до 360W • 1x 6-pin PCIe",
+      case: "Б/у ATX корпус со вторички ~ 500 ₽",
+      caseSub: "Стандартный черный корпус • 1х 120мм на выдув",
+      notes: "Бюджетная станция для киберспорта: CS2 (на низких), Dota 2, GTA V (60 FPS на средних) и Танки."
     },
     {
       baseCost: 20000,
-      cpu: "Intel Xeon E5-2670 v3 (12 ядер / 24 потока) ~ 1 200 ₽",
-      cooler: "Башенный кулер 4 трубки ~ 1 400 ₽",
-      mb: "X99 LGA 2011-3 (Machinist) ~ 4 100 ₽",
+      cpu: "Intel Xeon E5-2670 v3 (LGA 2011-3) ~ 1 200 ₽",
+      cpuSub: "12 ядер / 24 потока • 2.3-3.1 GHz • 30MB L3 • 22 нм • TDP 120W",
+      cooler: "Башенный кулер 4 трубки (Snowman / Wovibo) ~ 1 400 ₽",
+      coolerSub: "120мм гидродинамический вентилятор • TDP до 150W",
+      mb: "X99 LGA 2011-3 (Machinist / Jginyue) ~ 4 100 ₽",
+      mbSub: "4-канальный контроллер • Слот M.2 NVMe PCIe 3.0 x4 • 6 фаз VRM",
       gpu: "AMD Radeon RX 580 8GB (2048SP) ~ 6 200 ₽",
-      ram: "16 GB (2x8GB) DDR4 ECC REG ~ 2 000 ₽",
+      gpuSub: "Polaris 20 • 8GB GDDR5 • 256-bit • 8-pin питание • TDP 150W",
+      ram: "16 GB (2x8GB) DDR4 ECC REG 2133/2400 MHz ~ 2 000 ₽",
+      ramSub: "Серверная память с коррекцией ошибок • Dual/Quad Channel",
       storage: "512 GB M.2 NVMe SSD ~ 2 800 ₽",
+      storageSub: "PCIe 3.0 x4 • Скорость: 2100/1600 МБ/с • Ресурс 300 TBW",
       psu: "1stPlayer Black.Sir 500W / Deepcool PF450 ~ 3 000 ₽",
-      case: "Бюджетный корпус с сеткой ~ 1 800 ₽",
-      notes: "Доступная платформа для 1080p гейминга. 16 ГБ оперативной памяти и 8 ГБ видеопамяти тянут большинство современных игр."
+      psuSub: "Сертификат 80 PLUS White • 12V линия: 456W • Защиты OVP/OPP",
+      case: "Ginzzu / 1stPlayer с сетчатой мордой ~ 2 300 ₽",
+      caseSub: "Mesh-панель • 2x 120мм кулера • Нижнее расположение БП",
+      notes: "Народная платформа для доступного 1080p гейминга. 12 ядер и 8 ГБ видеопамяти закрывают большинство современных игр."
     },
     {
       baseCost: 35000,
-      cpu: "AMD Ryzen 5 2600 / Ryzen 5 3600 (б/у) ~ 4 800 ₽",
-      cooler: "ID-COOLING SE-214-XT ~ 1 500 ₽",
-      mb: "A520M / B450M (MSI / Gigabyte) ~ 5 300 ₽",
+      cpu: "AMD Ryzen 5 3600 (AM4, б/у) ~ 5 200 ₽",
+      cpuSub: "6 ядер / 12 потоков • 3.6-4.2 GHz • 32MB L3 • 7 нм Zen 2 • TDP 65W",
+      cooler: "ID-COOLING SE-214-XT Basic ~ 1 500 ₽",
+      coolerSub: "4 теплотрубки • 120мм PWM вентилятор • TDP 180W",
+      mb: "A520M / B450M (MSI / GIGABYTE) ~ 5 300 ₽",
+      mbSub: "Socket AM4 • PCIe 3.0 x16 • Слот M.2 PCIe 3.0 • 5-6 фаз питания",
       gpu: "GeForce GTX 1660 Super 6GB (б/у) ~ 11 000 ₽",
+      gpuSub: "TU116 Turing • 6GB GDDR6 14 Gbps • 192-bit • TDP 125W",
       ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 000 ₽",
-      storage: "512 GB M.2 NVMe SSD ~ 3 200 ₽",
+      ramSub: "Kingston Fury / XPG Gammix • XMP профиль • Dual Channel",
+      storage: "512 GB M.2 NVMe PCIe 3.0 ~ 3 200 ₽",
+      storageSub: "Silicon Power / ADATA • Чтение: 2400 МБ/с • Запись: 1800 МБ/с",
       psu: "Deepcool PF500 (500W) ~ 3 500 ₽",
-      case: "Корпус с вентиляцией ~ 2 200 ₽",
-      notes: "Платформа AM4 с возможностью дальнейшей установки Ryzen 5 5600 без замены материнской платы и оперативной памяти."
+      psuSub: "80 PLUS Standard • 12V шина: 480W • Плоские черные кабели",
+      case: "Prime Box Predator с 3 вертушками ~ 2 500 ₽",
+      caseSub: "Сетка спереди • Боковое закаленное стекло • Нижний отсек",
+      notes: "Стабильная платформа AM4 с низким энергопотреблением и возможностью легкого апгрейда на Ryzen 5 5600 без замены платы."
     },
     {
       baseCost: 50000,
-      cpu: "Intel Core i3-12100F (OEM) ~ 7 800 ₽",
-      cooler: "ID-COOLING SE-214-XT Basic ~ 1 600 ₽",
-      mb: "H610M (MSI PRO H610M-E) ~ 6 800 ₽",
-      gpu: "AMD Radeon RX 6500 XT (новая) или б/у RTX 2060 Super 8GB ~ 16 000 ₽",
+      cpu: "Intel Core i3-12100F (LGA 1700, OEM) ~ 7 800 ₽",
+      cpuSub: "4 ядра / 8 потоков Golden Cove • 3.3-4.3 GHz • 12MB L3 • Intel 7 (10 нм)",
+      cooler: "ID-COOLING SE-214-XT ~ 1 600 ₽",
+      coolerSub: "4 трубки прямого контакта • 120мм PWM • 180W TDP",
+      mb: "H610M (MSI PRO H610M-E DDR4) ~ 6 800 ₽",
+      mbSub: "PCIe 4.0 x16 • M.2 NVMe PCIe 3.0 x4 • 6+1+1 фаз VRM",
+      gpu: "GeForce RTX 2060 Super 8GB (б/у) / RX 6500 XT ~ 16 000 ₽",
+      gpuSub: "TU106 Turing • 8GB GDDR6 • 256-bit • DLSS 2 и Ray Tracing • 175W",
       ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
-      storage: "512 GB M.2 NVMe ~ 3 800 ₽",
+      ramSub: "G.Skill Aegis / Netac Shadow II • XMP 2.0 • Тайминги 16-18-18",
+      storage: "512 GB M.2 NVMe PCIe 3.0 x4 ~ 3 800 ₽",
+      storageSub: "ADATA Legend 710 • Чтение 2400 МБ/с • Запись 1800 МБ/с",
       psu: "Deepcool PK500D (Bronze) ~ 4 200 ₽",
-      case: "Prime Box / AeroCool с вертушками ~ 3 500 ₽",
-      notes: "Полностью новая сборка на актуальном сокете LGA 1700. Высокий фреймрейт в CS2, Valorant и Dota 2."
+      psuSub: "Сертификат 80 PLUS Bronze • DC-DC преобразователи • 12V: 498W",
+      case: "AeroCool Trinity Mini v2 ~ 3 500 ₽",
+      caseSub: "Компактный Mini-Tower • Mesh-фасад • 2х 140мм на вдув",
+      notes: "Высокая производительность на ядро в сокете LGA 1700. Высокий фреймрейт в CS2, Valorant и Cyberpunk 2077 на высоких настройках."
     },
     {
-      baseCost: 60000,
-      cpu: "AMD Ryzen 5 3600 или Ryzen 5 5500 (OEM) ~ 8 500 ₽",
-      cooler: "ID-COOLING SE-214-XT ~ 1 600 ₽",
-      mb: "B450M (MSI B450M-A PRO MAX II) ~ 6 200 ₽",
-      gpu: "AMD Radeon RX 6600 8GB (Sapphire Pulse) ~ 25 500 ₽",
+      baseCost: 65000,
+      cpu: "AMD Ryzen 5 5600 (AM4, OEM) ~ 10 500 ₽",
+      cpuSub: "6 ядер / 12 потоков Zen 3 • 3.5-4.4 GHz • 32MB L3 • 7 нм • TDP 65W",
+      cooler: "Deepcool AG400 / SE-224-XTS ~ 2 100 ₽",
+      coolerSub: "4 никелированные трубки • Матричные ребра • TDP до 220W",
+      mb: "B450M / B550M (MSI B450M PRO-VDH MAX) ~ 6 800 ₽",
+      mbSub: "PCIe 3.0 x16 • 4 слота памяти • Радиатор на фазах VRM",
+      gpu: "AMD Radeon RX 6600 8GB (Sapphire Pulse) ~ 26 000 ₽",
+      gpuSub: "RDNA 2 Navi 23 • 8GB GDDR6 • 128-bit • Infinity Cache 32MB • TDP 132W",
       ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
-      storage: "512 GB M.2 NVMe PCIe 3.0 ~ 3 800 ₽",
-      psu: "Deepcool PK600D (600W Bronze) ~ 5 400 ₽",
-      case: "Cougar MG140 Air / Montech AIR 100 ~ 4 100 ₽",
-      notes: "Оптимальный конфиг для Full HD. Блок питания на 600W Bronze с запасом. RX 6600 тянет Cyberpunk 2077 и RDR 2 на высоких настройках."
-    },
-    {
-      baseCost: 70000,
-      cpu: "AMD Ryzen 5 5500 / 3600 (OEM) ~ 8 500 ₽",
-      cooler: "ID-COOLING SE-214-XT ~ 1 600 ₽",
-      mb: "B450M (ASRock B450M Pro4 / MSI) ~ 6 500 ₽",
-      gpu: "AMD Radeon RX 6600 8GB ~ 25 500 ₽",
-      ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
-      storage: "1 TB M.2 NVMe PCIe 3.0 (ADATA Legend 800) ~ 6 400 ₽",
-      psu: "Deepcool PK650D (650W Bronze) ~ 5 800 ₽",
-      case: "Montech AIR 100 Lite ~ 4 400 ₽",
-      notes: "Сбалансированная сборка с быстрым накопителем емкостью 1 ТБ и надежным блоком питания на 650W."
+      ramSub: "Kingston FURY Beast Black • XMP профиль • Dual Channel",
+      storage: "1 TB M.2 NVMe PCIe 3.0 (ADATA Legend 800) ~ 6 200 ₽",
+      storageSub: "Чтение: 3500 МБ/с • Запись: 2800 МБ/с • Ресурс 600 TBW",
+      psu: "Deepcool PK600D (600W Bronze) ~ 5 200 ₽",
+      psuSub: "80 PLUS Bronze • Топология DC-DC • Линия 12V выдает 594W",
+      case: "Montech AIR 100 Lite Black ~ 4 200 ₽",
+      caseSub: "Петлевая стеклянная дверь • Mesh-морда • 2х 120мм вентилятора",
+      notes: "Золотой стандарт среднебюджетного Full HD гейминга. Процессор с 32 МБ кэша и видеокарта RX 6600 обеспечивают тишину и высокий FPS."
     },
     {
       baseCost: 85000,
-      cpu: "AMD Ryzen 5 5600 (OEM, кэш 32 МБ) ~ 11 500 ₽",
-      cooler: "ID-COOLING SE-224-XTS / Deepcool AG400 ~ 2 300 ₽",
-      mb: "B550M (GIGABYTE B550M DS3H) ~ 9 800 ₽",
+      cpu: "AMD Ryzen 5 5600 (AM4) ~ 10 500 ₽",
+      cpuSub: "6 ядер / 12 потоков • 3.5-4.4 GHz • 32MB L3 • PCIe 4.0 поддержка",
+      cooler: "Deepcool AG400 ARGB ~ 2 400 ₽",
+      coolerSub: "Гидродинамический подшипник • Рассеивание 220W",
+      mb: "B550M (GIGABYTE B550M DS3H R2) ~ 9 800 ₽",
+      mbSub: "Шина PCIe 4.0 x16 • 2x M.2 (один с радиатором) • 5+3 фаз питания",
       gpu: "NVIDIA GeForce RTX 4060 8GB (Palit Dual) ~ 34 500 ₽",
+      gpuSub: "AD107 Ada Lovelace • 8GB GDDR6 • 128-bit • DLSS 3 + Frame Gen • TDP 115W",
       ram: "32 GB (2x16GB) DDR4 3600 MHz CL18 ~ 8 800 ₽",
-      storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 200 ₽",
+      ramSub: "Team Group T-Force Vulcan Z • Dual Channel • Высокая пропускная способность",
+      storage: "1 TB M.2 NVMe PCIe 4.0 (Kingston KC3000 / Lexar NM790) ~ 7 400 ₽",
+      storageSub: "PCIe 4.0 x4 • Скорость: 7000 МБ/с • Ресурс 800 TBW",
       psu: "Deepcool PK650D (650W Bronze) ~ 5 800 ₽",
-      case: "Montech AIR 100 ARGB ~ 5 400 ₽",
-      notes: "Идеальный баланс процессора и видеокарты: шина PCIe 4.0, 32 ГБ памяти, поддержка DLSS 3 и генерации кадров."
+      psuSub: "80 PLUS Bronze • 12V шина: 648W • Защиты SCP/OVP/OPP",
+      case: "Montech AIR 100 ARGB (4 вертушки) ~ 5 400 ₽",
+      caseSub: "4x 120мм ARGB с контроллером • Сетка высокой продуваемости",
+      notes: "Сбалансированная конфигурация с 32 ГБ памяти, поддержкой PCIe 4.0 и генерацией кадров DLSS 3."
     },
-    {
-      baseCost: 95000,
-      cpu: "AMD Ryzen 5 5600 (OEM) ~ 11 500 ₽",
-      cooler: "Deepcool AG400 ~ 2 300 ₽",
-      mb: "B550M (GIGABYTE DS3H) ~ 9 800 ₽",
-      gpu: "GeForce RTX 4060 Ti 8GB или RX 6750 GRE 12GB ~ 43 000 ₽",
-      ram: "32 GB (2x16GB) DDR4 3600 MHz ~ 8 800 ₽",
-      storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 200 ₽",
-      psu: "Deepcool PK650D (650W Bronze) ~ 5 800 ₽",
-      case: "Montech AIR 100 ARGB ~ 5 400 ₽",
-      notes: "Усиленная видеокарта под максимальные настройки графики в 1080p и стабильный фреймрейт в 1440p."
-    },
-    // ВХОД В RTX 5060 + AM5
     {
       baseCost: 115000,
-      cpu: "AMD Ryzen 5 7500F (OEM, Zen 4) ~ 15 000 ₽",
-      cooler: "Thermalright Assassin King 120 SE ~ 2 500 ₽",
+      cpu: "AMD Ryzen 5 7500F (Socket AM5, OEM) ~ 15 000 ₽",
+      cpuSub: "6 ядер / 12 потоков Zen 4 • 3.7-5.0 GHz • 32MB L3 • 5 нм • TDP 65W",
+      cooler: "Thermalright Assassin King 120 SE ~ 2 600 ₽",
+      coolerSub: "5 тепловых трубок • 120мм тихий PWM кулер • TDP 225W",
       mb: "B650M (ASRock B650M-HDV/M.2) ~ 13 000 ₽",
+      mbSub: "AM5 сокет • 8+2+1 фаз VRM DrMOS 50A • 2x M.2 PCIe 5.0/4.0",
       gpu: "NVIDIA GeForce RTX 5060 8GB GDDR7 (Blackwell) ~ 42 000 ₽",
+      gpuSub: "Архитектура Blackwell • 8GB GDDR7 28 Gbps • DLSS 4 Multi-Frame • TDP 145W",
       ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
+      ramSub: "Kingston Fury Beast EXPO • Тайминги CL30-36-36 • ПСП ~52 ГБ/с",
       storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 500 ₽",
-      psu: "Montech Century 650W Gold / Deepcool PK650D ~ 6 800 ₽",
-      case: "Montech Air 100 ARGB ~ 5 500 ₽",
-      notes: "Актуальное поколение: процессор на сокете AM5 и видеокарта RTX 5060 на быстрой памяти GDDR7 с поддержкой DLSS 4."
+      storageSub: "Чтение: 7100 МБ/с • Запись: 6000 МБ/с • Контроллер с кэшем",
+      psu: "Montech Century 650W Gold ~ 6 800 ₽",
+      psuSub: "80 PLUS Gold • Полностью модульный • Японские конденсаторы 105°C",
+      case: "Montech AIR 100 ARGB ~ 5 500 ₽",
+      caseSub: "Закаленное стекло • Пылевые фильтры • Отличный кабель-менеджмент",
+      notes: "Актуальная платформа Socket AM5 с памятью DDR5 и видеокартой серии RTX 50 Blackwell на быстрой памяти GDDR7."
     },
-    // RTX 5060 Ti 16GB
     {
       baseCost: 145000,
       cpu: "AMD Ryzen 5 7600X / Core i5-13600KF ~ 21 000 ₽",
+      cpuSub: "6 ядер / 12 потоков • До 5.3 GHz • 38MB общего кэша • 5 нм Zen 4",
       cooler: "Thermalright Peerless Assassin 120 SE ~ 4 500 ₽",
+      coolerSub: "Двухсекционный радиатор • 6 трубок • 2х 120мм PWM • TDP 265W",
       mb: "B650 (MSI B650 Gaming Plus WiFi) ~ 16 000 ₽",
+      mbSub: "ATX формат • 12+2+1 фаз VRM • WiFi 6E + 2.5G LAN • 2x PCIe 4.0 M.2",
       gpu: "NVIDIA GeForce RTX 5060 Ti 16GB (Blackwell) ~ 58 000 ₽",
+      gpuSub: "16GB GDDR7 • 128-bit шина с огромным кэшем • DLSS 4 • TDP 180W",
       ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 EXPO ~ 13 500 ₽",
-      storage: "1 TB M.2 PCIe 4.0 (5000+ МБ/с) ~ 8 000 ₽",
-      psu: "750W Montech Century Gold ~ 8 800 ₽",
-      case: "Montech Air 903 Base ~ 6 800 ₽",
-      notes: "16 ГБ видеопамяти на RTX 5060 Ti исключают любые упоры по текстурам в играх 2025–2026 годов в разрешениях 1080p и 1440p."
+      ramSub: "Низкие задержки CL30 • Профиль AMD EXPO 1-клик",
+      storage: "1 TB PCIe 4.0 NVMe (7400 МБ/с) ~ 8 000 ₽",
+      storageSub: "DRAM-буфер 1GB • SLC-кэширование • 1 000 000 IOPS",
+      psu: "750W Montech Century Gold (ATX 3.0) ~ 8 800 ₽",
+      psuSub: "80 PLUS Gold • Нативный разъем 12VHPWR • Тихий 135мм вентилятор",
+      case: "Montech Air 903 Base Black ~ 6 800 ₽",
+      caseSub: "3x 140мм PWM кулера в комплекте • Сетка сверхвысокого потока воздуха",
+      notes: "Конфигурация с 16 ГБ видеопамяти, исключающая упор по видеопамяти в 2K (1440p) на ближайшие годы."
     },
-    // RTX 5070 12GB
-    {
-      baseCost: 185000,
-      cpu: "AMD Ryzen 7 7700X / Core i5-14600K ~ 26 000 ₽",
-      cooler: "Thermalright Phantom Spirit 120 SE ~ 5 000 ₽",
-      mb: "B650 (GIGABYTE B650 Gaming X AX) ~ 18 500 ₽",
-      gpu: "NVIDIA GeForce RTX 5070 12GB (Blackwell) ~ 78 000 ₽",
-      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
-      storage: "2 TB M.2 NVMe PCIe 4.0 ~ 15 000 ₽",
-      psu: "750W ATX 3.1 Gold (Montech Titan Gold) ~ 12 000 ₽",
-      case: "Lian Li Lancool 216 ~ 10 500 ₽",
-      notes: "Мощная связка для 2K ультра-гейминга с высокой кадровой частотой и полной аппаратной трассировкой лучей."
-    },
-    // RTX 5070 Ti 16GB
     {
       baseCost: 230000,
       cpu: "AMD Ryzen 7 7800X3D (3D V-Cache) ~ 41 000 ₽",
-      cooler: "Thermalright Phantom Spirit 120 SE ~ 5 000 ₽",
+      cpuSub: "8 ядер / 16 потоков • 96MB 3D V-Cache • 5.0 GHz • Игровой эталон",
+      cooler: "Thermalright Phantom Spirit 120 SE ARGB ~ 5 200 ₽",
+      coolerSub: "7 тепловых трубок • 2 радиатора • Эффективнее многих водянок 240мм",
       mb: "B650E (ASRock B650E Steel Legend WiFi) ~ 24 000 ₽",
+      mbSub: "PCIe 5.0 x16 под видеокарту • PCIe 5.0 M.2 • 16+2+1 фаз 60A",
       gpu: "NVIDIA GeForce RTX 5070 Ti 16GB (Blackwell) ~ 98 000 ₽",
+      gpuSub: "16GB GDDR7 28 Gbps • 256-bit • Мощные RT-ядра 5 поколения • TDP 285W",
       ram: "32 GB (2x16GB) DDR5 6400 MHz CL32 ~ 15 500 ₽",
-      storage: "2 TB M.2 PCIe 4.0 (чтение 7000 МБ/с) ~ 16 000 ₽",
+      ramSub: "Чипы Hynix A-die • Алюминиевые радиаторы • Ручной разгон",
+      storage: "2 TB M.2 PCIe 4.0 NVMe (7300 МБ/с) ~ 16 000 ₽",
+      storageSub: "Western Digital Black SN850X / Samsung 990 Pro • Ресурс 1200 TBW",
       psu: "850W ATX 3.1 Gold (Montech Titan Gold) ~ 13 500 ₽",
-      case: "Montech KING 95 Pro ~ 12 000 ₽",
-      notes: "Топовый 3D-кэш процессор и RTX 5070 Ti с 16 ГБ памяти. Высокий фреймрейт в 1440p и 4K без просадок 1% FPS."
+      psuSub: "Стандарт ATX 3.1 с разъемом 12V-2x6 • 80 PLUS Gold • Японская база",
+      case: "Montech KING 95 Pro (Панорамный аквариум) ~ 12 000 ₽",
+      caseSub: "Изогнутое закаленное стекло • 6х ARGB вентиляторов с реверсом",
+      notes: "Топовая связка для киберспорта и AAA-игр в 1440p/4K. 96 МБ кэша процессора гарантируют минимальные задержки и высокий показатель 1% Low FPS."
     },
-    // RTX 5080 16GB
     {
       baseCost: 330000,
       cpu: "AMD Ryzen 7 9800X3D (Zen 5 3D V-Cache) ~ 52 000 ₽",
+      cpuSub: "8 ядер / 16 потоков • Архитектура Zen 5 • 96MB 3D Cache • До 5.2 GHz",
       cooler: "СЖО 360мм (Arctic Liquid Freezer III 360) ~ 14 000 ₽",
+      coolerSub: "Радиатор толщиной 38мм • Вентилятор для обдува VRM • 3x 120мм PWM P12",
       mb: "X870 (MSI MAG X870 Tomahawk WiFi) ~ 32 000 ₽",
+      mbSub: "Чипсет X870 • Порты USB4 40Gbps • PCIe 5.0 x16 • 14+2+1 фаз 80A",
       gpu: "NVIDIA GeForce RTX 5080 16GB GDDR7 ~ 148 000 ₽",
+      gpuSub: "Память GDDR7 со скоростью 30 Gbps • Шина 256-bit • DLSS 4 • TDP 360W",
       ram: "64 GB (2x32GB) DDR5 6000 MHz CL30 EXPO ~ 26 000 ₽",
-      storage: "2 TB PCIe 5.0 NVMe + 2 TB PCIe 4.0 ~ 28 000 ₽",
+      ramSub: "Kingston Renegade • Чипы памяти Hynix • Запас под любые задачи",
+      storage: "2 TB PCIe 5.0 (12000 МБ/с) + 2 TB PCIe 4.0 ~ 28 000 ₽",
+      storageSub: "ИТОГО 4 ТБ скоростных накопителей с массивными радиаторами",
       psu: "1000W ATX 3.1 Platinum (Super Flower / Seasonic) ~ 22 000 ₽",
+      psuSub: "80 PLUS Platinum • Кабель 12V-2x6 с защитой от перегрева • Реле задержки",
       case: "Lian Li O11 Vision Chrome ~ 16 000 ₽",
-      notes: "Флагманский игровой процессор Ryzen 7 9800X3D и RTX 5080 с быстрой памятью GDDR7. Разрешение 4K с ультра-трассировкой."
+      caseSub: "3 стороны закаленного зеркального стекла без стоек каркаса",
+      notes: "Ультимативный гейминг на новейшем процессоре 9800X3D и видеокарте RTX 5080. Бескомпромиссная игра в 4K с ультра-трассировкой пути."
     },
-    // RTX 5090 32GB
-    {
-      baseCost: 460000,
-      cpu: "AMD Ryzen 7 9800X3D / Core Ultra 9 285K ~ 65 000 ₽",
-      cooler: "СЖО 360/420мм Arctic Liquid Freezer III ~ 16 500 ₽",
-      mb: "X870E (ASUS ROG Strix X870E-E Gaming WiFi) ~ 52 000 ₽",
-      gpu: "NVIDIA GeForce RTX 5090 32GB (Флагман Blackwell) ~ 245 000 ₽",
-      ram: "64 GB (2x32GB) DDR5 6400 MHz CL30 ~ 28 000 ₽",
-      storage: "4 TB M.2 PCIe 5.0/4.0 (Samsung 990 Pro) ~ 34 000 ₽",
-      psu: "1200W ATX 3.1 Platinum с нативным 12V-2x6 ~ 27 000 ₽",
-      case: "Lian Li O11 Dynamic EVO XL ~ 22 500 ₽",
-      notes: "32 ГБ GDDR7 памяти на RTX 5090 и 1200W Platinum питание. Работа с локальными нейросетями, рендеринг 8K и 4K Path Tracing."
-    },
-    // 650 000+ УЛЬТИМАТИВНЫЙ ТОП
     {
       baseCost: 650000,
-      cpu: "AMD Ryzen 9 9950X3D (16 ядер / 32 потока) или Intel Core Ultra 9 285K ~ 85 000 ₽",
+      cpu: "AMD Ryzen 9 9950X3D (16 ядер / 32 потока) или Ultra 9 285K ~ 85 000 ₽",
+      cpuSub: "16 ядер / 32 потока • 144MB кэша • 5.7 GHz Boost • 4 нм техпроцесс",
       cooler: "Кастомная СЖО EKWB / Arctic Liquid Freezer III 420 ~ 35 000 ₽",
+      coolerSub: "420мм радиатор • Медный водоблок микроканальный • 3x 140мм кулера",
       mb: "ASUS ROG Crosshair X870E Hero / ASRock Taichi ~ 68 000 ₽",
-      gpu: "NVIDIA GeForce RTX 5090 32GB OC (ASUS ROG Strix / MSI Suprim) ~ 265 000 ₽",
+      mbSub: "18+2+2 фаз 110A • PCIe 5.0 слоты • ESS ES9219 ЦАП аудио • 5Gb LAN + WiFi 7",
+      gpu: "NVIDIA GeForce RTX 5090 32GB OC (ASUS ROG Strix / Suprim) ~ 265 000 ₽",
+      gpuSub: "Флагман Blackwell • 32GB GDDR7 512-bit • 24 000+ CUDA • TDP 550W+",
       ram: "128 GB (4x32GB) DDR5 6400 MHz CL32 Low-Latency ~ 55 000 ₽",
+      ramSub: "4 модуля с индивидуальным термоконтролем • Объем для 8K монтажа и AI",
       storage: "4 TB PCIe 5.0 (14000 МБ/с) + 4 TB PCIe 4.0 (ИТОГО 8 TB NVMe) ~ 62 000 ₽",
+      storageSub: "Crucial T705 + Samsung 990 Pro • Медные радиаторы охлаждения",
       psu: "1600W ATX 3.1 Titanium (Seasonic Prime TX-1600) ~ 45 000 ₽",
+      psuSub: "80 PLUS Titanium • КПД до 96% • Двойные нативные разъемы 12V-2x6",
       case: "Lian Li V3000 Plus / Corsair 1000D Full-Tower ~ 42 000 ₽",
-      notes: "Бескомпромиссная станция максимального уровня в истории ПК. 32 ГБ видеопамяти, 8 ТБ высокоскоростных накопителей и титановый блок питания на 1600W."
+      caseSub: "Алюминиевый супер-каркас • Двойной контур водяного охлаждения",
+      notes: "Максимальная рабочая и игровая станция: 32 ГБ GDDR7 памяти на видеокарте, 8 ТБ накопителей, 128 ГБ ОЗУ и титановое питание 1600 Вт."
     }
   ];
 
@@ -919,13 +1222,21 @@
     document.getElementById('buildPriceTag').textContent = tagText;
     
     document.getElementById('bCpu').textContent = selectedBuild.cpu;
+    document.getElementById('bCpuSub').textContent = selectedBuild.cpuSub;
     document.getElementById('bCooler').textContent = selectedBuild.cooler;
+    document.getElementById('bCoolerSub').textContent = selectedBuild.coolerSub;
     document.getElementById('bMotherboard').textContent = selectedBuild.mb;
+    document.getElementById('bMotherboardSub').textContent = selectedBuild.mbSub;
     document.getElementById('bGpu').textContent = selectedBuild.gpu;
+    document.getElementById('bGpuSub').textContent = selectedBuild.gpuSub;
     document.getElementById('bRam').textContent = selectedBuild.ram;
+    document.getElementById('bRamSub').textContent = selectedBuild.ramSub;
     document.getElementById('bStorage').textContent = selectedBuild.storage;
+    document.getElementById('bStorageSub').textContent = selectedBuild.storageSub;
     document.getElementById('bPsu').textContent = selectedBuild.psu;
+    document.getElementById('bPsuSub').textContent = selectedBuild.psuSub;
     document.getElementById('bCase').textContent = selectedBuild.case;
+    document.getElementById('bCaseSub').textContent = selectedBuild.caseSub;
     document.getElementById('buildNotes').textContent = selectedBuild.notes;
 
     resBox.style.display = 'block';
@@ -1136,6 +1447,172 @@
     });
 
     document.getElementById('fpsResult').style.display = 'block';
+  }
+
+  // 4. СИМУЛЯТОР АПГРЕЙДА (ROI РУБЛЬ / FPS)
+  function calculateUpgradeROI() {
+    const cLvl = parseInt(document.getElementById('curCpu').value);
+    const gLvl = parseInt(document.getElementById('curGpu').value);
+    const psu = parseInt(document.getElementById('curPsu').value) || 450;
+    const bud = parseInt(document.getElementById('upgBudget').value) || 0;
+
+    const container = document.getElementById('roiCardsContainer');
+    container.innerHTML = '';
+
+    if (bud < 5000) {
+      alert("Укажите бюджет на апгрейд от 5 000 рублей.");
+      return;
+    }
+
+    let pathGPU = { name: "Путь 1: Замена видеокарты", text: "", cost: 0, fpsGain: 0, psuRisk: false };
+    let pathCPU = { name: "Путь 2: Замена платформы/CPU", text: "", cost: 0, fpsGain: 0, psuRisk: false };
+    let pathBAL = { name: "Путь 3: Комплексный баланс", text: "", cost: 0, fpsGain: 0, psuRisk: false };
+
+    if (bud <= 15000) {
+      pathGPU.text = "Установка б/у GTX 1660 Super 6GB / RX 580";
+      pathGPU.cost = 11000;
+      pathGPU.fpsGain = Math.max(12, 35 - gLvl * 6);
+
+      pathCPU.text = "Апгрейд процессора до Ryzen 5 3600 (б/у) или Xeon";
+      pathCPU.cost = 6500;
+      pathCPU.fpsGain = Math.max(6, 22 - cLvl * 4);
+
+      pathBAL.text = "Добавление второго модуля 8/16 ГБ ОЗУ + быстрый 512 ГБ NVMe SSD";
+      pathBAL.cost = 7500;
+      pathBAL.fpsGain = 14;
+    } else if (bud <= 38000) {
+      pathGPU.text = "Покупка новой Radeon RX 6600 8GB или RTX 4060 8GB";
+      pathGPU.cost = Math.min(bud, 34500);
+      pathGPU.fpsGain = Math.max(25, 55 - gLvl * 7);
+      if (psu < 500) pathGPU.psuRisk = true;
+
+      pathCPU.text = "Переход на связку Ryzen 5 5600 + плата B550M + кулер AG400";
+      pathCPU.cost = 23500;
+      pathCPU.fpsGain = Math.max(16, 42 - cLvl * 6);
+
+      pathBAL.text = "Видеокарта б/у RTX 2060 Super + новый БП Deepcool PK600D";
+      pathBAL.cost = 22000;
+      pathBAL.fpsGain = 32;
+    } else if (bud <= 75000) {
+      pathGPU.text = "Установка новой GeForce RTX 5060 8GB или RTX 4060 Ti";
+      pathGPU.cost = 43000;
+      pathGPU.fpsGain = Math.max(40, 75 - gLvl * 8);
+
+      pathCPU.text = "Переход на Socket AM5 (Ryzen 5 7500F + B650 + 32GB DDR5 6000)";
+      pathCPU.cost = 42000;
+      pathCPU.fpsGain = Math.max(30, 58 - cLvl * 6);
+
+      pathBAL.text = "Связка: Ryzen 5 5600 + RX 6600 + 32GB RAM + БП 650W";
+      pathBAL.cost = 49000;
+      pathBAL.fpsGain = 58;
+    } else {
+      pathGPU.text = "Флагманский апгрейд GPU: GeForce RTX 5070 Ti / RTX 5080";
+      pathGPU.cost = Math.min(bud, 145000);
+      pathGPU.fpsGain = 90;
+      if (psu < 750) pathGPU.psuRisk = true;
+
+      pathCPU.text = "Топовая игровая база: Ryzen 7 7800X3D / 9800X3D + X870 + 64GB DDR5";
+      pathCPU.cost = 88000;
+      pathCPU.fpsGain = 65;
+
+      pathBAL.text = "Полное обновление платформы AM5 + RTX 5060 Ti 16GB + БП Gold";
+      pathBAL.cost = 98000;
+      pathBAL.fpsGain = 85;
+    }
+
+    const paths = [pathGPU, pathCPU, pathBAL];
+    
+    paths.forEach(p => {
+      p.roi = Math.round(p.cost / p.fpsGain);
+    });
+
+    let best = paths[0];
+    paths.forEach(p => {
+      if (p.roi < best.roi) best = p;
+    });
+
+    paths.forEach(p => {
+      const isBest = p === best;
+      const card = document.createElement('div');
+      card.className = `roi-card ${isBest ? 'best-pick' : ''}`;
+      card.innerHTML = `
+        ${isBest ? '<div class="best-badge">Максимальный КПД</div>' : ''}
+        <div class="roi-header">${p.name}</div>
+        <div class="roi-upgrade-detail">${p.text}</div>
+        <div class="roi-upgrade-detail"><strong>Прирост фреймрейта:</strong> ~+${p.fpsGain}% к среднему FPS</div>
+        <div class="roi-upgrade-detail"><strong>Ориентировочная цена:</strong> ${p.cost.toLocaleString('ru-RU')} ₽</div>
+        <div class="roi-metric">Индекс цены: ~${p.roi} ₽ за каждый +1% FPS</div>
+        ${p.psuRisk ? '<div style="color:var(--danger);font-size:0.78rem;font-weight:600;">⚠️ Требуется замена БП (дефицит мощности)</div>' : ''}
+      `;
+      container.appendChild(card);
+    });
+
+    document.getElementById('roiAdvice').innerHTML = `
+      <strong>Вердикт алгоритма:</strong> Самое эффективное вложение средств для текущей системы — <strong>${best.name.toLowerCase()}</strong>. Вы получаете максимальный прирост частоты кадров на каждый вложенный рубль без переплаты за избыточные узлы.
+    `;
+
+    document.getElementById('roiResult').style.display = 'block';
+  }
+
+  // 5. КАЛЬКУЛЯТОР НАГРЕВА VRM
+  function calculateVRM() {
+    const boardType = document.getElementById('vrmBoard').value;
+    const cpuTdp = parseInt(document.getElementById('vrmCpu').value);
+    const coolerType = document.getElementById('vrmCaseAir').value;
+
+    const resBox = document.getElementById('vrmResult');
+    const tag = document.getElementById('vrmStatusTag');
+    const readout = document.getElementById('vrmReadout');
+    const pBar = document.getElementById('vrmProgressBar');
+    const recs = document.getElementById('vrmRecommendations');
+
+    recs.innerHTML = '';
+    resBox.style.display = 'block';
+
+    let baseTemp = 40;
+    let vrmResistance = 1.0;
+
+    if (boardType === 'budget_bare') vrmResistance = 2.4;
+    else if (boardType === 'mid_entry') vrmResistance = 1.6;
+    else if (boardType === 'mid_good') vrmResistance = 1.0;
+    else if (boardType === 'high_end') vrmResistance = 0.65;
+    else if (boardType === 'enthusiast') vrmResistance = 0.45;
+
+    let aioPenalty = coolerType === 'aio' ? 14 : 0;
+    let estimatedTemp = Math.round(baseTemp + (cpuTdp * 0.28 * vrmResistance) + aioPenalty);
+
+    let progressPercent = Math.min(100, Math.max(10, ((estimatedTemp - 35) / 90) * 100));
+    pBar.style.width = progressPercent + '%';
+
+    if (estimatedTemp < 75) {
+      tag.className = 'tag tag-ok';
+      tag.textContent = 'Безопасная зона';
+      pBar.style.backgroundColor = '#2ea043';
+      readout.textContent = `Расчетный нагрев силовых транзисторов (Mosfet): ~${estimatedTemp}°C. Цепи питания работают с большим запасом долговечности. Троттлинг по току полностью исключен.`;
+    } else if (estimatedTemp <= 95) {
+      tag.className = 'tag tag-warn';
+      tag.textContent = 'Повышенный нагрев';
+      pBar.style.backgroundColor = '#b45309';
+      readout.textContent = `Расчетный нагрев: ~${estimatedTemp}°C. Зона VRM находится под заметной термонагрузкой. Система стабильна, но требуется продуваемый корпус.`;
+      addVRMRec("Организуйте продув сокета", "Установите хотя бы один верхний вытяжной вентилятор над зоной сокета материнской платы.");
+    } else {
+      tag.className = 'tag tag-danger';
+      tag.textContent = 'Критический перегрев (Троттлинг)';
+      pBar.style.backgroundColor = '#dc2626';
+      readout.textContent = `Расчетный нагрев: ~${estimatedTemp}°C! Высокая вероятность сброса частот процессора (Thermal Throttling VRM). Мосфеты работают на пределе температурной деградации.`;
+      addVRMRec("Необходима смена материнской платы", "Плата со слабыми цепями питания не предназначена для процессора мощностью " + cpuTdp + "W. Требуется плата уровня B650/Z790 с DrMOS транзисторами.");
+      if (coolerType === 'aio') {
+        addVRMRec("Отсутствие обдува околосокетного пространства", "Водяное охлаждение не обдувает радиаторы VRM, что ухудшает теплоотвод. Используйте башенный кулер или СЖО со встроенным вентилятором на помпе.");
+      }
+    }
+  }
+
+  function addVRMRec(heading, text) {
+    const container = document.getElementById('vrmRecommendations');
+    const div = document.createElement('div');
+    div.className = 'detail-item';
+    div.innerHTML = `<h4>⚠️ ${heading}</h4><p>${text}</p>`;
+    container.appendChild(div);
   }
 </script>
 </body>
