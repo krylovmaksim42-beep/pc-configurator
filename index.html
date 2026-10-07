@@ -8,18 +8,19 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #0d1117;
-      --bg-card: #161b22;
-      --bg-input: #0d1117;
-      --border: #30363d;
-      --accent: #2f81f7;
-      --accent-hover: #1f6feb;
-      --text: #c9d1d9;
-      --text-bright: #f0f6fc;
-      --text-muted: #8b949e;
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-input: #f1f5f9;
+      --border: #2ea043;
+      --border-subtle: rgba(46, 160, 67, 0.4);
+      --accent: #2ea043;
+      --accent-hover: #238636;
+      --text: #1e293b;
+      --text-bright: #0f172a;
+      --text-muted: #64748b;
       --success: #238636;
-      --warning: #9e6a03;
-      --danger: #da3633;
+      --warning: #b45309;
+      --danger: #dc2626;
     }
 
     * {
@@ -36,16 +37,66 @@
       padding: 25px 15px;
       display: flex;
       justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* АНИМИРОВАННЫЙ ФОН С ЛЕТАЮЩИМИ КОМПОНЕНТАМИ */
+    .bg-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .floating-item {
+      position: absolute;
+      opacity: 0.16;
+      animation: floatMotion 18s ease-in-out infinite alternate;
+    }
+
+    .cpu-item {
+      filter: blur(4px);
+    }
+
+    .gpu-item {
+      filter: blur(6px);
+    }
+
+    /* Индивидуальные позиции и параметры анимации */
+    .pos-1 { top: 8%; left: 6%; animation-duration: 22s; animation-delay: 0s; }
+    .pos-2 { top: 65%; left: 8%; animation-duration: 26s; animation-delay: -3s; }
+    .pos-3 { top: 15%; right: 8%; animation-duration: 20s; animation-delay: -5s; }
+    .pos-4 { top: 55%; right: 6%; animation-duration: 24s; animation-delay: -2s; }
+    .pos-5 { top: 85%; left: 35%; animation-duration: 28s; animation-delay: -7s; }
+    .pos-6 { top: 35%; right: 28%; animation-duration: 25s; animation-delay: -4s; }
+
+    @keyframes floatMotion {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      50% {
+        transform: translateY(-45px) rotate(14deg) scale(1.05);
+      }
+      100% {
+        transform: translateY(35px) rotate(-10deg) scale(0.95);
+      }
     }
 
     .wrapper {
       width: 100%;
       max-width: 900px;
+      position: relative;
+      z-index: 1;
     }
 
     header {
       margin-bottom: 20px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border-subtle);
       padding-bottom: 16px;
     }
 
@@ -69,8 +120,8 @@
     }
 
     .tab-btn {
-      background: transparent;
-      border: 1px solid var(--border);
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
       color: var(--text-muted);
       padding: 10px 16px;
       border-radius: 6px;
@@ -82,8 +133,9 @@
 
     .tab-btn.active {
       background: var(--bg-card);
-      color: var(--text-bright);
-      border-color: var(--accent);
+      color: var(--accent);
+      border-color: var(--border);
+      box-shadow: 0 2px 6px rgba(46, 160, 67, 0.15);
     }
 
     .card {
@@ -92,6 +144,7 @@
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
     }
 
     .tab-content {
@@ -123,17 +176,18 @@
 
     select, input {
       background: var(--bg-input);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-subtle);
       color: var(--text-bright);
       padding: 10px 12px;
       border-radius: 6px;
       font-size: 0.9rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     select:focus, input:focus {
-      border-color: var(--accent);
+      border-color: var(--border);
+      box-shadow: 0 0 0 2px rgba(46, 160, 67, 0.2);
     }
 
     .btn-submit {
@@ -147,6 +201,7 @@
       font-weight: 600;
       cursor: pointer;
       transition: background-color 0.2s;
+      box-shadow: 0 2px 8px rgba(46, 160, 67, 0.25);
     }
 
     .btn-submit:hover {
@@ -161,26 +216,26 @@
     }
 
     .specs-table th, .specs-table td {
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-subtle);
       padding: 10px 12px;
       text-align: left;
     }
 
     .specs-table th {
-      background: rgba(255, 255, 255, 0.02);
-      color: var(--text-muted);
+      background: rgba(46, 160, 67, 0.06);
+      color: var(--text-bright);
       font-weight: 600;
       width: 25%;
     }
 
     .specs-table td {
-      color: var(--text-bright);
+      color: var(--text);
     }
 
     .result-section {
       display: none;
       margin-top: 20px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--border-subtle);
       padding-top: 20px;
     }
 
@@ -205,16 +260,16 @@
       font-weight: 700;
     }
 
-    .tag-ok { background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid var(--success); }
-    .tag-warn { background: rgba(158, 106, 3, 0.2); color: #d29922; border: 1px solid var(--warning); }
-    .tag-danger { background: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid var(--danger); }
+    .tag-ok { background: rgba(35, 134, 54, 0.12); color: #1e702c; border: 1px solid var(--border); }
+    .tag-warn { background: rgba(180, 83, 9, 0.12); color: var(--warning); border: 1px solid var(--warning); }
+    .tag-danger { background: rgba(220, 38, 38, 0.12); color: var(--danger); border: 1px solid var(--danger); }
 
     .summary-text {
       font-size: 0.9rem;
       color: var(--text);
       line-height: 1.5;
       background: var(--bg-input);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-subtle);
       padding: 12px 14px;
       border-radius: 6px;
       margin-top: 12px;
@@ -229,7 +284,7 @@
 
     .detail-item {
       background: var(--bg-input);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-subtle);
       padding: 12px 14px;
       border-radius: 6px;
     }
@@ -248,6 +303,59 @@
   </style>
 </head>
 <body>
+
+<!-- КОНТЕЙНЕР С ПЛАВАЮЩИМИ РАЗМЫТЫМИ ПРОЦЕССОРАМИ И ВИДЕОКАРТАМИ -->
+<div class="bg-particles">
+  <!-- Процессор 1 -->
+  <svg class="floating-item cpu-item pos-1" width="120" height="120" viewBox="0 0 100 100" fill="none">
+    <rect x="5" y="5" width="90" height="90" rx="10" stroke="#2ea043" stroke-width="4"/>
+    <rect x="22" y="22" width="56" height="56" rx="6" stroke="#2ea043" stroke-width="3" fill="rgba(46,160,67,0.06)"/>
+    <circle cx="32" cy="32" r="3" fill="#2ea043"/>
+    <line x1="28" y1="46" x2="72" y2="46" stroke="#2ea043" stroke-width="2"/>
+    <line x1="28" y1="54" x2="60" y2="54" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+
+  <!-- Видеокарта 1 -->
+  <svg class="floating-item gpu-item pos-2" width="220" height="100" viewBox="0 0 180 80" fill="none">
+    <rect x="6" y="8" width="168" height="64" rx="8" stroke="#2ea043" stroke-width="3"/>
+    <circle cx="55" cy="40" r="22" stroke="#2ea043" stroke-width="3"/>
+    <circle cx="125" cy="40" r="22" stroke="#2ea043" stroke-width="3"/>
+    <path d="M55 24 L55 56 M39 40 L71 40" stroke="#2ea043" stroke-width="2"/>
+    <path d="M125 24 L125 56 M109 40 L141 40" stroke="#2ea043" stroke-width="2"/>
+    <rect x="35" y="72" width="110" height="6" fill="#2ea043"/>
+  </svg>
+
+  <!-- Процессор 2 -->
+  <svg class="floating-item cpu-item pos-3" width="140" height="140" viewBox="0 0 100 100" fill="none">
+    <rect x="6" y="6" width="88" height="88" rx="8" stroke="#2ea043" stroke-width="3"/>
+    <rect x="25" y="25" width="50" height="50" rx="4" stroke="#2ea043" stroke-width="3"/>
+    <circle cx="14" cy="14" r="2" fill="#2ea043"/>
+    <circle cx="86" cy="14" r="2" fill="#2ea043"/>
+    <circle cx="14" cy="86" r="2" fill="#2ea043"/>
+    <circle cx="86" cy="86" r="2" fill="#2ea043"/>
+  </svg>
+
+  <!-- Видеокарта 2 -->
+  <svg class="floating-item gpu-item pos-4" width="200" height="90" viewBox="0 0 180 80" fill="none">
+    <rect x="6" y="10" width="168" height="60" rx="6" stroke="#2ea043" stroke-width="3"/>
+    <circle cx="55" cy="40" r="20" stroke="#2ea043" stroke-width="3"/>
+    <circle cx="125" cy="40" r="20" stroke="#2ea043" stroke-width="3"/>
+    <rect x="40" y="70" width="100" height="6" fill="#2ea043"/>
+  </svg>
+
+  <!-- Процессор 3 -->
+  <svg class="floating-item cpu-item pos-5" width="110" height="110" viewBox="0 0 100 100" fill="none">
+    <rect x="8" y="8" width="84" height="84" rx="6" stroke="#2ea043" stroke-width="3"/>
+    <rect x="26" y="26" width="48" height="48" rx="4" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+
+  <!-- Видеокарта 3 -->
+  <svg class="floating-item gpu-item pos-6" width="180" height="80" viewBox="0 0 180 80" fill="none">
+    <rect x="6" y="10" width="168" height="60" rx="6" stroke="#2ea043" stroke-width="3"/>
+    <circle cx="55" cy="40" r="18" stroke="#2ea043" stroke-width="2"/>
+    <circle cx="125" cy="40" r="18" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+</div>
 
 <div class="wrapper">
   <header>
@@ -365,7 +473,6 @@
     btn.classList.add('active');
   }
 
-  // БАЗА СБОРОК С ТОЧНОЙ СРЕДНЕЙ СТОИМОСТЬЮ (baseCost)
   const buildsDatabase = [
     {
       baseCost: 3000,
@@ -525,7 +632,6 @@
     }
   ];
 
-  // ПОДБОР СБОРКИ С УМНОЙ ВИЛКОЙ ЦЕН
   function generateBuildByBudget() {
     const budget = parseInt(document.getElementById('budgetInput').value) || 0;
     const resBox = document.getElementById('budgetResult');
@@ -535,7 +641,6 @@
       return;
     }
 
-    // Ищем сборку с минимальной разницей к введенной сумме
     let selectedBuild = buildsDatabase[0];
     let minDiff = Math.abs(budget - buildsDatabase[0].baseCost);
 
@@ -547,7 +652,6 @@
       }
     }
 
-    // Формируем вилку от введенного бюджета: ±3..5% (например, 50к -> 48 000 - 52 000 ₽)
     const rangeLow = Math.round((budget * 0.96) / 500) * 500;
     const rangeHigh = Math.round((budget * 1.04) / 500) * 500;
     const tagText = `${rangeLow.toLocaleString('ru-RU')} - ${rangeHigh.toLocaleString('ru-RU')} ₽`;
@@ -568,7 +672,6 @@
     resBox.style.display = 'block';
   }
 
-  // АНАЛИЗАТОР БАЛАНСА
   const cpuPower = {
     legacy: 1, fx_series: 1, intel_lga1155: 2, xeon_v3: 2, ryzen_zen1: 2,
     intel_mid_old: 3, ryzen_am4_main: 4, intel_lga1700: 4,
