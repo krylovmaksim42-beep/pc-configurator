@@ -481,7 +481,7 @@
 <div class="wrapper">
   <header>
     <h1>Конфигуратор ПК</h1>
-    <p class="desc">Подбор сборки под бюджет (до флагманских решений), проверка совместимости и расчет FPS в популярных играх.</p>
+    <p class="desc">Подбор сборки под бюджет, проверка совместимости связок CPU/GPU и расчет FPS в популярных играх.</p>
   </header>
 
   <!-- СКРОЛЛ-ЛЕНТА ВКЛАДОК -->
@@ -540,12 +540,14 @@
           <option value="intel_mid_old">Core i3-10100F / i3-12100F / i5-10400F</option>
           <option value="ryzen_am4_main" selected>AMD Ryzen 5 3600 / Ryzen 5 5500 / 5600</option>
           <option value="intel_lga1700">Intel Core i5-12400F / i5-13400F / 14400F</option>
-          <option value="ryzen_am4_top">AMD Ryzen 7 5700X3D / 5800X3D (AM4)</option>
-          <option value="am5_base">AMD Ryzen 5 7500F / Ryzen 5 7600 (AM5)</option>
-          <option value="intel_high">Intel Core i5-14600K / Core Ultra 7 265K</option>
-          <option value="am5_intel_top">AMD Ryzen 7 7800X3D / Core i7-14700K</option>
-          <option value="am5_zen5_x3d">AMD Ryzen 7 9800X3D / Ryzen 9 9950X3D</option>
-          <option value="intel_ultra_top">Intel Core Ultra 9 285K / Core i9-14900KS</option>
+          <option value="ryzen_am4_top">AMD Ryzen 7 5700X / 5700X3D / 5800X3D (AM4)</option>
+          <option value="am5_base">AMD Ryzen 5 7500F / 7600 / 7600X (AM5)</option>
+          <option value="intel_high">Intel Core i5-13600K / 14600K / Core Ultra 5 245K</option>
+          <option value="am5_mid_high">AMD Ryzen 7 7700X / Ryzen 7 9700X (AM5)</option>
+          <option value="am5_intel_top">AMD Ryzen 7 7800X3D / Core i7-13700K / 14700K</option>
+          <option value="intel_ultra_7">Intel Core Ultra 7 265K / Core i9-14900K</option>
+          <option value="am5_zen5_x3d">AMD Ryzen 7 9800X3D / Ryzen 9 9900X</option>
+          <option value="am5_zen5_top">AMD Ryzen 9 9950X3D / Core Ultra 9 285K</option>
         </select>
       </div>
 
@@ -558,7 +560,9 @@
           <option value="gpu_polaris">RX 580 8GB (2048SP) / GTX 1060 6GB</option>
           <option value="gpu_entry">GTX 1660 Super / GTX 1660 Ti / RTX 2060</option>
           <option value="gpu_mid" selected>Radeon RX 6600 8GB / RTX 3060 12GB / RTX 4060</option>
+          <option value="gpu_rtx5060">GeForce RTX 5060 8GB GDDR7 (Blackwell)</option>
           <option value="gpu_mid_high">RTX 4060 Ti / RX 6700 XT / RX 7700 XT 12GB</option>
+          <option value="gpu_rtx5060ti">GeForce RTX 5060 Ti 16GB (Blackwell)</option>
           <option value="gpu_high">RTX 4070 / RTX 4070 Super 12GB / RX 7800 XT</option>
           <option value="gpu_rtx5070">GeForce RTX 5070 12GB (Blackwell)</option>
           <option value="gpu_rtx5070ti">GeForce RTX 5070 Ti 16GB</option>
@@ -608,9 +612,10 @@
           <option value="cpu_low">Core 2 Quad / FX-серия / Core i3 старый</option>
           <option value="cpu_budget">Core i5-2500 / i5-3570 / Xeon E5-2670v3</option>
           <option value="cpu_entry">Ryzen 5 1600 / 2600 / Core i3-10100F</option>
-          <option value="cpu_mid" selected>Ryzen 5 3600 / 5500 / 5600 / i5-12400F</option>
-          <option value="cpu_high">Ryzen 7 5700X3D / Ryzen 5 7500F / i5-13600K</option>
-          <option value="cpu_top">Ryzen 7 7800X3D / Core i7-14700K</option>
+          <option value="cpu_mid" selected>Ryzen 5 3600 / 5500 / 5600 / i5-12400F / 13400F</option>
+          <option value="cpu_mid_plus">Ryzen 5 7600X / Core i5-13600K / 14600K</option>
+          <option value="cpu_high">Ryzen 7 5700X3D / Ryzen 7 7700X / Ryzen 7 9700X</option>
+          <option value="cpu_top">Ryzen 7 7800X3D / Core i7-14700K / Ultra 7 265K</option>
           <option value="cpu_zen5_x3d">Ryzen 7 9800X3D / Ryzen 9 9950X3D / Ultra 9 285K</option>
         </select>
       </div>
@@ -624,7 +629,9 @@
           <option value="gpu_1660s">GTX 1660 Super / GTX 1660 Ti 6GB</option>
           <option value="gpu_rx6600" selected>Radeon RX 6600 8GB / RTX 3060 12GB</option>
           <option value="gpu_4060">GeForce RTX 4060 8GB / RX 7600</option>
+          <option value="gpu_rtx5060">GeForce RTX 5060 8GB GDDR7</option>
           <option value="gpu_4060ti">RTX 4060 Ti 8GB / RX 7700 XT 12GB</option>
+          <option value="gpu_rtx5060ti">GeForce RTX 5060 Ti 16GB</option>
           <option value="gpu_4070s">RTX 4070 Super 12GB / RX 7800 XT</option>
           <option value="gpu_rtx5070">GeForce RTX 5070 12GB (Blackwell)</option>
           <option value="gpu_rtx5070ti">GeForce RTX 5070 Ti 16GB</option>
@@ -791,78 +798,85 @@
       case: "Montech AIR 100 ARGB ~ 5 400 ₽",
       notes: "Усиленная видеокарта под максимальные настройки графики в 1080p и стабильный фреймрейт в 1440p."
     },
+    // ВХОД В RTX 5060 + AM5
     {
-      baseCost: 105000,
+      baseCost: 115000,
       cpu: "AMD Ryzen 5 7500F (OEM, Zen 4) ~ 15 000 ₽",
       cooler: "Thermalright Assassin King 120 SE ~ 2 500 ₽",
       mb: "B650M (ASRock B650M-HDV/M.2) ~ 13 000 ₽",
-      gpu: "GeForce RTX 4060 8GB / RX 7600 XT 16GB ~ 35 500 ₽",
+      gpu: "NVIDIA GeForce RTX 5060 8GB GDDR7 (Blackwell) ~ 42 000 ₽",
       ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
       storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 500 ₽",
-      psu: "Montech Century 650W Gold ~ 6 800 ₽",
-      case: "Montech Air 100 ~ 5 500 ₽",
-      notes: "Платформа Socket AM5 с DDR5 памятью и золотым блоком питания. Прямой путь апгрейда до X3D-процессоров."
+      psu: "Montech Century 650W Gold / Deepcool PK650D ~ 6 800 ₽",
+      case: "Montech Air 100 ARGB ~ 5 500 ₽",
+      notes: "Актуальное поколение: процессор на сокете AM5 и видеокарта RTX 5060 на быстрой памяти GDDR7 с поддержкой DLSS 4."
     },
+    // RTX 5060 Ti 16GB
     {
-      baseCost: 125000,
-      cpu: "AMD Ryzen 5 7500F (OEM) ~ 15 000 ₽",
-      cooler: "Deepcool AG400 Plus ~ 2 600 ₽",
-      mb: "B650M (MSI B650M Gaming Plus) ~ 14 500 ₽",
-      gpu: "AMD Radeon RX 7700 XT 12GB ~ 48 500 ₽",
-      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
-      storage: "1 TB M.2 PCIe 4.0 ~ 7 500 ₽",
+      baseCost: 145000,
+      cpu: "AMD Ryzen 5 7600X / Core i5-13600KF ~ 21 000 ₽",
+      cooler: "Thermalright Peerless Assassin 120 SE ~ 4 500 ₽",
+      mb: "B650 (MSI B650 Gaming Plus WiFi) ~ 16 000 ₽",
+      gpu: "NVIDIA GeForce RTX 5060 Ti 16GB (Blackwell) ~ 58 000 ₽",
+      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 EXPO ~ 13 500 ₽",
+      storage: "1 TB M.2 PCIe 4.0 (5000+ МБ/с) ~ 8 000 ₽",
       psu: "750W Montech Century Gold ~ 8 800 ₽",
       case: "Montech Air 903 Base ~ 6 800 ₽",
-      notes: "12 ГБ видеопамяти и БП на 750W Gold. Уверенная работа в 2K (2560x1440) на ультра-настройках."
+      notes: "16 ГБ видеопамяти на RTX 5060 Ti исключают любые упоры по текстурам в играх 2025–2026 годов в разрешениях 1080p и 1440p."
     },
+    // RTX 5070 12GB
     {
-      baseCost: 165000,
-      cpu: "AMD Ryzen 5 7600X / Ryzen 7 7700 ~ 22 000 ₽",
-      cooler: "Thermalright Peerless Assassin 120 SE ~ 4 500 ₽",
+      baseCost: 185000,
+      cpu: "AMD Ryzen 7 7700X / Core i5-14600K ~ 26 000 ₽",
+      cooler: "Thermalright Phantom Spirit 120 SE ~ 5 000 ₽",
       mb: "B650 (GIGABYTE B650 Gaming X AX) ~ 18 500 ₽",
-      gpu: "NVIDIA GeForce RTX 4070 Super 12GB ~ 69 000 ₽",
+      gpu: "NVIDIA GeForce RTX 5070 12GB (Blackwell) ~ 78 000 ₽",
       ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
       storage: "2 TB M.2 NVMe PCIe 4.0 ~ 15 000 ₽",
-      psu: "750W ATX 3.0 Gold (Montech Titan Gold) ~ 11 800 ₽",
+      psu: "750W ATX 3.1 Gold (Montech Titan Gold) ~ 12 000 ₽",
       case: "Lian Li Lancool 216 ~ 10 500 ₽",
-      notes: "Высокий фреймрейт в 1440p на ультра-настройках с трассировкой лучей. Блок питания стандарта ATX 3.0."
+      notes: "Мощная связка для 2K ультра-гейминга с высокой кадровой частотой и полной аппаратной трассировкой лучей."
     },
+    // RTX 5070 Ti 16GB
     {
-      baseCost: 220000,
+      baseCost: 230000,
       cpu: "AMD Ryzen 7 7800X3D (3D V-Cache) ~ 41 000 ₽",
       cooler: "Thermalright Phantom Spirit 120 SE ~ 5 000 ₽",
       mb: "B650E (ASRock B650E Steel Legend WiFi) ~ 24 000 ₽",
-      gpu: "NVIDIA GeForce RTX 5070 Ti 16GB (Blackwell) ~ 95 000 ₽",
+      gpu: "NVIDIA GeForce RTX 5070 Ti 16GB (Blackwell) ~ 98 000 ₽",
       ram: "32 GB (2x16GB) DDR5 6400 MHz CL32 ~ 15 500 ₽",
       storage: "2 TB M.2 PCIe 4.0 (чтение 7000 МБ/с) ~ 16 000 ₽",
       psu: "850W ATX 3.1 Gold (Montech Titan Gold) ~ 13 500 ₽",
       case: "Montech KING 95 Pro ~ 12 000 ₽",
-      notes: "Связка нового поколения: топовый игровой 3D-процессор и RTX 5070 Ti с 16 ГБ памяти и поддержкой архитектуры Blackwell. Безупречный 2K/4K фреймрейт."
+      notes: "Топовый 3D-кэш процессор и RTX 5070 Ti с 16 ГБ памяти. Высокий фреймрейт в 1440p и 4K без просадок 1% FPS."
     },
+    // RTX 5080 16GB
     {
-      baseCost: 320000,
+      baseCost: 330000,
       cpu: "AMD Ryzen 7 9800X3D (Zen 5 3D V-Cache) ~ 52 000 ₽",
       cooler: "СЖО 360мм (Arctic Liquid Freezer III 360) ~ 14 000 ₽",
-      mb: "X870 / B650E (MSI MAG X870 Tomahawk WiFi) ~ 32 000 ₽",
-      gpu: "NVIDIA GeForce RTX 5080 16GB GDDR7 ~ 145 000 ₽",
+      mb: "X870 (MSI MAG X870 Tomahawk WiFi) ~ 32 000 ₽",
+      gpu: "NVIDIA GeForce RTX 5080 16GB GDDR7 ~ 148 000 ₽",
       ram: "64 GB (2x32GB) DDR5 6000 MHz CL30 EXPO ~ 26 000 ₽",
       storage: "2 TB PCIe 5.0 NVMe + 2 TB PCIe 4.0 ~ 28 000 ₽",
       psu: "1000W ATX 3.1 Platinum (Super Flower / Seasonic) ~ 22 000 ₽",
       case: "Lian Li O11 Vision Chrome ~ 16 000 ₽",
-      notes: "Ультимативный гейминг на новейшем процессоре Ryzen 7 9800X3D и RTX 5080 с быстрой памятью GDDR7. Разрешение 4K с ультра-трассировкой."
+      notes: "Флагманский игровой процессор Ryzen 7 9800X3D и RTX 5080 с быстрой памятью GDDR7. Разрешение 4K с ультра-трассировкой."
     },
+    // RTX 5090 32GB
     {
-      baseCost: 450000,
-      cpu: "AMD Ryzen 7 9800X3D / Ryzen 9 9950X3D ~ 65 000 ₽",
+      baseCost: 460000,
+      cpu: "AMD Ryzen 7 9800X3D / Core Ultra 9 285K ~ 65 000 ₽",
       cooler: "СЖО 360/420мм Arctic Liquid Freezer III ~ 16 500 ₽",
       mb: "X870E (ASUS ROG Strix X870E-E Gaming WiFi) ~ 52 000 ₽",
-      gpu: "NVIDIA GeForce RTX 5090 32GB (Флагман Blackwell) ~ 240 000 ₽",
+      gpu: "NVIDIA GeForce RTX 5090 32GB (Флагман Blackwell) ~ 245 000 ₽",
       ram: "64 GB (2x32GB) DDR5 6400 MHz CL30 ~ 28 000 ₽",
       storage: "4 TB M.2 PCIe 5.0/4.0 (Samsung 990 Pro) ~ 34 000 ₽",
       psu: "1200W ATX 3.1 Platinum с нативным 12V-2x6 ~ 27 000 ₽",
       case: "Lian Li O11 Dynamic EVO XL ~ 22 500 ₽",
-      notes: "Флагманский уровень: 32 ГБ GDDR7 памяти на RTX 5090 и 1200W Platinum питание. Работа с локальными нейросетями, рендеринг 8K и 4K Path Tracing."
+      notes: "32 ГБ GDDR7 памяти на RTX 5090 и 1200W Platinum питание. Работа с локальными нейросетями, рендеринг 8K и 4K Path Tracing."
     },
+    // 650 000+ УЛЬТИМАТИВНЫЙ ТОП
     {
       baseCost: 650000,
       cpu: "AMD Ryzen 9 9950X3D (16 ядер / 32 потока) или Intel Core Ultra 9 285K ~ 85 000 ₽",
@@ -921,22 +935,22 @@
   const cpuPower = {
     legacy: 1, fx_series: 1, intel_lga1155: 2, xeon_v3: 2, ryzen_zen1: 2,
     intel_mid_old: 3, ryzen_am4_main: 4, intel_lga1700: 4,
-    ryzen_am4_top: 5, am5_base: 5, intel_high: 6, am5_intel_top: 7,
-    am5_zen5_x3d: 8, intel_ultra_top: 8
+    ryzen_am4_top: 5, am5_base: 5, intel_high: 6, am5_mid_high: 6,
+    am5_intel_top: 7, intel_ultra_7: 7, am5_zen5_x3d: 8, am5_zen5_top: 8
   };
 
   const gpuPower = {
     gpu_retro: 0, gpu_budget_low: 1, gpu_budget_old: 2, gpu_polaris: 2,
-    gpu_entry: 3, gpu_mid: 4, gpu_mid_high: 5, gpu_high: 6,
-    gpu_rtx5070: 7, gpu_rtx5070ti: 8, gpu_enthusiast: 8,
-    gpu_rtx5080: 9, gpu_top: 9, gpu_rtx5090: 10
+    gpu_entry: 3, gpu_mid: 4, gpu_rtx5060: 5, gpu_mid_high: 5,
+    gpu_rtx5060ti: 6, gpu_high: 6, gpu_rtx5070: 7, gpu_rtx5070ti: 8,
+    gpu_enthusiast: 8, gpu_rtx5080: 9, gpu_top: 9, gpu_rtx5090: 10
   };
 
   const tdpEstimate = {
     gpu_retro: 30, gpu_budget_low: 65, gpu_budget_old: 90, gpu_polaris: 160,
-    gpu_entry: 125, gpu_mid: 160, gpu_mid_high: 220, gpu_high: 240,
-    gpu_rtx5070: 250, gpu_rtx5070ti: 285, gpu_enthusiast: 320,
-    gpu_rtx5080: 360, gpu_top: 450, gpu_rtx5090: 550
+    gpu_entry: 125, gpu_mid: 160, gpu_rtx5060: 145, gpu_mid_high: 220,
+    gpu_rtx5060ti: 180, gpu_high: 240, gpu_rtx5070: 250, gpu_rtx5070ti: 285,
+    gpu_enthusiast: 320, gpu_rtx5080: 360, gpu_top: 450, gpu_rtx5090: 550
   };
 
   function analyzeConfiguration() {
@@ -1028,7 +1042,9 @@
     gpu_1660s:    { cs2: 145, cyberpunk: 55, gta5: 115, dota2: 160, rdr2: 60, tanks: 165, preset: "Высокие" },
     gpu_rx6600:   { cs2: 195, cyberpunk: 70, gta5: 140, dota2: 210, rdr2: 75, tanks: 210, preset: "Высокие" },
     gpu_4060:     { cs2: 230, cyberpunk: 85, gta5: 160, dota2: 240, rdr2: 88, tanks: 240, preset: "Ультра" },
+    gpu_rtx5060:  { cs2: 265, cyberpunk: 98, gta5: 170, dota2: 260, rdr2: 98, tanks: 260, preset: "Ультра" },
     gpu_4060ti:   { cs2: 280, cyberpunk: 105, gta5: 175, dota2: 270, rdr2: 105, tanks: 270, preset: "Ультра" },
+    gpu_rtx5060ti:{ cs2: 325, cyberpunk: 122, gta5: 180, dota2: 290, rdr2: 120, tanks: 295, preset: "Ультра" },
     gpu_4070s:    { cs2: 350, cyberpunk: 135, gta5: 185, dota2: 310, rdr2: 135, tanks: 320, preset: "Ультра" },
     gpu_rtx5070:  { cs2: 390, cyberpunk: 155, gta5: 185, dota2: 340, rdr2: 150, tanks: 340, preset: "Ультра" },
     gpu_rtx5070ti:{ cs2: 430, cyberpunk: 175, gta5: 185, dota2: 360, rdr2: 170, tanks: 360, preset: "Ультра" },
@@ -1043,6 +1059,7 @@
     cpu_budget: 0.72,
     cpu_entry: 0.85,
     cpu_mid: 1.00,
+    cpu_mid_plus: 1.08,
     cpu_high: 1.15,
     cpu_top: 1.25,
     cpu_zen5_x3d: 1.35
