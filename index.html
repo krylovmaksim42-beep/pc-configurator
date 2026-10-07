@@ -34,14 +34,14 @@
       background-color: var(--bg-main);
       color: var(--text);
       min-height: 100vh;
-      padding: 25px 15px;
+      padding: 20px 12px;
       display: flex;
       justify-content: center;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* АНИМИРОВАННЫЙ ФОН С ЛЕТАЮЩИМИ КОМПОНЕНТАМИ */
+    /* АНИМИРОВАННЫЙ ФОН */
     .bg-particles {
       position: fixed;
       top: 0;
@@ -55,36 +55,27 @@
 
     .floating-item {
       position: absolute;
-      opacity: 0.16;
-      animation: floatMotion 18s ease-in-out infinite alternate;
+      opacity: 0.15;
+      animation: floatMotion 22s ease-in-out infinite alternate;
     }
 
-    .cpu-item {
-      filter: blur(4px);
-    }
+    .blur-sm { filter: blur(4px); }
+    .blur-md { filter: blur(6px); }
 
-    .gpu-item {
-      filter: blur(6px);
-    }
-
-    /* Индивидуальные позиции и параметры анимации */
-    .pos-1 { top: 8%; left: 6%; animation-duration: 22s; animation-delay: 0s; }
-    .pos-2 { top: 65%; left: 8%; animation-duration: 26s; animation-delay: -3s; }
-    .pos-3 { top: 15%; right: 8%; animation-duration: 20s; animation-delay: -5s; }
-    .pos-4 { top: 55%; right: 6%; animation-duration: 24s; animation-delay: -2s; }
-    .pos-5 { top: 85%; left: 35%; animation-duration: 28s; animation-delay: -7s; }
-    .pos-6 { top: 35%; right: 28%; animation-duration: 25s; animation-delay: -4s; }
+    .pos-1 { top: 5%; left: 4%; animation-duration: 20s; }
+    .pos-2 { top: 60%; left: 5%; animation-duration: 26s; animation-delay: -3s; }
+    .pos-3 { top: 10%; right: 5%; animation-duration: 22s; animation-delay: -5s; }
+    .pos-4 { top: 50%; right: 4%; animation-duration: 24s; animation-delay: -2s; }
+    .pos-5 { top: 82%; left: 30%; animation-duration: 28s; animation-delay: -7s; }
+    .pos-6 { top: 30%; right: 22%; animation-duration: 25s; animation-delay: -4s; }
+    .pos-7 { top: 78%; right: 12%; animation-duration: 27s; animation-delay: -6s; }
+    .pos-8 { top: 22%; left: 18%; animation-duration: 23s; animation-delay: -8s; }
+    .pos-9 { top: 42%; left: 2%; animation-duration: 29s; animation-delay: -1s; }
 
     @keyframes floatMotion {
-      0% {
-        transform: translateY(0) rotate(0deg) scale(1);
-      }
-      50% {
-        transform: translateY(-45px) rotate(14deg) scale(1.05);
-      }
-      100% {
-        transform: translateY(35px) rotate(-10deg) scale(0.95);
-      }
+      0% { transform: translateY(0) rotate(0deg) scale(1); }
+      50% { transform: translateY(-40px) rotate(12deg) scale(1.04); }
+      100% { transform: translateY(30px) rotate(-8deg) scale(0.96); }
     }
 
     .wrapper {
@@ -95,9 +86,9 @@
     }
 
     header {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 16px;
+      padding-bottom: 14px;
     }
 
     h1 {
@@ -115,20 +106,23 @@
 
     .tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
     }
 
     .tab-btn {
       background: #ffffff;
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      padding: 10px 16px;
+      padding: 9px 14px;
       border-radius: 6px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
       transition: 0.15s ease;
+      flex: 1 1 auto;
+      text-align: center;
     }
 
     .tab-btn.active {
@@ -142,8 +136,8 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
+      padding: 18px;
+      margin-bottom: 18px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
     }
 
@@ -157,19 +151,19 @@
 
     .grid-form {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 14px;
-      margin-bottom: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     label {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-muted);
     }
@@ -178,11 +172,12 @@
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
       color: var(--text-bright);
-      padding: 10px 12px;
+      padding: 9px 11px;
       border-radius: 6px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
     }
 
     select:focus, input:focus {
@@ -208,16 +203,22 @@
       background: var(--accent-hover);
     }
 
+    /* Таблицы подбора */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
     .specs-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 0.9rem;
+      margin-top: 14px;
+      font-size: 0.88rem;
     }
 
     .specs-table th, .specs-table td {
       border: 1px solid var(--border-subtle);
-      padding: 10px 12px;
+      padding: 9px 11px;
       text-align: left;
     }
 
@@ -225,7 +226,7 @@
       background: rgba(46, 160, 67, 0.06);
       color: var(--text-bright);
       font-weight: 600;
-      width: 25%;
+      width: 28%;
     }
 
     .specs-table td {
@@ -234,9 +235,9 @@
 
     .result-section {
       display: none;
-      margin-top: 20px;
+      margin-top: 18px;
       border-top: 1px solid var(--border-subtle);
-      padding-top: 20px;
+      padding-top: 18px;
     }
 
     .result-header {
@@ -244,10 +245,11 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 12px;
+      gap: 10px;
     }
 
     .result-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       color: var(--text-bright);
     }
@@ -255,9 +257,10 @@
     .tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.85rem;
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: 4px;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     .tag-ok { background: rgba(35, 134, 54, 0.12); color: #1e702c; border: 1px solid var(--border); }
@@ -265,12 +268,12 @@
     .tag-danger { background: rgba(220, 38, 38, 0.12); color: var(--danger); border: 1px solid var(--danger); }
 
     .summary-text {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text);
       line-height: 1.5;
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
-      padding: 12px 14px;
+      padding: 11px 13px;
       border-radius: 6px;
       margin-top: 12px;
     }
@@ -285,94 +288,195 @@
     .detail-item {
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
-      padding: 12px 14px;
+      padding: 11px 13px;
       border-radius: 6px;
     }
 
     .detail-item h4 {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-bright);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .detail-item p {
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       color: var(--text-muted);
       line-height: 1.4;
+    }
+
+    /* FPS Карточки */
+    .fps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .fps-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .fps-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .game-name {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text-bright);
+    }
+
+    .game-setting {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .fps-value-box {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+
+    .fps-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .fps-unit {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 12px 8px; }
+      .card { padding: 14px; }
+      h1 { font-size: 1.35rem; }
+      .specs-table th { width: 35%; }
     }
   </style>
 </head>
 <body>
 
-<!-- КОНТЕЙНЕР С ПЛАВАЮЩИМИ РАЗМЫТЫМИ ПРОЦЕССОРАМИ И ВИДЕОКАРТАМИ -->
+<!-- РАЗНООБРАЗНЫЙ ФОН: ПРОЦЕССОРЫ, ПЛАТЫ, ВИДЕОКАРТЫ, ПАМЯТЬ -->
 <div class="bg-particles">
   <!-- Процессор 1 -->
-  <svg class="floating-item cpu-item pos-1" width="120" height="120" viewBox="0 0 100 100" fill="none">
-    <rect x="5" y="5" width="90" height="90" rx="10" stroke="#2ea043" stroke-width="4"/>
-    <rect x="22" y="22" width="56" height="56" rx="6" stroke="#2ea043" stroke-width="3" fill="rgba(46,160,67,0.06)"/>
-    <circle cx="32" cy="32" r="3" fill="#2ea043"/>
-    <line x1="28" y1="46" x2="72" y2="46" stroke="#2ea043" stroke-width="2"/>
-    <line x1="28" y1="54" x2="60" y2="54" stroke="#2ea043" stroke-width="2"/>
+  <svg class="floating-item blur-sm pos-1" width="110" height="110" viewBox="0 0 100 100" fill="none">
+    <rect x="6" y="6" width="88" height="88" rx="8" stroke="#2ea043" stroke-width="3"/>
+    <rect x="24" y="24" width="52" height="52" rx="4" stroke="#2ea043" stroke-width="2.5" fill="rgba(46,160,67,0.05)"/>
+    <circle cx="34" cy="34" r="3" fill="#2ea043"/>
+    <line x1="30" y1="48" x2="70" y2="48" stroke="#2ea043" stroke-width="2"/>
+    <line x1="30" y1="56" x2="60" y2="56" stroke="#2ea043" stroke-width="2"/>
   </svg>
 
   <!-- Видеокарта 1 -->
-  <svg class="floating-item gpu-item pos-2" width="220" height="100" viewBox="0 0 180 80" fill="none">
+  <svg class="floating-item blur-md pos-2" width="200" height="90" viewBox="0 0 180 80" fill="none">
     <rect x="6" y="8" width="168" height="64" rx="8" stroke="#2ea043" stroke-width="3"/>
-    <circle cx="55" cy="40" r="22" stroke="#2ea043" stroke-width="3"/>
-    <circle cx="125" cy="40" r="22" stroke="#2ea043" stroke-width="3"/>
-    <path d="M55 24 L55 56 M39 40 L71 40" stroke="#2ea043" stroke-width="2"/>
-    <path d="M125 24 L125 56 M109 40 L141 40" stroke="#2ea043" stroke-width="2"/>
-    <rect x="35" y="72" width="110" height="6" fill="#2ea043"/>
+    <circle cx="55" cy="40" r="20" stroke="#2ea043" stroke-width="2.5"/>
+    <circle cx="125" cy="40" r="20" stroke="#2ea043" stroke-width="2.5"/>
+    <path d="M55 26 L55 54 M41 40 L69 40" stroke="#2ea043" stroke-width="1.8"/>
+    <path d="M125 26 L125 54 M111 40 L139 40" stroke="#2ea043" stroke-width="1.8"/>
+    <rect x="35" y="72" width="110" height="5" fill="#2ea043"/>
   </svg>
 
-  <!-- Процессор 2 -->
-  <svg class="floating-item cpu-item pos-3" width="140" height="140" viewBox="0 0 100 100" fill="none">
+  <!-- Материнская плата 1 -->
+  <svg class="floating-item blur-sm pos-3" width="160" height="160" viewBox="0 0 140 140" fill="none">
+    <rect x="6" y="6" width="128" height="128" rx="6" stroke="#2ea043" stroke-width="3"/>
+    <rect x="25" y="25" width="40" height="40" rx="3" stroke="#2ea043" stroke-width="2" fill="rgba(46,160,67,0.06)"/>
+    <rect x="75" y="20" width="8" height="50" rx="1" stroke="#2ea043" stroke-width="1.8"/>
+    <rect x="88" y="20" width="8" height="50" rx="1" stroke="#2ea043" stroke-width="1.8"/>
+    <rect x="25" y="85" width="80" height="10" rx="2" stroke="#2ea043" stroke-width="2"/>
+    <rect x="25" y="105" width="80" height="8" rx="2" stroke="#2ea043" stroke-width="1.8"/>
+    <rect x="95" y="85" width="22" height="25" rx="3" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+
+  <!-- Оперативная память RAM -->
+  <svg class="floating-item blur-sm pos-4" width="170" height="60" viewBox="0 0 140 45" fill="none">
+    <rect x="5" y="6" width="130" height="32" rx="4" stroke="#2ea043" stroke-width="2.5"/>
+    <rect x="18" y="12" width="18" height="18" rx="2" stroke="#2ea043" stroke-width="1.5"/>
+    <rect x="42" y="12" width="18" height="18" rx="2" stroke="#2ea043" stroke-width="1.5"/>
+    <rect x="66" y="12" width="18" height="18" rx="2" stroke="#2ea043" stroke-width="1.5"/>
+    <rect x="90" y="12" width="18" height="18" rx="2" stroke="#2ea043" stroke-width="1.5"/>
+    <line x1="12" y1="38" x2="128" y2="38" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+
+  <!-- Процессор 2 (LGA сокет) -->
+  <svg class="floating-item blur-md pos-5" width="120" height="120" viewBox="0 0 100 100" fill="none">
     <rect x="6" y="6" width="88" height="88" rx="8" stroke="#2ea043" stroke-width="3"/>
-    <rect x="25" y="25" width="50" height="50" rx="4" stroke="#2ea043" stroke-width="3"/>
-    <circle cx="14" cy="14" r="2" fill="#2ea043"/>
-    <circle cx="86" cy="14" r="2" fill="#2ea043"/>
-    <circle cx="14" cy="86" r="2" fill="#2ea043"/>
-    <circle cx="86" cy="86" r="2" fill="#2ea043"/>
-  </svg>
-
-  <!-- Видеокарта 2 -->
-  <svg class="floating-item gpu-item pos-4" width="200" height="90" viewBox="0 0 180 80" fill="none">
-    <rect x="6" y="10" width="168" height="60" rx="6" stroke="#2ea043" stroke-width="3"/>
-    <circle cx="55" cy="40" r="20" stroke="#2ea043" stroke-width="3"/>
-    <circle cx="125" cy="40" r="20" stroke="#2ea043" stroke-width="3"/>
-    <rect x="40" y="70" width="100" height="6" fill="#2ea043"/>
-  </svg>
-
-  <!-- Процессор 3 -->
-  <svg class="floating-item cpu-item pos-5" width="110" height="110" viewBox="0 0 100 100" fill="none">
-    <rect x="8" y="8" width="84" height="84" rx="6" stroke="#2ea043" stroke-width="3"/>
     <rect x="26" y="26" width="48" height="48" rx="4" stroke="#2ea043" stroke-width="2"/>
+    <circle cx="16" cy="16" r="3" fill="#2ea043"/>
+    <circle cx="84" cy="16" r="3" fill="#2ea043"/>
+    <circle cx="16" cy="84" r="3" fill="#2ea043"/>
+    <circle cx="84" cy="84" r="3" fill="#2ea043"/>
   </svg>
 
-  <!-- Видеокарта 3 -->
-  <svg class="floating-item gpu-item pos-6" width="180" height="80" viewBox="0 0 180 80" fill="none">
-    <rect x="6" y="10" width="168" height="60" rx="6" stroke="#2ea043" stroke-width="3"/>
-    <circle cx="55" cy="40" r="18" stroke="#2ea043" stroke-width="2"/>
-    <circle cx="125" cy="40" r="18" stroke="#2ea043" stroke-width="2"/>
+  <!-- Видеокарта 2 (Турбина / компактная) -->
+  <svg class="floating-item blur-sm pos-6" width="160" height="80" viewBox="0 0 160 70" fill="none">
+    <rect x="6" y="8" width="148" height="54" rx="6" stroke="#2ea043" stroke-width="2.5"/>
+    <circle cx="110" cy="35" r="18" stroke="#2ea043" stroke-width="2.5"/>
+    <line x1="25" y1="25" x2="65" y2="25" stroke="#2ea043" stroke-width="2"/>
+    <line x1="25" y1="35" x2="65" y2="35" stroke="#2ea043" stroke-width="2"/>
+    <line x1="25" y1="45" x2="65" y2="45" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+
+  <!-- Еще одна материнская плата (ITX) -->
+  <svg class="floating-item blur-md pos-7" width="130" height="130" viewBox="0 0 120 120" fill="none">
+    <rect x="6" y="6" width="108" height="108" rx="6" stroke="#2ea043" stroke-width="2.5"/>
+    <rect x="20" y="20" width="35" height="35" rx="3" stroke="#2ea043" stroke-width="2"/>
+    <rect x="68" y="16" width="7" height="42" rx="1" stroke="#2ea043" stroke-width="1.8"/>
+    <rect x="80" y="16" width="7" height="42" rx="1" stroke="#2ea043" stroke-width="1.8"/>
+    <rect x="20" y="75" width="70" height="8" rx="2" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+
+  <!-- Планка RAM 2 -->
+  <svg class="floating-item blur-sm pos-8" width="140" height="50" viewBox="0 0 140 45" fill="none">
+    <rect x="5" y="6" width="130" height="32" rx="4" stroke="#2ea043" stroke-width="2"/>
+    <rect x="20" y="12" width="16" height="16" stroke="#2ea043" stroke-width="1.5"/>
+    <rect x="45" y="12" width="16" height="16" stroke="#2ea043" stroke-width="1.5"/>
+    <rect x="70" y="12" width="16" height="16" stroke="#2ea043" stroke-width="1.5"/>
+    <rect x="95" y="12" width="16" height="16" stroke="#2ea043" stroke-width="1.5"/>
+  </svg>
+
+  <!-- Чипсет / микросхема -->
+  <svg class="floating-item blur-sm pos-9" width="90" height="90" viewBox="0 0 80 80" fill="none">
+    <rect x="15" y="15" width="50" height="50" rx="4" stroke="#2ea043" stroke-width="2.5"/>
+    <line x1="5" y1="28" x2="15" y2="28" stroke="#2ea043" stroke-width="2"/>
+    <line x1="5" y1="40" x2="15" y2="40" stroke="#2ea043" stroke-width="2"/>
+    <line x1="5" y1="52" x2="15" y2="52" stroke="#2ea043" stroke-width="2"/>
+    <line x1="65" y1="28" x2="75" y2="28" stroke="#2ea043" stroke-width="2"/>
+    <line x1="65" y1="40" x2="75" y2="40" stroke="#2ea043" stroke-width="2"/>
+    <line x1="65" y1="52" x2="75" y2="52" stroke="#2ea043" stroke-width="2"/>
   </svg>
 </div>
 
 <div class="wrapper">
   <header>
     <h1>Конфигуратор ПК</h1>
-    <p class="desc">Подбор оптимальной конфигурации под бюджет и анализ совместимости комплектующих.</p>
+    <p class="desc">Подбор сборки под бюджет, проверка аппаратного баланса и расчет FPS в популярных играх.</p>
   </header>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('budgetTab', this)">Подбор по бюджету</button>
     <button class="tab-btn" onclick="switchTab('upgradeTab', this)">Анализ баланса и апгрейда</button>
+    <button class="tab-btn" onclick="switchTab('fpsTab', this)">Оценка FPS в играх</button>
   </div>
 
   <!-- ВКЛАДКА 1: ПОДБОР ПО БЮДЖЕТУ -->
   <div id="budgetTab" class="card tab-content active">
-    <div class="field" style="margin-bottom: 16px;">
+    <div class="field" style="margin-bottom: 14px;">
       <label for="budgetInput">Сумма на системный блок (в рублях):</label>
-      <input type="number" id="budgetInput" placeholder="Введите сумму" min="1000" step="1000" value="50000">
+      <input type="number" id="budgetInput" placeholder="Введите сумму" min="1000" step="1000" value="60000">
     </div>
     <button class="btn-submit" onclick="generateBuildByBudget()">Рассчитать конфигурацию</button>
 
@@ -382,18 +486,20 @@
         <div class="tag tag-ok" id="buildPriceTag">0 ₽</div>
       </div>
       
-      <table class="specs-table">
-        <tbody>
-          <tr><th>Процессор</th><td id="bCpu">-</td></tr>
-          <tr><th>Охлаждение</th><td id="bCooler">-</td></tr>
-          <tr><th>Материнская плата</th><td id="bMotherboard">-</td></tr>
-          <tr><th>Видеокарта</th><td id="bGpu">-</td></tr>
-          <tr><th>ОЗУ</th><td id="bRam">-</td></tr>
-          <tr><th>Накопитель</th><td id="bStorage">-</td></tr>
-          <tr><th>Блок питания</th><td id="bPsu">-</td></tr>
-          <tr><th>Корпус</th><td id="bCase">-</td></tr>
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table class="specs-table">
+          <tbody>
+            <tr><th>Процессор</th><td id="bCpu">-</td></tr>
+            <tr><th>Охлаждение</th><td id="bCooler">-</td></tr>
+            <tr><th>Материнская плата</th><td id="bMotherboard">-</td></tr>
+            <tr><th>Видеокарта</th><td id="bGpu">-</td></tr>
+            <tr><th>ОЗУ</th><td id="bRam">-</td></tr>
+            <tr><th>Накопитель</th><td id="bStorage">-</td></tr>
+            <tr><th>Блок питания</th><td id="bPsu">-</td></tr>
+            <tr><th>Корпус</th><td id="bCase">-</td></tr>
+          </tbody>
+        </table>
+      </div>
 
       <div class="summary-text" id="buildNotes">Пояснение появится здесь.</div>
     </div>
@@ -405,14 +511,14 @@
       <div class="field">
         <label for="cCpu">Процессор:</label>
         <select id="cCpu">
-          <option value="legacy">LGA 775 (Core 2 Quad) / Athlon II / Phenom II</option>
-          <option value="fx_series">AMD FX-4300 / FX-6300 / FX-8350 (AM3+)</option>
+          <option value="legacy">LGA 775 (Core 2 Quad) / Phenom II</option>
+          <option value="fx_series">AMD FX-6300 / FX-8350 (AM3+)</option>
           <option value="intel_lga1155">Core i5-2500 / i5-3570 / i7-3770 (LGA 1155)</option>
           <option value="xeon_v3">Xeon E5-2670 v3 / E5-2680 v4 (LGA 2011-3)</option>
           <option value="ryzen_zen1">AMD Ryzen 5 1600 / 2600 (AM4)</option>
           <option value="intel_mid_old">Core i3-10100F / i3-12100F / i5-10400F</option>
-          <option value="ryzen_am4_main" selected>AMD Ryzen 5 3600 / Ryzen 5 5500 / Ryzen 5 5600</option>
-          <option value="intel_lga1700">Intel Core i5-12400F / i5-13400F / i5-14400F</option>
+          <option value="ryzen_am4_main" selected>AMD Ryzen 5 3600 / Ryzen 5 5500 / 5600</option>
+          <option value="intel_lga1700">Intel Core i5-12400F / i5-13400F / 14400F</option>
           <option value="ryzen_am4_top">AMD Ryzen 7 5700X3D / 5800X3D (AM4)</option>
           <option value="am5_base">AMD Ryzen 5 7500F / Ryzen 5 7600 (AM5)</option>
           <option value="am5_intel_top">AMD Ryzen 7 7800X3D / Core i7-14700K</option>
@@ -425,11 +531,11 @@
           <option value="gpu_retro">Встроенное видео / GT 710 / GT 730</option>
           <option value="gpu_budget_low">GTX 650 / GTX 750 Ti / HD 7770 / GT 1030</option>
           <option value="gpu_budget_old">GTX 950 / GTX 960 / GTX 1050 Ti</option>
-          <option value="gpu_polaris" selected>RX 580 8GB (2048SP) / GTX 1060 6GB</option>
-          <option value="gpu_entry">GTX 1660 Super / GTX 1660 Ti / RTX 2060 6GB</option>
-          <option value="gpu_mid">Radeon RX 6600 8GB / RTX 3060 12GB / RTX 4060 8GB</option>
+          <option value="gpu_polaris">RX 580 8GB (2048SP) / GTX 1060 6GB</option>
+          <option value="gpu_entry">GTX 1660 Super / GTX 1660 Ti / RTX 2060</option>
+          <option value="gpu_mid" selected>Radeon RX 6600 8GB / RTX 3060 12GB / RTX 4060</option>
           <option value="gpu_mid_high">RTX 4060 Ti / RX 6700 XT / RX 7700 XT 12GB</option>
-          <option value="gpu_high">RTX 4070 / RTX 4070 Super 12GB / RX 7800 XT 16GB</option>
+          <option value="gpu_high">RTX 4070 / RTX 4070 Super 12GB / RX 7800 XT</option>
           <option value="gpu_enthusiast">RTX 4080 Super 16GB / RX 7900 XT</option>
           <option value="gpu_top">GeForce RTX 4090 24GB</option>
         </select>
@@ -449,7 +555,7 @@
 
       <div class="field">
         <label for="cPsu">Мощность БП (Вт):</label>
-        <input type="number" id="cPsu" value="700" step="50">
+        <input type="number" id="cPsu" value="650" step="50">
       </div>
     </div>
 
@@ -463,6 +569,73 @@
       <div class="details-list" id="analysisDetails"></div>
     </div>
   </div>
+
+  <!-- ВКЛАДКА 3: ОЦЕНКА FPS -->
+  <div id="fpsTab" class="card tab-content">
+    <div class="grid-form">
+      <div class="field">
+        <label for="fpsCpu">Процессор:</label>
+        <select id="fpsCpu">
+          <option value="cpu_low">Core 2 Quad / FX-серия / Core i3 старый</option>
+          <option value="cpu_budget">Core i5-2500 / i5-3570 / Xeon E5-2670v3</option>
+          <option value="cpu_entry">Ryzen 5 1600 / 2600 / Core i3-10100F</option>
+          <option value="cpu_mid" selected>Ryzen 5 3600 / 5500 / 5600 / i5-12400F</option>
+          <option value="cpu_high">Ryzen 7 5700X3D / Ryzen 5 7500F / i5-13600K</option>
+          <option value="cpu_top">Ryzen 7 7800X3D / Core i7-14700K</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fpsGpu">Видеокарта:</label>
+        <select id="fpsGpu">
+          <option value="gpu_750ti">GTX 750 Ti / GT 1030 2GB</option>
+          <option value="gpu_1050ti">GTX 1050 Ti 4GB / GTX 960</option>
+          <option value="gpu_rx580">RX 580 8GB / GTX 1060 6GB</option>
+          <option value="gpu_1660s">GTX 1660 Super / GTX 1660 Ti 6GB</option>
+          <option value="gpu_rx6600" selected>Radeon RX 6600 8GB / RTX 3060 12GB</option>
+          <option value="gpu_4060">GeForce RTX 4060 8GB / RX 7600</option>
+          <option value="gpu_4060ti">RTX 4060 Ti 8GB / RX 7700 XT 12GB</option>
+          <option value="gpu_4070s">RTX 4070 Super 12GB / RX 7800 XT</option>
+          <option value="gpu_4080s">RTX 4080 Super / RTX 4090</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fpsRam">Оперативная память:</label>
+        <select id="fpsRam">
+          <option value="8_s">8 ГБ (Single Channel)</option>
+          <option value="8_d">8 ГБ (Dual Channel)</option>
+          <option value="16_d" selected>16 ГБ (Dual Channel)</option>
+          <option value="32_d">32 ГБ (Dual Channel)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fpsRes">Разрешение экрана:</label>
+        <select id="fpsRes">
+          <option value="1080p" selected>1920x1080 (Full HD)</option>
+          <option value="1440p">2560x1440 (2K QHD)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="calculateFps()">Рассчитать FPS в играх</button>
+
+    <div id="fpsResult" class="result-section">
+      <div class="result-header">
+        <div class="result-title" id="fpsTitle">Прогноз производительности</div>
+        <div class="tag tag-ok" id="fpsOverallTag">Готово к тестам</div>
+      </div>
+      
+      <div class="fps-grid" id="fpsCardsContainer">
+        <!-- Генерация карточек игр -->
+      </div>
+
+      <div class="summary-text" id="fpsNotes">
+        Значения рассчитаны на основе усредненного бенчмарк-тестирования в реальных игровых сценах без включения трассировки лучей. На видеокартах серии RTX 40 включение технологии Frame Generation (DLSS 3) дополнительно увеличивает фреймрейт на 40-70%.
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -473,6 +646,7 @@
     btn.classList.add('active');
   }
 
+  // 1. БАЗА СБОРОК ПОД БЮДЖЕТ
   const buildsDatabase = [
     {
       baseCost: 3000,
@@ -672,6 +846,7 @@
     resBox.style.display = 'block';
   }
 
+  // 2. АНАЛИЗАТОР БАЛАНСА
   const cpuPower = {
     legacy: 1, fx_series: 1, intel_lga1155: 2, xeon_v3: 2, ryzen_zen1: 2,
     intel_mid_old: 3, ryzen_am4_main: 4, intel_lga1700: 4,
@@ -766,6 +941,103 @@
     div.innerHTML = `<h4>${heading}</h4><p>${text}</p>`;
     container.appendChild(div);
   }
+
+  // 3. КАЛЬКУЛЯТОР FPS
+  // Базовый FPS видеокарты в 1080p (пресеты подобраны под класс видеокарты)
+  const gpuBaseFps = {
+    gpu_750ti:  { cs2: 45,  cyberpunk: 18, gta5: 50,  dota2: 65,  rdr2: 22, tanks: 70,  preset: "Низкие" },
+    gpu_1050ti: { cs2: 70,  cyberpunk: 28, gta5: 70,  dota2: 95,  rdr2: 32, tanks: 95,  preset: "Низко-средние" },
+    gpu_rx580:  { cs2: 110, cyberpunk: 42, gta5: 90,  dota2: 130, rdr2: 48, tanks: 130, preset: "Средние" },
+    gpu_1660s:  { cs2: 145, cyberpunk: 55, gta5: 115, dota2: 160, rdr2: 60, tanks: 165, preset: "Высокие" },
+    gpu_rx6600: { cs2: 195, cyberpunk: 70, gta5: 140, dota2: 210, rdr2: 75, tanks: 210, preset: "Высокие" },
+    gpu_4060:   { cs2: 230, cyberpunk: 85, gta5: 160, dota2: 240, rdr2: 88, tanks: 240, preset: "Ультра" },
+    gpu_4060ti: { cs2: 280, cyberpunk: 105, gta5: 175, dota2: 270, rdr2: 105, tanks: 270, preset: "Ультра" },
+    gpu_4070s:  { cs2: 350, cyberpunk: 135, gta5: 185, dota2: 310, rdr2: 135, tanks: 320, preset: "Ультра" },
+    gpu_4080s:  { cs2: 440, cyberpunk: 170, gta5: 185, dota2: 340, rdr2: 165, tanks: 350, preset: "Ультра" }
+  };
+
+  // Коэффициент влияния процессора
+  const cpuFpsMult = {
+    cpu_low: 0.50,
+    cpu_budget: 0.72,
+    cpu_entry: 0.85,
+    cpu_mid: 1.00,
+    cpu_high: 1.15,
+    cpu_top: 1.25
+  };
+
+  // Влияние оперативной памяти
+  const ramFpsMult = {
+    '8_s': 0.78,
+    '8_d': 0.90,
+    '16_d': 1.00,
+    '32_d': 1.05
+  };
+
+  function calculateFps() {
+    const cpu = document.getElementById('fpsCpu').value;
+    const gpu = document.getElementById('fpsGpu').value;
+    const ram = document.getElementById('fpsRam').value;
+    const res = document.getElementById('fpsRes').value;
+
+    const base = gpuBaseFps[gpu];
+    const cMult = cpuFpsMult[cpu];
+    const rMult = ramFpsMult[ram];
+    const resMult = res === '1440p' ? 0.72 : 1.00;
+
+    const games = [
+      { name: "Counter-Strike 2", key: "cs2", isCpuHeavy: true },
+      { name: "Cyberpunk 2077", key: "cyberpunk", isCpuHeavy: false },
+      { name: "GTA V", key: "gta5", isCpuHeavy: true },
+      { name: "Dota 2", key: "dota2", isCpuHeavy: true },
+      { name: "Red Dead Redemption 2", key: "rdr2", isCpuHeavy: false },
+      { name: "Мир Танков", key: "tanks", isCpuHeavy: false }
+    ];
+
+    const container = document.getElementById('fpsCardsContainer');
+    container.innerHTML = '';
+
+    games.forEach(g => {
+      let rawFps = base[g.key];
+      // В процессорозависимых играх (CS2, Dota) влияние CPU выше
+      let effCpuMult = g.isCpuHeavy ? cMult : (0.4 + cMult * 0.6);
+      let calculatedFps = Math.round(rawFps * effCpuMult * rMult * resMult);
+
+      // Ограничение по движку для старых игр (например GTA V упирается в 185)
+      if (g.key === 'gta5' && calculatedFps > 185) calculatedFps = 185;
+      if (calculatedFps < 10) calculatedFps = 10;
+
+      let tagClass = "tag-ok";
+      let statusText = "Отлично";
+      if (calculatedFps < 30) {
+        tagClass = "tag-danger";
+        statusText = "Неиграбельно";
+      } else if (calculatedFps < 60) {
+        tagClass = "tag-warn";
+        statusText = "Комфортно";
+      }
+
+      const card = document.createElement('div');
+      card.className = 'fps-card';
+      card.innerHTML = `
+        <div class="fps-card-top">
+          <div>
+            <div class="game-name">${g.name}</div>
+            <div class="game-setting">${base.preset} (${res})</div>
+          </div>
+          <span class="tag ${tagClass}">${statusText}</span>
+        </div>
+        <div class="fps-value-box">
+          <span class="fps-number">${calculatedFps}</span>
+          <span class="fps-unit">FPS (avg)</span>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    document.getElementById('fpsResult').style.display = 'block';
+  }
 </script>
 </body>
 </html>
+
