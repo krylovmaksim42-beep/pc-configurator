@@ -1,974 +1,1221 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мобильный Конфигуратор & Анатомия Смартфонов</title>
+  <title>PcConf — Маркетплейс и Конфигуратор ПК Нового Поколения</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            pcDark: {
+              950: '#070a0f',
+              900: '#0c1017',
+              850: '#111722',
+              800: '#161f2e',
+              750: '#1c273a',
+              700: '#233148',
+              border: '#1e2b40',
+              borderLight: '#283854'
+            },
+            pcBlue: {
+              500: '#0088ff',
+              400: '#38bdf8',
+              300: '#7dd3fc',
+              glow: 'rgba(0, 136, 255, 0.35)'
+            },
+            pcCyan: {
+              400: '#22d3ee',
+              500: '#06b6d4'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    :root {
-      --bg-main: #f8fafc;
-      --bg-card: #ffffff;
-      --bg-input: #f1f5f9;
-      --border-red: #dc2626;
-      --border-red-subtle: rgba(220, 38, 38, 0.35);
-      --accent-red: #dc2626;
-      --accent-red-hover: #b91c1c;
-      --text: #1e293b;
-      --text-bright: #0f172a;
-      --text-muted: #64748b;
-      --radius: 3px;
+    ::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0c1017;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e2b40;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0088ff;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
-    body {
-      background-color: var(--bg-main);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 24px 14px;
-      display: flex;
-      justify-content: center;
-      position: relative;
-      overflow-x: hidden;
+    .glow-banner {
+      background: radial-gradient(circle at 75% 30%, rgba(34, 211, 238, 0.35) 0%, rgba(0, 136, 255, 0.45) 30%, rgba(168, 85, 247, 0.25) 60%, rgba(12, 16, 23, 0.95) 100%),
+                  linear-gradient(135deg, #09121f 0%, #111d31 50%, #0d1524 100%);
+      box-shadow: 0 10px 40px -10px rgba(0, 136, 255, 0.25);
     }
 
-    /* АНИМИРОВАННЫЙ ФОН ИЗ МОБИЛЬНЫХ ДЕТАЛЕЙ */
-    .bg-particles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+    .squircle {
+      border-radius: 22px;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .squircle:hover {
+      transform: translateY(-4px) scale(1.03);
+    }
+
+    .neon-btn-primary {
+      background: linear-gradient(135deg, #0088ff 0%, #00b4d8 100%);
+      box-shadow: 0 4px 20px rgba(0, 136, 255, 0.4);
+      transition: all 0.2s ease;
+    }
+    .neon-btn-primary:hover {
+      background: linear-gradient(135deg, #0077e6 0%, #00a2c7 100%);
+      box-shadow: 0 6px 26px rgba(0, 136, 255, 0.6);
+      transform: translateY(-1px);
+    }
+    .neon-btn-primary:active {
+      transform: translateY(1px);
+    }
+
+    .pill-active {
+      background-color: #1c273a;
+      color: #38bdf8;
+      border-color: #0088ff;
+      box-shadow: 0 0 12px rgba(0, 136, 255, 0.2);
+    }
+
+    .ambient-glow {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      filter: blur(120px);
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
-    }
-
-    .floating-item {
-      position: absolute;
-      opacity: 0.12;
-      animation: floatMotion 22s ease-in-out infinite alternate;
-    }
-
-    .blur-sm { filter: blur(3px); }
-    .blur-md { filter: blur(5px); }
-
-    .pos-1 { top: 4%; left: 3%; animation-duration: 20s; }
-    .pos-2 { top: 62%; left: 4%; animation-duration: 26s; animation-delay: -3s; }
-    .pos-3 { top: 8%; right: 4%; animation-duration: 22s; animation-delay: -5s; }
-    .pos-4 { top: 48%; right: 3%; animation-duration: 24s; animation-delay: -2s; }
-    .pos-5 { top: 84%; left: 28%; animation-duration: 28s; animation-delay: -7s; }
-
-    @keyframes floatMotion {
-      0% { transform: translateY(0) rotate(0deg) scale(1); }
-      50% { transform: translateY(-30px) rotate(8deg) scale(1.02); }
-      100% { transform: translateY(24px) rotate(-6deg) scale(0.98); }
-    }
-
-    .wrapper {
-      width: 100%;
-      max-width: 980px;
-      position: relative;
-      z-index: 1;
-    }
-
-    header {
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border-red-subtle);
-      padding-bottom: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .brand-title {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--text-bright);
-      letter-spacing: -0.02em;
-    }
-
-    .brand-desc {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-top: 3px;
-    }
-
-    .header-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--accent-red);
-      border: 1px solid var(--border-red-subtle);
-      padding: 4px 10px;
-      border-radius: var(--radius);
-      background: rgba(220, 38, 38, 0.05);
-    }
-
-    /* КНОПКИ НАВИГАЦИИ (3px) */
-    .tabs-wrapper {
-      width: 100%;
-      margin-bottom: 16px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      width: 100%;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      background: #ffffff;
-      border: 1px solid var(--border-red-subtle);
-      color: #991b1b;
-      padding: 10px 14px;
-      border-radius: var(--radius);
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      flex: 1 1 auto;
-      text-align: center;
-      min-width: 200px;
-    }
-
-    .tab-btn:hover {
-      border-color: var(--border-red);
-      color: var(--accent-red);
-      background: rgba(220, 38, 38, 0.04);
-    }
-
-    .tab-btn.active {
-      background: #ffffff;
-      color: var(--accent-red);
-      border-color: var(--border-red);
-      border-width: 2px;
-      padding: 9px 13px;
-    }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-red);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-    }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    .grid-form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    select, input {
-      background: var(--bg-input);
-      border: 1px solid var(--border-red-subtle);
-      color: var(--text-bright);
-      padding: 10px 12px;
-      border-radius: var(--radius);
-      font-size: 0.88rem;
-      outline: none;
-      transition: border-color 0.2s;
-      width: 100%;
-    }
-
-    select:focus, input:focus {
-      border-color: var(--border-red);
-    }
-
-    .btn-submit {
-      width: 100%;
-      background: var(--accent-red);
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: var(--radius);
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.15s;
-    }
-    .btn-submit:hover { background: var(--accent-red-hover); }
-
-    .result-section {
-      display: none;
-      margin-top: 18px;
-      border-top: 1px solid var(--border-red-subtle);
-      padding-top: 18px;
-    }
-
-    .result-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      gap: 10px;
-    }
-
-    .result-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-bright);
-    }
-
-    .tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.83rem;
-      padding: 4px 10px;
-      border-radius: var(--radius);
-      font-weight: 700;
-      white-space: nowrap;
-      background: rgba(220, 38, 38, 0.12);
-      color: #dc2626;
-      border: 1px solid var(--border-red);
-    }
-
-    .tag-blue {
-      background: rgba(37, 99, 235, 0.12);
-      color: #2563eb;
-      border: 1px solid #2563eb;
-    }
-
-    /* ПОДБОР: ДВУХКОЛОНОЧНЫЙ БАТТЛ (НОВЫЙ VS Б/У) */
-    .battle-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
-      margin-top: 12px;
-    }
-
-    .battle-card {
-      border: 1px solid var(--border-red-subtle);
-      background: #ffffff;
-      border-radius: var(--radius);
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .battle-card.used-card {
-      border: 2px solid #2563eb;
-    }
-
-    .battle-card.new-card {
-      border: 2px solid var(--border-red);
-    }
-
-    .battle-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .battle-model {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text-bright);
-    }
-
-    .battle-specs {
-      font-size: 0.84rem;
-      color: var(--text);
-      line-height: 1.45;
-    }
-
-    .battle-specs strong {
-      color: var(--text-bright);
-    }
-
-    .summary-text {
-      font-size: 0.88rem;
-      color: var(--text);
-      line-height: 1.5;
-      background: #fdfaf9;
-      border: 1px solid var(--border-red-subtle);
-      padding: 12px 14px;
-      border-radius: var(--radius);
-      margin-top: 14px;
-    }
-
-    /* РАЗБОРКА ТЕЛЕФОНА */
-    .teardown-showcase {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
-      margin-top: 14px;
-    }
-
-    .teardown-photo-box {
-      border: 1px solid var(--border-red-subtle);
-      background: #ffffff;
-      border-radius: var(--radius);
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .teardown-photo-box img {
-      width: 100%;
-      height: 250px;
-      object-fit: contain;
-      background: #f8fafc;
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: var(--radius);
-    }
-
-    .photo-caption {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text-bright);
-    }
-
-    .photo-sub {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      line-height: 1.35;
-    }
-
-    .details-list {
-      margin-top: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .detail-item {
-      background: #ffffff;
-      border: 1px solid var(--border-red-subtle);
-      padding: 12px 14px;
-      border-radius: var(--radius);
-    }
-
-    .detail-item h4 {
-      font-size: 0.88rem;
-      color: var(--text-bright);
-      margin-bottom: 4px;
-    }
-
-    .detail-item p {
-      font-size: 0.84rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
-
-    /* ТАБЛИЦА СРАВНЕНИЯ */
-    .compare-container {
-      width: 100%;
-      overflow-x: auto;
-      margin-top: 14px;
-      border: 1px solid var(--border-red-subtle);
-    }
-
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-    }
-
-    .compare-table th, .compare-table td {
-      border: 1px solid var(--border-red-subtle);
-      padding: 10px 12px;
-      text-align: left;
-    }
-
-    .compare-table th {
-      background: rgba(220, 38, 38, 0.06);
-      color: var(--text-bright);
-      font-weight: 700;
-      width: 25%;
-    }
-
-    .compare-table td {
-      color: var(--text);
-      width: 37.5%;
-    }
-
-    /* ИНДИКАТОР ВЕРДИКТА */
-    .verdict-box {
-      border-left: 4px solid var(--accent-red);
-      background: #fff5f5;
-      padding: 14px;
-      border-radius: var(--radius);
-      margin-top: 14px;
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    .verdict-box strong {
-      color: var(--text-bright);
-    }
-
-    @media (max-width: 600px) {
-      body { padding: 12px 8px; }
-      .card { padding: 14px; }
-      h1 { font-size: 1.35rem; }
-      .tab-btn { min-width: 100%; font-size: 0.84rem; }
     }
   </style>
 </head>
-<body>
+<body class="bg-pcDark-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-pcBlue-500 selection:text-white relative overflow-x-hidden">
 
-<div class="bg-particles">
-  <svg class="floating-item blur-sm pos-1" width="100" height="150" viewBox="0 0 80 140" fill="none">
-    <rect x="5" y="5" width="70" height="130" rx="8" stroke="#dc2626" stroke-width="2.5"/>
-    <rect x="25" y="15" width="30" height="40" rx="2" stroke="#dc2626" stroke-width="1.8"/>
-    <rect x="15" y="65" width="50" height="55" rx="3" stroke="#dc2626" stroke-width="2"/>
-  </svg>
-  <svg class="floating-item blur-md pos-2" width="140" height="140" viewBox="0 0 120 120" fill="none">
-    <rect x="10" y="10" width="100" height="100" rx="6" stroke="#dc2626" stroke-width="2.5"/>
-    <circle cx="60" cy="60" r="32" stroke="#dc2626" stroke-width="2"/>
-  </svg>
-  <svg class="floating-item blur-sm pos-3" width="90" height="130" viewBox="0 0 80 120" fill="none">
-    <rect x="6" y="6" width="68" height="108" rx="7" stroke="#dc2626" stroke-width="2.5"/>
-    <circle cx="40" cy="100" r="5" stroke="#dc2626" stroke-width="2"/>
-  </svg>
-  <svg class="floating-item blur-sm pos-4" width="160" height="60" viewBox="0 0 140 45" fill="none">
-    <rect x="5" y="6" width="130" height="32" stroke="#dc2626" stroke-width="2"/>
-    <line x1="12" y1="38" x2="128" y2="38" stroke="#dc2626" stroke-width="2"/>
-  </svg>
-  <svg class="floating-item blur-md pos-5" width="110" height="110" viewBox="0 0 100 100" fill="none">
-    <rect x="6" y="6" width="88" height="88" stroke="#dc2626" stroke-width="2.5"/>
-    <circle cx="50" cy="50" r="22" stroke="#dc2626" stroke-width="2"/>
-  </svg>
-</div>
+  <div class="ambient-glow bg-blue-600/15 top-[-100px] left-[15%]"></div>
+  <div class="ambient-glow bg-cyan-500/10 top-[250px] right-[5%]"></div>
+  <div class="ambient-glow bg-purple-600/10 bottom-[10%] left-[5%]"></div>
 
-<div class="wrapper">
-  <header>
-    <div>
-      <div class="brand-title">Мобильный Анализатор</div>
-      <div class="brand-desc">Инженерный подбор (Новый vs Б/У), анатомия внутреннего устройства и живое сравнение смартфонов.</div>
+  <header class="sticky top-0 z-50 bg-pcDark-900/90 backdrop-blur-md border-b border-pcDark-border px-4 lg:px-8 py-3 transition-all">
+    <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-3 lg:gap-6">
+      
+      <!-- Brand Logo & Pill Switcher -->
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="#" class="flex items-center gap-2 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-pcBlue-500 via-pcCyan-400 to-indigo-500 flex items-center justify-center font-black text-white text-lg tracking-wider shadow-lg shadow-pcBlue-500/30 group-hover:scale-105 transition-transform">
+            PC
+          </div>
+          <span class="text-2xl font-black tracking-tight text-white flex items-center">
+            Pc<span class="text-pcBlue-400">Conf</span>
+          </span>
+        </a>
+
+        <!-- Status Mode Pill (Active Indicator) -->
+        <button id="serverToggleBtn" onclick="togglePlatformStatus()" title="Статус серверов бенчмарков" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pcDark-800 border border-pcDark-border text-xs font-medium text-slate-300 hover:border-pcBlue-500 transition-colors">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>v2026.4</span>
+        </button>
+      </div>
+
+      <!-- Search Input Pill (Mirrors Marketplace Game Search) -->
+      <div class="flex-1 max-w-2xl relative">
+        <div class="relative flex items-center">
+          <svg class="w-5 h-5 text-slate-400 absolute left-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input 
+            type="text" 
+            id="globalSearchInput"
+            oninput="handleLiveSearch(this.value)"
+            placeholder="Поиск видеокарт, процессоров, игр (Cyberpunk, CS2, RTX 5090)..." 
+            class="w-full bg-pcDark-800 text-sm font-medium text-slate-100 placeholder-slate-400 pl-11 pr-24 py-2.5 rounded-full border border-pcDark-border hover:border-pcDark-borderLight focus:border-pcBlue-500 focus:outline-none focus:ring-2 focus:ring-pcBlue-500/20 transition-all shadow-inner"
+          >
+          <kbd class="hidden md:inline-flex items-center gap-1 absolute right-3 px-2 py-0.5 text-[10px] font-mono font-semibold text-slate-400 bg-pcDark-750 border border-pcDark-border rounded-md">
+            ⌘K
+          </kbd>
+        </div>
+
+        <!-- Autocomplete Flyout -->
+        <div id="searchDropdown" class="hidden absolute left-0 right-0 top-12 mt-1 bg-pcDark-850/98 backdrop-blur-xl border border-pcDark-border rounded-2xl shadow-2xl z-50 p-2 overflow-hidden max-h-80 overflow-y-auto">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Right Action Items -->
+      <div class="flex items-center gap-2 lg:gap-3 shrink-0">
+        <button onclick="switchTab('budgetTab')" class="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-pcDark-800 hover:bg-pcDark-750 border border-pcDark-border text-xs font-bold text-slate-200 transition-all">
+          <svg class="w-4 h-4 text-pcCyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          Собрать ПК
+        </button>
+
+        <button onclick="switchTab('balanceTab')" class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-pcDark-800 hover:bg-pcDark-750 border border-pcDark-border text-xs font-bold text-slate-200 transition-all">
+          <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+          Баланс
+        </button>
+
+        <button onclick="switchTab('fpsTab')" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-pcDark-800 hover:bg-pcDark-750 border border-pcDark-border text-xs font-bold text-pcBlue-400 transition-all">
+          <span class="w-2 h-2 rounded-full bg-pcBlue-400"></span>
+          FPS Тест
+        </button>
+
+        <!-- Profile Avatar Pill -->
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-pcDark-750 to-pcDark-700 border border-pcDark-border flex items-center justify-center text-xs font-bold text-slate-200 cursor-pointer hover:border-pcBlue-400 transition-all">
+          ПК
+        </div>
+      </div>
+
     </div>
-    <div class="header-badge">SMARTPHONE LAB</div>
   </header>
 
-  <!-- НАВИГАЦИЯ -->
-  <div class="tabs-wrapper">
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('phoneBudgetTab', this)">Подбор по бюджету (Новый vs Б/У)</button>
-      <button class="tab-btn" onclick="switchTab('phoneTeardownTab', this)">Как устроен телефон (Внутрянка)</button>
-      <button class="tab-btn" onclick="switchTab('phoneCompareTab', this)">Сравнение смартфонов</button>
-    </div>
-  </div>
+  <main class="max-w-[1440px] mx-auto w-full px-4 lg:px-8 py-5 flex-1 flex flex-col gap-6 relative z-10">
 
-  <!-- ВКЛАДКА 1: ПОДБОР ПО БЮДЖЕТУ (НОВЫЙ VS Б/У) -->
-  <div id="phoneBudgetTab" class="card tab-content active">
-    <div class="field" style="margin-bottom: 14px;">
-      <label for="phoneBudgetInput">Сумма на покупку устройства (в рублях):</label>
-      <input type="number" id="phoneBudgetInput" min="4000" step="2000" value="25000">
-    </div>
-    <button class="btn-submit" onclick="generatePhoneBattle()">Рассчитать лучшие варианты (Новый vs Б/У)</button>
-
-    <div id="phoneBudgetResult" class="result-section">
-      <div class="result-header">
-        <div class="result-title" id="pbBudgetTitle">Бюджет: 0 ₽</div>
-        <div class="tag" id="pbTag">Анализ завершен</div>
+    <!-- HERO GAMING BANNER (Playerok 3D Billboard Style) -->
+    <div class="glow-banner rounded-3xl p-6 sm:p-8 lg:p-10 relative overflow-hidden border border-cyan-500/30 flex flex-col justify-between min-h-[220px] lg:min-h-[250px]">
+      <!-- Background Cyber Grid Mesh overlay -->
+      <div class="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
+      
+      <!-- Decorative Cyber Glyphs -->
+      <div class="absolute -right-8 -bottom-10 opacity-15 pointer-events-none select-none text-[180px] font-black text-pcBlue-400 font-mono">
+        RTX50
       </div>
 
-      <div class="battle-grid">
-        <!-- КАРТОЧКА НОВОГО ИЗ МАГАЗИНА -->
-        <div class="battle-card new-card">
-          <div>
-            <div class="battle-card-header">
-              <span class="tag">НОВЫЙ ИЗ МАГАЗИНА</span>
-              <span style="font-weight:700; color:var(--accent-red);" id="pbNewPrice">-</span>
-            </div>
-            <div class="battle-model" style="margin: 8px 0;" id="pbNewModel">-</div>
-            <div class="battle-specs" id="pbNewSpecs">-</div>
+      <div class="relative z-10 max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pcBlue-500/20 border border-pcBlue-400/40 text-pcBlue-300 text-xs font-bold uppercase tracking-wider mb-3">
+          <span class="w-2 h-2 rounded-full bg-pcCyan-400 animate-ping"></span>
+          Сезонный апдейт • Линейка RTX 50 & Ryzen 9000
+        </div>
+        <h2 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight uppercase drop-shadow-md">
+          КОНФИГУРАТОР <span class="bg-gradient-to-r from-pcCyan-400 via-pcBlue-400 to-indigo-300 bg-clip-text text-transparent">НОВОГО ПОКОЛЕНИЯ</span>
+        </h2>
+        <p class="text-sm sm:text-base text-slate-300 mt-2 font-medium max-w-xl leading-relaxed">
+          Умный подбор системных блоков под точный бюджет, онлайн-проверка горлышка (Bottleneck) и моментальный расчет FPS в 1080p, 2K и 4K.
+        </p>
+      </div>
+
+      <div class="relative z-10 mt-5 flex flex-wrap items-center gap-3">
+        <button onclick="quickSetBudget(85000)" class="neon-btn-primary px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-white tracking-wide uppercase flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Рассчитать топ-сетап (85 000 ₽)
+        </button>
+        <button onclick="switchTab('balanceTab')" class="px-4 py-2.5 rounded-xl bg-pcDark-900/80 hover:bg-pcDark-800 text-xs sm:text-sm font-bold text-slate-200 border border-pcDark-border hover:border-slate-500 transition-all flex items-center gap-2">
+          Проверить свое железо
+        </button>
+      </div>
+    </div>
+
+    <section class="flex flex-col gap-2.5">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-pcBlue-400"></span>
+          Быстрый выбор игры или конфигурации
+        </span>
+        <span class="text-xs text-slate-500 font-mono">Прокрутите вправо →</span>
+      </div>
+
+      <div class="flex items-center gap-3.5 overflow-x-auto no-scrollbar py-2 -mx-1 px-1">
+        
+        <!-- Game 1: CS2 -->
+        <button onclick="filterByGame('cs2', 'Counter-Strike 2')" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-700 flex items-center justify-center text-white font-black text-xs shadow-md shadow-orange-500/20">
+            CS2
           </div>
-          <div class="summary-text" style="margin-top:0;" id="pbNewVerdict">-</div>
-        </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">CS2</span>
+        </button>
 
-        <!-- КАРТОЧКА ЛУЧШЕГО Б/У ВАРИАНТА -->
-        <div class="battle-card used-card">
-          <div>
-            <div class="battle-card-header">
-              <span class="tag tag-blue">ЛУЧШИЙ Б/У (ВТОРИЧКА)</span>
-              <span style="font-weight:700; color:#2563eb;" id="pbUsedPrice">-</span>
-            </div>
-            <div class="battle-model" style="margin: 8px 0;" id="pbUsedModel">-</div>
-            <div class="battle-specs" id="pbUsedSpecs">-</div>
+        <!-- Game 2: Cyberpunk -->
+        <button onclick="filterByGame('cyberpunk', 'Cyberpunk 2077')" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-black font-black text-xs shadow-md shadow-yellow-500/20">
+            CP77
           </div>
-          <div class="summary-text" style="margin-top:0; border-color:rgba(37,99,235,0.3); background:#f8faff;" id="pbUsedVerdict">-</div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">Cyberpunk</span>
+        </button>
+
+        <!-- Game 3: GTA V -->
+        <button onclick="filterByGame('gta5', 'GTA V')" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-800 flex items-center justify-center text-white font-black text-xs shadow-md shadow-emerald-500/20">
+            GTA V
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">GTA V</span>
+        </button>
+
+        <!-- Game 4: Dota 2 -->
+        <button onclick="filterByGame('dota2', 'Dota 2')" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-600 to-red-900 flex items-center justify-center text-white font-black text-xs shadow-md shadow-red-500/20">
+            DOTA
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">Dota 2</span>
+        </button>
+
+        <!-- Hardware 1: RTX 5090 -->
+        <button onclick="quickSetBudget(460000)" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcCyan-400 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-700 flex items-center justify-center text-black font-black text-[10px] shadow-md shadow-cyan-500/20">
+            5090
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcCyan-400 truncate max-w-full">RTX 5090</span>
+        </button>
+
+        <!-- Hardware 2: RTX 5070 -->
+        <button onclick="quickSetBudget(185000)" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-700 flex items-center justify-center text-white font-black text-[10px] shadow-md shadow-blue-500/20">
+            5070
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">RTX 5070</span>
+        </button>
+
+        <!-- Hardware 3: RTX 4060 -->
+        <button onclick="quickSetBudget(85000)" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-700 flex items-center justify-center text-white font-black text-[10px] shadow-md shadow-teal-500/20">
+            4060
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">RTX 4060</span>
+        </button>
+
+        <!-- Hardware 4: RX 6600 -->
+        <button onclick="quickSetBudget(60000)" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center text-white font-black text-[10px] shadow-md shadow-red-500/20">
+            RX6600
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">RX 6600</span>
+        </button>
+
+        <!-- Budget 1: Бюджет 35к -->
+        <button onclick="quickSetBudget(35000)" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white font-black text-xs shadow-md">
+            35k
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">Бюджет 35k</span>
+        </button>
+
+        <!-- Budget 2: Народный 65к -->
+        <button onclick="quickSetBudget(65000)" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-pcBlue-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-800 flex items-center justify-center text-white font-black text-xs shadow-md">
+            65k
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-pcBlue-400 truncate max-w-full">Топ 65k</span>
+        </button>
+
+        <!-- Budget 3: Ультимативный 230к -->
+        <button onclick="quickSetBudget(230000)" class="squircle shrink-0 w-[84px] sm:w-[94px] flex flex-col items-center gap-1.5 p-2 bg-pcDark-850 border border-pcDark-border hover:border-purple-500 group">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-700 flex items-center justify-center text-white font-black text-xs shadow-md shadow-purple-500/20">
+            230k
+          </div>
+          <span class="text-[11px] font-bold text-slate-300 group-hover:text-purple-400 truncate max-w-full">Ultra 230k</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Matches the 'Пополнение Steam' card from screenshot -->
+    <section class="bg-pcDark-850 border border-pcDark-border hover:border-pcDark-borderLight transition-colors rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 shadow-xl">
+      
+      <!-- Left side: Icon badge & Title -->
+      <div class="flex items-center gap-3.5 shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pcDark-750 to-pcDark-700 border border-pcDark-border flex items-center justify-center shadow-inner">
+          <svg class="w-6 h-6 text-pcCyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-base font-extrabold text-white">Быстрый расчет под бюджет</h3>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-pcBlue-500/20 text-pcBlue-300 border border-pcBlue-500/30">
+              AI v4.8
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Введите сумму и получите идеальный баланс комплектующих</p>
         </div>
       </div>
 
-      <div class="verdict-box" id="pbFinalConclusion">-</div>
-    </div>
-  </div>
-
-  <!-- ВКЛАДКА 2: КАК УСТРОЕН ТЕЛЕФОН (РЕАЛЬНАЯ ВНУТРЯНКА) -->
-  <div id="phoneTeardownTab" class="card tab-content">
-    <div class="field" style="margin-bottom: 14px;">
-      <label for="teardownSelect">Выберите модель для детального изучения компоновки:</label>
-      <select id="teardownSelect">
-        <option value="s23" selected>Samsung Galaxy S23 (Snapdragon 8 Gen 2, испарительная камера)</option>
-        <option value="s20plus">Samsung Galaxy S20+ (Dynamic AMOLED 120Hz, антенна Qi, Exynos 990 / 865)</option>
-        <option value="note8">Samsung Galaxy Note 8 (Герметичный отсек S-Pen, двойной OIS камер)</option>
-        <option value="a50">Samsung Galaxy A50 (Разборная пластиковая рама, подэкранный сканер)</option>
-        <option value="pocof6">POCO F6 (Snapdragon 8s Gen 3, охлаждение LiquidCool 4800 мм²)</option>
-        <option value="realme8">Realme 8 (Ультратонкий корпус, медная трубка Copper Cooling)</option>
-        <option value="ip8">Apple iPhone 8 (Стеклянная спинка под Qi, вибромотор Taptic Engine)</option>
-        <option value="ip6s">Apple iPhone 6s (Алюминий 7000 серии, подложка 3D Touch, аудиоджек 3.5мм)</option>
-        <option value="ip6">Apple iPhone 6 (Корпус unibody, процессор Apple A8, разборка с дисплея)</option>
-        <option value="nokia6111">Nokia 6111 (Винтажный слайдер: рельсовый механизм, ленточный шлейф)</option>
-      </select>
-    </div>
-    <button class="btn-submit" onclick="showTeardown()">Показать внутреннее устройство</button>
-
-    <div id="teardownResult" class="result-section">
-      <div class="result-header">
-        <div class="result-title" id="tdTitle">Внутренняя компоновка</div>
-        <div class="tag" id="tdTag">Инженерный разбор</div>
-      </div>
-      <div class="summary-text" id="tdArchitecture">-</div>
-
-      <div class="teardown-showcase" id="tdGallery"></div>
-      <div class="details-list" id="tdInternalSpecs"></div>
-    </div>
-  </div>
-
-  <!-- ВКЛАДКА 3: СРАВНЕНИЕ ТЕЛЕФОНОВ -->
-  <div id="phoneCompareTab" class="card tab-content">
-    <div class="grid-form">
-      <div class="field">
-        <label for="cmpPhone1">Первый смартфон:</label>
-        <select id="cmpPhone1"></select>
-      </div>
-      <div class="field">
-        <label for="cmpPhone2">Второй смартфон:</label>
-        <select id="cmpPhone2"></select>
-      </div>
-    </div>
-    <button class="btn-submit" onclick="comparePhones()">Сравнить характеристики и получить вердикт</button>
-
-    <div id="compareResult" class="result-section">
-      <div class="result-header">
-        <div class="result-title">Сравнительный анализ моделей</div>
-        <div class="tag" id="cmpVerdictTag">VS</div>
-      </div>
-
-      <div class="compare-container">
-        <table class="compare-table" id="cmpTable"></table>
-      </div>
-
-      <div class="verdict-box" id="cmpVerdictText">-</div>
-    </div>
-  </div>
-
-</div>
-
-<script>
-  function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    btn.classList.add('active');
-  }
-
-  // 1. БАЗА ДЛЯ ПОДБОРА: НОВЫЙ VS Б/У
-  const budgetBattleList = [
-    {
-      max: 10000,
-      newModel: "Realme Note 50 (4/128 ГБ)",
-      newPrice: "~8 500 ₽",
-      newSpecs: "<strong>Процессор:</strong> Unisoc T612<br><strong>Экран:</strong> 6.74\" IPS 90 Гц HD+<br><strong>Память:</strong> 4/128 ГБ + MicroSD<br><strong>Батарея:</strong> 5000 мА·ч (10W)<br><strong>Камера:</strong> 13 Мп базовая",
-      newVerdict: "Новый аппарат на гарантии: 2 дня без розетки, не жалко уронить, стабильно тянет базовые приложения.",
-      usedModel: "Samsung Galaxy A50 или iPhone 6s",
-      usedPrice: "~5 000 – 7 500 ₽",
-      usedSpecs: "<strong>Процессор:</strong> Exynos 9610 / Apple A9<br><strong>Экран:</strong> 6.4\" Super AMOLED Full HD+ / 4.7\" Retina<br><strong>Память:</strong> 4/64 ГБ / 2/64 ГБ<br><strong>Камера:</strong> 25 Мп / 12 MP 4K видео",
-      usedVerdict: "Б/у Galaxy A50 даст в разы более сочный Full HD AMOLED экран, а iPhone 6s — компактность и быструю систему, но батареи будут уставшими.",
-      conclusion: "За 10 000 ₽ надежнее купить <strong>новый Realme Note 50</strong>: получите свежий аккумулятор на 5000 мА·ч и отсутствие скрытых дефектов."
-    },
-    {
-      max: 20000,
-      newModel: "Xiaomi Redmi Note 13 4G (8/128 ГБ)",
-      newPrice: "~16 000 ₽",
-      newSpecs: "<strong>Процессор:</strong> Snapdragon 685 (6 нм)<br><strong>Экран:</strong> 6.67\" AMOLED 120 Гц Full HD+<br><strong>Память:</strong> 8/128 ГБ + MicroSD<br><strong>Батарея:</strong> 5000 мА·ч + быстрая зарядка 33W<br><strong>Камера:</strong> 108 Мп + 8 Мп ширик",
-      newVerdict: "Идеален из магазина: сочный 120 Гц AMOLED дисплей, стереозвук, NFC для оплаты картой и полный комплект с зарядкой.",
-      usedModel: "Samsung Galaxy Note 8 или iPhone 8 Plus",
-      usedPrice: "~11 000 – 14 000 ₽",
-      usedSpecs: "<strong>Процессор:</strong> Exynos 8895 / Apple A11 Bionic<br><strong>Экран:</strong> 6.3\" 2K Super AMOLED / 5.5\" Retina Full HD<br><strong>Оснащение:</strong> Стекло, металл, водозащита IP68, стилус S-Pen, беспроводная зарядка<br><strong>Камера:</strong> Двойной оптический зум с OIS",
-      usedVerdict: "Note 8 ощущается на голову премиальнее любого бюджетника: 2K экран, поддержка стилуса S-Pen и топовые материалы.",
-      conclusion: "Если нужен рабочий аппарат на каждый день с гарантией и живучей батареей — берите <strong>новый Redmi Note 13</strong>. Если важен статус, премиум-материалы и стилус для рисования — можно взять <strong>б/у Galaxy Note 8</strong> с заменой аккумулятора."
-    },
-    {
-      max: 35000,
-      newModel: "POCO X6 Pro 5G (8/256 ГБ)",
-      newPrice: "~28 500 ₽",
-      newSpecs: "<strong>Процессор:</strong> Dimensity 8300-Ultra (1.4 млн AnTuTu)<br><strong>Экран:</strong> 6.67\" 1.5K Flow AMOLED 120 Гц (HDR10+)<br><strong>Память:</strong> 8/256 ГБ флагманская UFS 4.0<br><strong>Батарея:</strong> 5000 мА·ч + турбо 67W<br><strong>Камера:</strong> 64 Мп с оптической стабилизацией (OIS)",
-      newVerdict: "Игровой монстр из коробки: максимальный FPS в любых играх, мгновенная установка софта и молниеносная зарядка.",
-      usedModel: "Samsung Galaxy S20+ или iPhone 11 Pro",
-      usedPrice: "~22 000 – 26 000 ₽",
-      usedSpecs: "<strong>Процессор:</strong> Snapdragon 865 / Apple A13 Bionic<br><strong>Экран:</strong> 6.7\" Dynamic AMOLED 120 Гц 1440p / 5.8\" OLED<br><strong>Камера:</strong> Полноценный флагманский зум, стекло Gorilla 6, беспроводная и реверсивная зарядка, защита IP68",
-      usedVerdict: "Galaxy S20+ или iPhone 11 Pro на вторичке уничтожают POCO по качеству съемки видео, тактильным материалам (стекло/сталь) и экрану без рамок.",
-      conclusion: "Для максимальной производительности в играх берите <strong>новый POCO X6 Pro</strong>. Но если в приоритете фото/видеосъемка, влагозащита IP68 и беспроводная зарядка — <strong>б/у Samsung Galaxy S20+</strong> за 23-25 тыс. рублей будет ощутимо породистее."
-    },
-    {
-      max: 55000,
-      newModel: "POCO F6 Pro / Xiaomi 13T",
-      newPrice: "~45 000 – 48 000 ₽",
-      newSpecs: "<strong>Процессор:</strong> Snapdragon 8 Gen 2 / Dimensity 8200-Ultra<br><strong>Экран:</strong> 6.67\" 120-144 Гц AMOLED (до 4000 нит)<br><strong>Память:</strong> 12/512 ГБ LPDDR5X + UFS 4.0<br><strong>Батарея:</strong> 5000 мА·ч + турбо-зарядка 120W (100% за 19 мин)<br><strong>Камера:</strong> 50 Мп с OIS + телеобъектив Leica",
-      newVerdict: "Мощнейший субфлагман: шикарная скорость, металлическая рама, превосходный экран и сверхбыстрая зарядка.",
-      usedModel: "Samsung Galaxy S23 (8/256 ГБ) или iPhone 13 Pro",
-      usedPrice: "~42 000 – 46 000 ₽",
-      usedSpecs: "<strong>Процессор:</strong> Snapdragon 8 Gen 2 for Galaxy / A15 Bionic<br><strong>Экран:</strong> 6.1\" Dynamic AMOLED 2X 120 Гц / 120 Гц ProMotion<br><strong>Камера:</strong> Флагманский 3x оптический зум, видео 4K/8K, топовый виброотклик, защита IP68, беспроводная зарядка",
-      usedVerdict: "Б/у Galaxy S23 за эти деньги — это полноценный компактный суперфлагман с лучшим стеклом Victus 2, премиум-камерами и поддержкой обновлений.",
-      conclusion: "Если нужен большой экран и моментальная зарядка 120 Вт — берите <strong>новый Xiaomi 13T / POCO F6</strong>. Если нужен безупречный компактный премиум-смартфон с эталонной ночной камерой и беспроводной зарядкой — <strong>б/у Samsung Galaxy S23</strong> будет лучшей покупкой на рынке!"
-    },
-    {
-      max: 999999,
-      newModel: "Samsung Galaxy S24 Ultra / iPhone 15 Pro Max",
-      newPrice: "~90 000 – 120 000+ ₽",
-      newSpecs: "<strong>Процессор:</strong> Snapdragon 8 Gen 3 for Galaxy / Apple A17 Pro<br><strong>Экран:</strong> LTPO AMOLED 2X / Super Retina XDR ProMotion<br><strong>Корпус:</strong> Авиационный титан, антибликовое стекло, защита IP68<br><strong>Камера:</strong> 200 Мп / 48 Мп, 5x перископ, кинематографическое видео 4K 60fps",
-      newVerdict: "Абсолютная вершина современных технологий без единого компромисса.",
-      usedModel: "Samsung Galaxy S23 Ultra или iPhone 14 Pro Max",
-      usedPrice: "~60 000 – 68 000 ₽",
-      usedSpecs: "<strong>Процессор:</strong> Snapdragon 8 Gen 2 / Apple A16 Bionic<br><strong>Камера:</strong> 200 Мп + 10x честный оптический зум / 48 Мп Dynamic Island<br><strong>Экономия:</strong> Разница в 40-50 тысяч рублей при 95% аналогичных возможностей.",
-      usedVerdict: "S23 Ultra на вторичке имеет уникальный 10-кратный оптический перископ (которого даже нет в S24 Ultra), а стоит почти вдвое дешевле нового.",
-      conclusion: "Если бюджет не ограничен — берите <strong>новый Galaxy S24 Ultra или iPhone 15 Pro Max</strong>. Но с точки зрения финансового интеллекта покупка <strong>б/у S23 Ultra</strong> сэкономит вам 45 000 рублей без потери флагманского опыта."
-    }
-  ];
-
-  function generatePhoneBattle() {
-    const bud = parseInt(document.getElementById('phoneBudgetInput').value) || 0;
-    const resBox = document.getElementById('phoneBudgetResult');
-    if (bud < 4000) { alert("Укажите сумму от 4 000 рублей"); return; }
-
-    let sel = budgetBattleList[budgetBattleList.length - 1];
-    for (let i = 0; i < budgetBattleList.length; i++) {
-      if (bud <= budgetBattleList[i].max) { sel = budgetBattleList[i]; break; }
-    }
-
-    document.getElementById('pbBudgetTitle').textContent = "Бюджет: " + bud.toLocaleString('ru-RU') + " ₽";
-    document.getElementById('pbNewModel').textContent = sel.newModel;
-    document.getElementById('pbNewPrice').textContent = sel.newPrice;
-    document.getElementById('pbNewSpecs').innerHTML = sel.newSpecs;
-    document.getElementById('pbNewVerdict').innerHTML = `<strong>Плюсы нового:</strong> ${sel.newVerdict}`;
-
-    document.getElementById('pbUsedModel').textContent = sel.usedModel;
-    document.getElementById('pbUsedPrice').textContent = sel.usedPrice;
-    document.getElementById('pbUsedSpecs').innerHTML = sel.usedSpecs;
-    document.getElementById('pbUsedVerdict').innerHTML = `<strong>Плюсы б/у:</strong> ${sel.usedVerdict}`;
-
-    document.getElementById('pbFinalConclusion').innerHTML = `
-      <strong>Финальный вердикт эксперта:</strong> ${sel.conclusion}
-    `;
-
-    resBox.style.display = 'block';
-  }
-
-  // 2. ДЕТАЛЬНЫЙ РАЗБОР ВНУТРЯНКИ ТЕЛЕФОНОВ
-  const teardownData = {
-    s23: {
-      title: "Samsung Galaxy S23 — Анатомия и Внутрянка",
-      arch: "Корпус на шасси Armor Aluminum. Под задней крышкой Gorilla Glass Victus 2 находится блок антенны NFC со спиральной катушкой беспроводной зарядки Qi. В верхней части смонтирована двухслойная компактная материнская плата, а под ней — увеличенная медная паровая камера испарительного охлаждения процессора Snapdragon 8 Gen 2 for Galaxy.",
-      gallery: [
-        { t: "Без задней крышки (Катушка Qi и NFC)", desc: "Видны 16 винтов средней прижимной пластины, модуль беспроводной зарядки и вырезы под 3 раздельных объектива камер.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/samsung-galaxy-s23-teardown.jpg" },
-        { t: "Материнская плата и батарея 3900 mAh", desc: "Двухъярусная системная плата, шлейфы дисплея и аккумулятор со специальным синим язычком для легкого извлечения без химии.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/samsung-galaxy-s23-internals.jpg" },
-        { t: "Внешний вид смартфона", desc: "Компактный флагман 6.1\" Dynamic AMOLED 2X со строгими плоскими боковыми гранями.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/samsung-galaxy-s23-assembled.jpg" }
-      ],
-      specs: [
-        { t: "Система охлаждения", d: "Медная паровая камера (Vapor Chamber) увеличена в 2.7 раза по сравнению с S22, что устранило троттлинг в играх." },
-        { t: "Модули камер", d: "Основной сенсор 50 Мп на подвесе OIS с металлическим экранированием, 10 Мп 3x оптический телеобъектив и 12 Мп ширик." }
-      ]
-    },
-    s20plus: {
-      title: "Samsung Galaxy S20+ — Анатомия и Внутрянка",
-      arch: "Классическая флагманская компоновка: изогнутое заднее стекло Gorilla Glass 6, средняя фиксирующая пластина с антенной NFC, материнская плата сверху и субплата Type-C снизу. Аккумулятор 4500 мА·ч вклеен в алюминиевое шасси.",
-      gallery: [
-        { t: "Снятая задняя панель", desc: "Вскрытие задней крышки открывает доступ к винтам средней рамки и черному шлейфу беспроводной зарядки.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/samsung-galaxy-s20-plus-teardown.jpg" },
-        { t: "Шасси, медная трубка и батарея", desc: "Медная тепловая трубка под платой отводит тепло от Exynos 990 / Snapdragon 865 на экранное шасси.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/samsung-galaxy-s20-plus-inside.jpg" },
-        { t: "Внешний вид Galaxy S20+", desc: "Изогнутый 6.7\" Dynamic AMOLED 120Hz экран и блок квадрокамеры с датчиком ToF 3D глубины.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/samsung-galaxy-s20-plus-phone.jpg" }
-      ],
-      specs: [
-        { t: "Блок вибромотора", d: "Линейный вибромотор Z-axis расположен рядом с субплатой разъема Type-C." },
-        { t: "Дисплейный шлейф", d: "Широкий шлейф матрицы 120 Гц проходит под батарейным отсеком." }
-      ]
-    },
-    note8: {
-      title: "Samsung Galaxy Note 8 — Анатомия и Внутрянка",
-      arch: "Уникальная архитектура с герметичным тоннелем для стилуса S-Pen по правому борту. Двойная основная камера впервые в мире получила двойную оптическую стабилизацию (на обоих объективах). Батарея 3300 мА·ч изолирована с повышенными зазорами безопасности.",
-      gallery: [
-        { t: "Вскрытие спинки Note 8", desc: "Отсоединен шлейф сканера отпечатка пальца, видна катушка индукции и канал стилуса S-Pen.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/galaxy-note8-teardown.jpg" },
-        { t: "Материнская плата и S-Pen шахта", desc: "Массивная сдвоенная камера OIS, тепловая трубка и изолированный канал пера Wacom.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/galaxy-note8-motherboard.jpg" },
-        { t: "Galaxy Note 8 в сборе", desc: "Дисплей Infinity 6.3\" с загнутыми гранями и электронное перо S-Pen.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/galaxy-note8-phone.jpg" }
-      ],
-      specs: [
-        { t: "Канал S-Pen", d: "Полностью изолированный герметичный отсек: телефон сохраняет водозащиту IP68 даже при вынутом стилусе." },
-        { t: "Камеры Dual OIS", d: "Оба сенсора 12 Мп (широкий и 2x зум) снабжены собственными подвесами электромагнитной стабилизации." }
-      ]
-    },
-    a50: {
-      title: "Samsung Galaxy A50 — Анатомия и Внутрянка",
-      arch: "Разборная среднебюджетная конструкция. Задняя крышка из термопластика Glasstic держится на клеевом контуре и защелках средней рамки. Под экраном установлен оптический сканер отпечатков пальцев, подсвечивающий палец через микроотверстие в AMOLED.",
-      gallery: [
-        { t: "Снятая пластиковая крышка", desc: "Рама на 13 винтах, пластиковое шасси и открытый доступ к субплате с разъемом 3.5 мм для наушников.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/galaxy-a50-teardown.jpg" },
-        { t: "Плата, тройная камера и батарея", desc: "Аккумулятор 4000 мА·ч, материнская плата Exynos 9610 и оптический датчик отпечатка под дисплеем.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/galaxy-a50-internals.jpg" },
-        { t: "Galaxy A50 в сборе", desc: "6.4\" Super AMOLED экран с каплевидным вырезом Infinity-U и переливающийся корпус.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/galaxy-a50-phone.jpg" }
-      ],
-      specs: [
-        { t: "Ремонтопригодность", d: "Раздельные шлейфы и доступная модульная замена разъема Type-C и микрофона на отдельной плате." },
-        { t: "Подэкранный сканер", d: "Миниатюрный оптический CMOS-сенсор под матрицей дисплея." }
-      ]
-    },
-    pocof6: {
-      title: "POCO F6 — Анатомия и Внутрянка",
-      arch: "Игровая компоновка LiquidCool 4.0: стальная испарительная камера площадью 4800 мм² с капиллярной циркуляцией жидкости. Металлические экраны плат закрыты плотными графитовыми пластинами для рассеивания тепла от Snapdragon 8s Gen 3.",
-      gallery: [
-        { t: "Снятая задняя панель", desc: "Видны массивные термоинтерфейсы из черного графита над материнской платой и батареей 5000 мА·ч.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/poco-f6-teardown.jpg" },
-        { t: "Материнская плата и датчик Sony", desc: "Камера Sony IMX882 на подвесе OIS, чип 8s Gen 3 и двухканальный контроллер зарядки 90W.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/poco-f6-internals.jpg" },
-        { t: "POCO F6 в сборе", desc: "Тонкий корпус с плоским 1.5K AMOLED экраном 120Hz и минимальными симметричными рамками.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/poco-f6-phone.jpg" }
-      ],
-      specs: [
-        { t: "Охлаждение IceLoop", d: "Капиллярная испарительная камера охлаждает процессор даже при длительных игровых сессиях в 60-120 FPS." },
-        { t: "Турбо-зарядка 90W", d: "Двухъячеечная компоновка аккумулятора позволяет зарядить устройство до 100% за 35 минут." }
-      ]
-    },
-    realme8: {
-      title: "Realme 8 — Анатомия и Внутрянка",
-      arch: "Ультратонкий профиль 7.99 мм. Для охлаждения чипсета MediaTek Helio G95 установлена медная тепловая трубка Copper Liquid Cooling, передающая тепло на экранный каркас. Тонкая батарея 5000 мА·ч занимает 70% площади корпуса.",
-      gallery: [
-        { t: "Разборка пластиковой рамки", desc: "Доступ к материнской плате, квадрокамере 64 Мп и межплатным плоским FPC-шлейфам.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/realme-8-teardown.jpg" },
-        { t: "Медная трубка и шасси", desc: "Медная тепловая трубка под процессором и подэкранный оптический сканер отпечатков.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/realme-8-inside.jpg" },
-        { t: "Realme 8 в сборе", desc: "Super AMOLED экран 6.4\" и глянцевая спинка с фирменным слоганом Dare To Leap.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/realme-8-phone.jpg" }
-      ],
-      specs: [
-        { t: "Зарядка Dart Charge 30W", d: "Низковольтная скоростная зарядка высоким током исключает нагрев самого аккумулятора в руках." },
-        { t: "Дисплейный модуль", d: "Super AMOLED панель от Samsung с частотой дискретизации касаний 180 Гц." }
-      ]
-    },
-    ip8: {
-      title: "Apple iPhone 8 — Анатомия и Внутрянка",
-      arch: "Вскрытие производится снятием дисплейного модуля вбок (на 90 градусов). Внутри установлена катушка индукционной зарядки Qi под стеклом, вибромотор Taptic Engine для обратной связи сенсорной кнопки Home и защитные пластины на винтах Tri-Point Y000.",
-      gallery: [
-        { t: "Вскрытие экрана вбок", desc: "Дисплей откинут вправо: видны шлейфы экрана, аккумулятора и L-образный защитный экран кабелей.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-8-teardown.jpg" },
-        { t: "Taptic Engine и катушка Qi", desc: "Массивный прямоугольный вибромотор Taptic Engine внизу и круглая катушка беспроводной зарядки по центру.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-8-internals.jpg" },
-        { t: "iPhone 8 в сборе", desc: "Стеклянная задняя крышка, True Tone дисплей Retina 4.7\" и кнопка Home с Touch ID.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-8-phone.jpg" }
-      ],
-      specs: [
-        { t: "Кнопка Home Touch ID", d: "Физически монолитная сенсорная кнопка; иллюзия клика создается импульсом Taptic Engine." },
-        { t: "Проклейка IP67", d: "Эластичный резиновый клей по контуру рамы защищает от проникновения пыли и воды." }
-      ]
-    },
-    ip6s: {
-      title: "Apple iPhone 6s — Анатомия и Внутрянка",
-      arch: "Усиленный каркас из авиационного алюминия серии 7000. В дисплейный модуль встроена емкостная подложка 3D Touch, измеряющая силу нажатия на экран. В нижней части установлен первый прямоугольный вибропривод Taptic Engine.",
-      gallery: [
-        { t: "Поднятие экрана на петлях", desc: "Экран открывается вверх: аккумулятор 1715 мА·ч с натяжными лентами и материнская плата справа.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-6s-teardown.jpg" },
-        { t: "Сенсорный слой 3D Touch и плата A9", desc: "Специфический утолщенный дисплейный модуль с датчиками давления и плата с чипом A9.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-6s-inside.jpg" },
-        { t: "iPhone 6s в сборе", desc: "Цельнометаллический корпус unibody, разъем 3.5 мм для наушников и сканер Touch ID 2 поколения.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-6s-phone.jpg" }
-      ],
-      specs: [
-        { t: "Сплав алюминия 7000", d: "Высокопрочный сплав исключил деформацию корпуса при ношении в узких карманах." },
-        { t: "Модуль 3D Touch", d: "Сенсорная сетка под подсветкой замеряет микродеформации стекла при сильном нажатии." }
-      ]
-    },
-    ip6: {
-      title: "Apple iPhone 6 — Анатомия и Внутрянка",
-      arch: "Классическая ультратонкая компоновка Apple толщиной 6.9 мм. Круглый роторный вибромоторчик, материнская плата на чипе A8 с 1 ГБ оперативной памяти и батарея на 1810 мА·ч. Модуль дисплея крепится на клипсах сверху.",
-      gallery: [
-        { t: "Снятый экранный блок", desc: "Простая и понятная компоновка: материнская плата справа, аккумулятор слева, шлейфы коннекторов сверху.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-6-teardown.jpg" },
-        { t: "Плата процессора Apple A8", desc: "Чипсет A8, память NAND, модем Qualcomm и физическая механическая кнопка Home со шлейфом.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-6-inside.jpg" },
-        { t: "iPhone 6 в сборе", desc: "Легендарный округлый дизайн 2.5D, выступающее кольцо камеры 8 Мп и пластиковые полоски антенн.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/iphone-6-phone.jpg" }
-      ],
-      specs: [
-        { t: "Механика кнопки Home", d: "Механический кликер под мембраной со встроенным сапфировым сканером Touch ID." },
-        { t: "Аудиоразъем", d: "Полноценный 3.5 мм Mini-Jack разъем на едином шлейфе зарядки Lightning." }
-      ]
-    },
-    nokia6111: {
-      title: "Nokia 6111 — Анатомия и Внутрянка (Винтажный Слайдер)",
-      arch: "Двухсоставная архитектура на пружинных стальных рельсах. Верхняя сдвижная часть несет динамик и TFT экран 128x160, а нижняя — плату с процессором, модуль 1 Мп камеры со вспышкой, микрофон и слот съемного аккумулятора BL-4B.",
-      gallery: [
-        { t: "Механизм слайдера и гибкий шлейф", desc: "Рельсовый направляющий механизм и оранжевый полиимидный гибкий шлейф между двумя половинками.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/nokia-6111-slider.jpg" },
-        { t: "Системная плата и камера 1 Мп", desc: "Плата с чипами стандарта GSM 900/1800/1900, вибромотором и контактами под батарею BL-4B.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/nokia-6111-internals.jpg" },
-        { t: "Nokia 6111 в сборе", desc: "Культовый компактный пузатый слайдер 2005 года с зеркальной отделкой и удобными кнопками.", url: "https://d14285vtr9kkmq.cloudfront.net/teardown/nokia-6111-phone.jpg" }
-      ],
-      specs: [
-        { t: "Межсекционный шлейф", d: "Эластичный ленточный кабель, рассчитанный на сотни тысяч циклов раскрытия слайдера." },
-        { t: "Съемный аккумулятор", d: "Литий-ионный элемент Nokia BL-4B емкостью 700 мА·ч, заменяемый за 3 секунды." }
-      ]
-    }
-  };
-
-  // Fallback заглушка на надежные фото разбора, если CDN временно не отдает конкретный кадр
-  function fixTeardownImages() {
-    const defaultTeardownImg = "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=600&auto=format&fit=crop&q=80";
-    document.querySelectorAll('.teardown-photo-box img').forEach(img => {
-      img.onerror = function() {
-        this.src = defaultTeardownImg;
-      };
-    });
-  }
-
-  function showTeardown() {
-    const key = document.getElementById('teardownSelect').value;
-    const data = teardownData[key];
-    const resBox = document.getElementById('teardownResult');
-
-    document.getElementById('tdTitle').textContent = data.title;
-    document.getElementById('tdArchitecture').innerHTML = `<strong>Конструкция и компоновка шасси:</strong> ${data.arch}`;
-
-    const galBox = document.getElementById('tdGallery');
-    galBox.innerHTML = '';
-    data.gallery.forEach(img => {
-      galBox.innerHTML += `
-        <div class="teardown-photo-box">
-          <img src="${img.url}" alt="${img.t}" loading="lazy">
-          <div class="photo-caption">${img.t}</div>
-          <div class="photo-sub">${img.desc}</div>
+      <!-- Center side: Interactive Inputs Row -->
+      <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 items-center">
+        <!-- Budget Amount Input -->
+        <div class="relative">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Сумма на системник</label>
+          <div class="relative flex items-center">
+            <input 
+              type="number" 
+              id="heroBudgetInput" 
+              value="85000" 
+              min="5000" 
+              step="5000"
+              class="w-full bg-pcDark-800 text-white font-mono font-bold text-base px-3.5 py-2.5 rounded-xl border border-pcDark-border focus:border-pcBlue-500 focus:outline-none"
+            >
+            <span class="absolute right-3 text-slate-400 font-bold text-sm">₽</span>
+          </div>
         </div>
+
+        <!-- Target Workload Selector -->
+        <div>
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Основная задача</label>
+          <select id="heroWorkloadSelect" class="w-full bg-pcDark-800 text-white font-medium text-sm px-3.5 py-2.5 rounded-xl border border-pcDark-border focus:border-pcBlue-500 focus:outline-none cursor-pointer">
+            <option value="gaming" selected>🎮 Игры (Максимальный FPS)</option>
+            <option value="stream">🎥 Стриминг и видеомонтаж</option>
+            <option value="balance">⚖️ Универсальный баланс</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Right side: Big action button -->
+      <div class="shrink-0 flex items-end">
+        <button onclick="triggerQuickBuild()" class="neon-btn-primary w-full lg:w-auto px-6 py-3 rounded-xl text-sm font-extrabold text-white tracking-wide uppercase flex items-center justify-center gap-2">
+          <span>Собрать сетап</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+
+    </section>
+
+    <nav class="flex items-center gap-2 overflow-x-auto no-scrollbar border-b border-pcDark-border pb-2">
+      <button id="pill-budgetTab" onclick="switchTab('budgetTab')" class="pill-active shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border border-transparent transition-all flex items-center gap-2">
+        <span>🔥</span>
+        <span>Конфигуратор сборок</span>
+      </button>
+
+      <button id="pill-balanceTab" onclick="switchTab('balanceTab')" class="shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-400 hover:text-white bg-pcDark-850 hover:bg-pcDark-800 border border-pcDark-border transition-all flex items-center gap-2">
+        <span>⚖️</span>
+        <span>Диагностика баланса (Bottleneck)</span>
+      </button>
+
+      <button id="pill-fpsTab" onclick="switchTab('fpsTab')" class="shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-400 hover:text-white bg-pcDark-850 hover:bg-pcDark-800 border border-pcDark-border transition-all flex items-center gap-2">
+        <span>🎮</span>
+        <span>Калькулятор FPS</span>
+      </button>
+
+      <button id="pill-specsTab" onclick="switchTab('specsTab')" class="shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-slate-400 hover:text-white bg-pcDark-850 hover:bg-pcDark-800 border border-pcDark-border transition-all flex items-center gap-2">
+        <span>💡</span>
+        <span>Гид апгрейда и окупаемости</span>
+      </button>
+    </nav>
+
+    <div id="budgetTab" class="tab-content flex flex-col gap-6">
+      
+      <!-- Configurator Main Board -->
+      <div class="bg-pcDark-850 border border-pcDark-border rounded-2xl p-5 sm:p-7 shadow-xl">
+        <div class="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-pcDark-border">
+          <div>
+            <h3 class="text-xl font-extrabold text-white flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-pcBlue-400"></span>
+              Расчет оптимального системного блока
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">Алгоритм подбирает сбалансированную связку 8 ключевых узлов без переплат</p>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400 font-medium">Пресеты:</span>
+            <button onclick="quickSetBudget(35000)" class="px-2.5 py-1 rounded-lg bg-pcDark-800 hover:bg-pcDark-750 text-xs font-mono font-bold text-slate-300 border border-pcDark-border">35k</button>
+            <button onclick="quickSetBudget(65000)" class="px-2.5 py-1 rounded-lg bg-pcDark-800 hover:bg-pcDark-750 text-xs font-mono font-bold text-slate-300 border border-pcDark-border">65k</button>
+            <button onclick="quickSetBudget(85000)" class="px-2.5 py-1 rounded-lg bg-pcDark-800 hover:bg-pcDark-750 text-xs font-mono font-bold text-pcBlue-400 border border-pcBlue-500/40">85k</button>
+            <button onclick="quickSetBudget(145000)" class="px-2.5 py-1 rounded-lg bg-pcDark-800 hover:bg-pcDark-750 text-xs font-mono font-bold text-slate-300 border border-pcDark-border">145k</button>
+            <button onclick="quickSetBudget(230000)" class="px-2.5 py-1 rounded-lg bg-pcDark-800 hover:bg-pcDark-750 text-xs font-mono font-bold text-purple-400 border border-purple-500/40">230k</button>
+          </div>
+        </div>
+
+        <!-- Budget Result Cards Container -->
+        <div id="budgetResultArea" class="mt-6 flex flex-col gap-6">
+          
+          <!-- Top KPI Ribbon -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-pcDark-800/80 border border-pcDark-border rounded-xl p-3 flex flex-col">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Выделенный бюджет</span>
+              <span id="cardBudgetValue" class="text-lg font-black text-white font-mono mt-1">85 000 ₽</span>
+              <span id="cardPriceRange" class="text-[11px] text-pcBlue-400 font-mono mt-0.5">81 500 – 88 500 ₽</span>
+            </div>
+
+            <div class="bg-pcDark-800/80 border border-pcDark-border rounded-xl p-3 flex flex-col">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Пиковое потребление</span>
+              <span id="cardWattage" class="text-lg font-black text-amber-400 font-mono mt-1">~290 Вт</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">Рекомендован БП от 500W</span>
+            </div>
+
+            <div class="bg-pcDark-800/80 border border-pcDark-border rounded-xl p-3 flex flex-col">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Шина & Память</span>
+              <span id="cardPlatform" class="text-lg font-black text-pcCyan-400 font-mono mt-1">PCIe 4.0 / 32GB</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">Двухканальный Dual Channel</span>
+            </div>
+
+            <div class="bg-pcDark-800/80 border border-pcDark-border rounded-xl p-3 flex flex-col">
+              <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Целевое разрешение</span>
+              <span id="cardTargetResolution" class="text-lg font-black text-emerald-400 font-mono mt-1">1080p Ultra</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">Готов к 1440p (DLSS 3)</span>
+            </div>
+          </div>
+
+          <!-- Specs Table (High Density Marketplace Style) -->
+          <div class="overflow-x-auto rounded-xl border border-pcDark-border bg-pcDark-900/60">
+            <table class="w-full text-left text-sm">
+              <tbody id="specsTableBody" class="divide-y divide-pcDark-border">
+                <!-- Dynamically generated rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Expert Conclusion Box -->
+          <div id="buildNotesCard" class="bg-pcDark-800/90 border-l-4 border-pcBlue-500 rounded-r-xl p-4 text-sm text-slate-200 leading-relaxed shadow-md">
+            <!-- Dynamically populated -->
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="balanceTab" class="tab-content hidden flex flex-col gap-6">
+      <div class="bg-pcDark-850 border border-pcDark-border rounded-2xl p-5 sm:p-7 shadow-xl">
+        <div class="pb-4 border-b border-pcDark-border">
+          <h3 class="text-xl font-extrabold text-white flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+            Диагностика аппаратного баланса и узких мест
+          </h3>
+          <p class="text-xs text-slate-400 mt-1">Проверьте, раскрывает ли процессор видеокарту и хватает ли запаса блока питания</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          
+          <div>
+            <label class="text-xs font-bold text-slate-300 block mb-1.5">Центральный процессор (CPU)</label>
+            <select id="diagCpu" onchange="runDiagnosticCheck()" class="w-full bg-pcDark-800 text-slate-100 text-xs font-medium p-3 rounded-xl border border-pcDark-border focus:border-pcBlue-500 focus:outline-none">
+              <option value="legacy">LGA 775 / FX-6300 / Phenom II</option>
+              <option value="intel_lga1155">Core i5-2500 / i5-3570 / i7-3770</option>
+              <option value="xeon_v3">Xeon E5-2670 v3 / E5-2680 v4 (LGA 2011-3)</option>
+              <option value="ryzen_zen1">Ryzen 5 1600 / 2600 (AM4)</option>
+              <option value="intel_mid_old">Core i3-10100F / i3-12100F / i5-10400F</option>
+              <option value="ryzen_am4_main" selected>Ryzen 5 3600 / 5500 / 5600 (AM4)</option>
+              <option value="intel_lga1700">Core i5-12400F / i5-13400F / 14400F</option>
+              <option value="ryzen_am4_top">Ryzen 7 5700X3D / 5800X3D (AM4)</option>
+              <option value="am5_base">Ryzen 5 7500F / 7600 (AM5)</option>
+              <option value="intel_high">Core i5-13600K / 14600K / Ultra 5 245K</option>
+              <option value="am5_intel_top">Ryzen 7 7800X3D / Core i7-14700K</option>
+              <option value="am5_zen5_x3d">Ryzen 7 9800X3D / Core Ultra 9 285K</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-300 block mb-1.5">Видеокарта (GPU)</label>
+            <select id="diagGpu" onchange="runDiagnosticCheck()" class="w-full bg-pcDark-800 text-slate-100 text-xs font-medium p-3 rounded-xl border border-pcDark-border focus:border-pcBlue-500 focus:outline-none">
+              <option value="gpu_budget_low">GTX 750 Ti / GT 1030 2GB</option>
+              <option value="gpu_polaris">RX 580 8GB / GTX 1060 6GB</option>
+              <option value="gpu_entry">GTX 1660 Super / RTX 2060 6GB</option>
+              <option value="gpu_mid" selected>Radeon RX 6600 8GB / RTX 4060 8GB</option>
+              <option value="gpu_rtx5060">GeForce RTX 5060 8GB GDDR7</option>
+              <option value="gpu_mid_high">RTX 4060 Ti 8GB / RX 7700 XT 12GB</option>
+              <option value="gpu_rtx5060ti">GeForce RTX 5060 Ti 16GB GDDR7</option>
+              <option value="gpu_high">RTX 4070 / RTX 4070 Super 12GB</option>
+              <option value="gpu_rtx5070">GeForce RTX 5070 12GB (Blackwell)</option>
+              <option value="gpu_rtx5070ti">GeForce RTX 5070 Ti 16GB (Blackwell)</option>
+              <option value="gpu_rtx5080">GeForce RTX 5080 16GB GDDR7</option>
+              <option value="gpu_rtx5090">GeForce RTX 5090 32GB (Флагман)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-300 block mb-1.5">Оперативная память (RAM)</label>
+            <select id="diagRam" onchange="runDiagnosticCheck()" class="w-full bg-pcDark-800 text-slate-100 text-xs font-medium p-3 rounded-xl border border-pcDark-border focus:border-pcBlue-500 focus:outline-none">
+              <option value="4">4 ГБ (DDR2 / DDR3)</option>
+              <option value="8_single">8 ГБ (Single Channel - 1 планка)</option>
+              <option value="8_dual">8 ГБ (Dual Channel - 2x4GB)</option>
+              <option value="16_dual" selected>16 ГБ (Dual Channel - 2x8GB)</option>
+              <option value="32_dual">32 ГБ (Dual Channel - 2x16GB)</option>
+              <option value="64_dual">64 ГБ и более (DDR5 Dual)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-slate-300 block mb-1.5">Мощность блока питания (Вт)</label>
+            <div class="relative flex items-center">
+              <input 
+                type="number" 
+                id="diagPsu" 
+                value="650" 
+                step="50" 
+                oninput="runDiagnosticCheck()"
+                class="w-full bg-pcDark-800 text-slate-100 text-xs font-mono font-bold p-3 rounded-xl border border-pcDark-border focus:border-pcBlue-500 focus:outline-none"
+              >
+              <span class="absolute right-3 text-slate-400 text-xs font-bold">Watt</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Diagnostic Verdict Card -->
+        <div class="mt-6 bg-pcDark-800 rounded-2xl p-5 border border-pcDark-border flex flex-col gap-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2.5">
+              <span id="diagStatusBadge" class="px-3 py-1 rounded-lg text-xs font-extrabold uppercase font-mono">
+                Идеальный баланс
+              </span>
+              <h4 id="diagStatusHeadline" class="text-base font-extrabold text-white">
+                Компоненты подобраны в одном классе
+              </h4>
+            </div>
+            <div id="diagWattageSummary" class="text-xs font-mono text-slate-400">
+              Потребление системы: ~270 Вт
+            </div>
+          </div>
+
+          <!-- Bottleneck Bar Meter -->
+          <div>
+            <div class="flex justify-between text-xs text-slate-400 mb-1 font-mono">
+              <span>CPU Баланс</span>
+              <span id="diagMeterValue">98% КПД связки</span>
+              <span>GPU Баланс</span>
+            </div>
+            <div class="w-full h-3 bg-pcDark-900 rounded-full overflow-hidden p-0.5 border border-pcDark-border">
+              <div id="diagMeterBar" class="h-full bg-gradient-to-r from-emerald-500 to-pcBlue-400 rounded-full transition-all duration-300" style="width: 95%;"></div>
+            </div>
+          </div>
+
+          <div id="diagDetailsList" class="flex flex-col gap-2.5 mt-2">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="fpsTab" class="tab-content hidden flex flex-col gap-6">
+      <div class="bg-pcDark-850 border border-pcDark-border rounded-2xl p-5 sm:p-7 shadow-xl">
+        <div class="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-pcDark-border">
+          <div>
+            <h3 class="text-xl font-extrabold text-white flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-pcCyan-400"></span>
+              Калькулятор частоты кадров (FPS) в играх
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">Реальные средние показатели (Average FPS) в популярных соревновательных и AAA играх</p>
+          </div>
+
+          <!-- Resolution Pills -->
+          <div class="flex items-center gap-1.5 bg-pcDark-800 p-1 rounded-xl border border-pcDark-border">
+            <button onclick="setFpsResolution('1080p')" id="res-1080p" class="px-3 py-1 rounded-lg text-xs font-bold font-mono transition-all bg-pcBlue-500 text-white shadow-sm">1080p FHD</button>
+            <button onclick="setFpsResolution('1440p')" id="res-1440p" class="px-3 py-1 rounded-lg text-xs font-bold font-mono text-slate-400 hover:text-white transition-all">1440p 2K</button>
+            <button onclick="setFpsResolution('4k')" id="res-4k" class="px-3 py-1 rounded-lg text-xs font-bold font-mono text-slate-400 hover:text-white transition-all">4K UHD</button>
+          </div>
+        </div>
+
+        <!-- FPS Results Grid -->
+        <div id="fpsGridContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-6">
+          <!-- Dynamically populated 6 games -->
+        </div>
+
+        <div class="mt-5 p-3.5 rounded-xl bg-pcDark-800/60 border border-pcDark-border text-xs text-slate-400 flex items-center gap-3">
+          <svg class="w-5 h-5 text-pcBlue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Замеры рассчитаны без включения трассировки лучей. На картах NVIDIA RTX включение DLSS 3 / DLSS 4 Frame Generation добавляет от 45% до 80% FPS.</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="specsTab" class="tab-content hidden flex flex-col gap-6">
+      <div class="bg-pcDark-850 border border-pcDark-border rounded-2xl p-5 sm:p-7 shadow-xl">
+        <div class="pb-4 border-b border-pcDark-border">
+          <h3 class="text-xl font-extrabold text-white flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-purple-400"></span>
+            Гид по апгрейду: окупаемость каждого рубля
+          </h3>
+          <p class="text-xs text-slate-400 mt-1">Определите, что даст максимальный прирост кадровой частоты за минимальные деньги</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div class="bg-pcDark-800 border border-pcDark-border rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-500/20 text-blue-400 border border-blue-500/30">Приоритет №1</span>
+              <h4 class="text-base font-extrabold text-white mt-2">Переход на 32GB Dual Channel</h4>
+              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                Если у вас 8 ГБ в одноканале или 16 ГБ на пределе в Cyberpunk и GTA V, установка комплекта 2x16GB 3600MHz (DDR4) или 6000MHz (DDR5) за ~8 500 ₽ мгновенно устранит фризы 1% Low FPS.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-pcDark-border text-xs font-mono text-emerald-400 font-bold">
+              КПД: ~450 ₽ за +1% стабильности
+            </div>
+          </div>
+
+          <div class="bg-pcDark-800 border border-pcDark-border rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-pcCyan-500/20 text-pcCyan-400 border border-pcCyan-500/30">Приоритет №2</span>
+              <h4 class="text-base font-extrabold text-white mt-2">Замена видеокарты на RTX 5060 / RX 6600</h4>
+              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                Переход со старых GTX 1060 / RX 580 на современную видеокарту дает прирост в 2.5–3.5 раза. При бюджете 26 000 – 42 000 ₽ это самый ощутимый качественный скачок в играх.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-pcDark-border text-xs font-mono text-emerald-400 font-bold">
+              КПД: ~320 ₽ за +1 FPS в 1080p
+            </div>
+          </div>
+
+          <div class="bg-pcDark-800 border border-pcDark-border rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-500/20 text-purple-400 border border-purple-500/30">Приоритет №3</span>
+              <h4 class="text-base font-extrabold text-white mt-2">Процессор с 3D V-Cache (5700X3D / 7800X3D)</h4>
+              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                Большой кэш 96 МБ нивелирует задержки оперативной памяти в CS2, Dota 2 и тяжелых сетевых сценах, поднимая минимальный фреймрейт даже на мощных картах на 30–50%.
+              </p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-pcDark-border text-xs font-mono text-emerald-400 font-bold">
+              КПД: ~580 ₽ за +1 FPS в соревновательных играх
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-pcDark-900 border-t border-pcDark-border py-6 px-4 lg:px-8 mt-12 text-xs text-slate-500">
+    <div class="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-extrabold text-slate-300">PcConf Marketplace Engine</span>
+        <span>•</span>
+        <span>Независимый технологический конфигуратор ПК</span>
+      </div>
+      <div class="font-mono text-slate-400">
+        База компонентов 2026.4 • Без рекламы ритейла
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* Complete Database of PC Configurations (from Ultra Budget to Flagship) */
+    const PC_BUILDS_DATABASE = [
+      {
+        baseCost: 20000,
+        wattage: "~260 Вт",
+        bus: "PCIe 3.0 x16",
+        targetRes: "1080p Low/Med",
+        cpu: "Intel Xeon E5-2670 v3 (LGA 2011-3) ~ 1 200 ₽",
+        cpuSub: "12 ядер / 24 потока • Turbo 3.1 GHz • 30MB L3 кэш",
+        cooler: "Башенный кулер 4 трубки (Snowman) ~ 1 400 ₽",
+        coolerSub: "120мм PWM вентилятор • Рассеивание до 150W",
+        mb: "X99 LGA 2011-3 (Machinist X99-RS9) ~ 4 100 ₽",
+        mbSub: "Поддержка 4-канала DDR4 • Слот M.2 NVMe PCIe 3.0",
+        gpu: "AMD Radeon RX 580 8GB (2048SP) ~ 6 200 ₽",
+        gpuSub: "8GB GDDR5 • 256-bit • 8-pin питание • TDP 150W",
+        ram: "16 GB (2x8GB) DDR4 ECC REG ~ 2 000 ₽",
+        ramSub: "Серверная память с коррекцией ошибок • Dual Channel",
+        storage: "512 GB M.2 NVMe SSD ~ 2 800 ₽",
+        storageSub: "Скорость чтения/записи ~2100/1600 МБ/с",
+        psu: "1stPlayer Black.Sir 500W / Deepcool PF450 ~ 3 000 ₽",
+        psuSub: "80 PLUS White • Линия 12V: 456 Вт",
+        case: "Бюджетный корпус с сетчатой мордой ~ 1 800 ₽",
+        caseSub: "Сетка спереди • Нижний отсек блока питания",
+        notes: "Доступная входная платформа для 1080p. 16 ГБ ОЗУ и 8 ГБ видеопамяти позволяют проходить GTA V, Танки, Dota 2 и CS2 на комфортных FPS."
+      },
+      {
+        baseCost: 35000,
+        wattage: "~240 Вт",
+        bus: "PCIe 3.0 x16",
+        targetRes: "1080p Medium",
+        cpu: "AMD Ryzen 5 2600 / 3600 (AM4, б/у) ~ 4 800 ₽",
+        cpuSub: "6 ядер / 12 потоков • 32MB L3 (для 3600) • 7 нм Zen 2",
+        cooler: "ID-COOLING SE-214-XT Basic ~ 1 500 ₽",
+        coolerSub: "4 теплотрубки • 180 Вт TDP рассеивания",
+        mb: "A520M / B450M (MSI / Gigabyte) ~ 5 300 ₽",
+        mbSub: "Socket AM4 • Слот M.2 PCIe 3.0 x4 • 5 фаз питания",
+        gpu: "GeForce GTX 1660 Super 6GB (б/у) ~ 11 000 ₽",
+        gpuSub: "6GB GDDR6 14 Gbps • 192-bit • TDP 125W",
+        ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 000 ₽",
+        ramSub: "XMP профиль 3200 • Двухканальный режим",
+        storage: "512 GB M.2 NVMe SSD ~ 3 200 ₽",
+        storageSub: "PCIe 3.0 x4 • Чтение ~2400 МБ/с",
+        psu: "Deepcool PF500 (500W) ~ 3 500 ₽",
+        psuSub: "80 PLUS Standard • 12V шина: 480 Вт",
+        case: "AeroCool / Prime Box с вентиляцией ~ 2 200 ₽",
+        caseSub: "Продуваемый фасад • Стекло на боковой стенке",
+        notes: "Платформа AM4 с низким энергопотреблением и прямым путем модернизации до процессора Ryzen 5 5600 без замены материнской платы."
+      },
+      {
+        baseCost: 65000,
+        wattage: "~270 Вт",
+        bus: "PCIe 4.0 x8",
+        targetRes: "1080p High",
+        cpu: "AMD Ryzen 5 5600 (OEM, кэш 32 МБ) ~ 10 500 ₽",
+        cpuSub: "6 ядер / 12 потоков • 3.5-4.4 GHz • 32MB L3 • Zen 3",
+        cooler: "Deepcool AG400 ~ 2 100 ₽",
+        coolerSub: "Гидродинамический подшипник • 220 Вт TDP",
+        mb: "B450M / B550M (MSI PRO-VDH MAX) ~ 6 800 ₽",
+        mbSub: "Радиатор на фазах VRM • 4 слота памяти DDR4",
+        gpu: "AMD Radeon RX 6600 8GB ~ 26 000 ₽",
+        gpuSub: "RDNA 2 • 8GB GDDR6 • 32MB Infinity Cache • TDP 132W",
+        ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
+        ramSub: "Kingston FURY Beast • Низкие тайминги",
+        storage: "1 TB M.2 NVMe PCIe 3.0 ~ 6 200 ₽",
+        storageSub: "Чтение: 3500 МБ/с • Запись: 2800 МБ/с",
+        psu: "Deepcool PK600D (600W Bronze) ~ 5 200 ₽",
+        psuSub: "80 PLUS Bronze • Линия 12V: 594 Вт",
+        case: "Montech AIR 100 Lite ~ 4 200 ₽",
+        caseSub: "Петлевая стеклянная дверь • Mesh-фасад",
+        notes: "Золотой стандарт Full HD гейминга. RX 6600 тянет Cyberpunk 2077 и RDR 2 на высоких настройках графики при очень тихой работе."
+      },
+      {
+        baseCost: 85000,
+        wattage: "~290 Вт",
+        bus: "PCIe 4.0 x8",
+        targetRes: "1080p Ultra",
+        cpu: "AMD Ryzen 5 5600 (OEM) ~ 10 500 ₽",
+        cpuSub: "6 ядер / 12 потоков • 32MB L3 • Полная шина PCIe 4.0",
+        cooler: "Deepcool AG400 ARGB ~ 2 400 ₽",
+        coolerSub: "Матричные ребра • Рассеивание 220 Вт",
+        mb: "B550M (GIGABYTE B550M DS3H) ~ 9 800 ₽",
+        mbSub: "Шина PCIe 4.0 x16 • 2x M.2 разъема • 5+3 фазы",
+        gpu: "NVIDIA GeForce RTX 4060 8GB (Palit Dual) ~ 34 500 ₽",
+        gpuSub: "Ada Lovelace • 8GB GDDR6 • DLSS 3 + Frame Gen • 115W",
+        ram: "32 GB (2x16GB) DDR4 3600 MHz CL18 ~ 8 800 ₽",
+        ramSub: "Двухканальный режим • Большой запас под игры 2026",
+        storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 400 ₽",
+        storageSub: "Скорость до 7000 МБ/с • Ресурс 800 TBW",
+        psu: "Deepcool PK650D (650W Bronze) ~ 5 800 ₽",
+        psuSub: "80 PLUS Bronze • 12V шина: 648 Вт",
+        case: "Montech AIR 100 ARGB ~ 5 400 ₽",
+        caseSub: "4x 120мм ARGB вертушки • Отличный продув",
+        notes: "Сбалансированная связка: шина PCIe 4.0, 32 ГБ памяти, поддержка трассировки лучей и генерации кадров DLSS 3."
+      },
+      {
+        baseCost: 115000,
+        wattage: "~340 Вт",
+        bus: "PCIe 5.0 / 4.0",
+        targetRes: "1080p / 1440p",
+        cpu: "AMD Ryzen 5 7500F (Socket AM5, Zen 4) ~ 15 000 ₽",
+        cpuSub: "6 ядер / 12 потоков • До 5.0 GHz • Socket AM5 • 5 нм",
+        cooler: "Thermalright Assassin King 120 SE ~ 2 600 ₽",
+        coolerSub: "5 тепловых трубок • 120мм PWM • 225W TDP",
+        mb: "B650M (ASRock B650M-HDV/M.2) ~ 13 000 ₽",
+        mbSub: "Socket AM5 • 8+2+1 фаз DrMOS 50A • Слот PCIe 5.0 M.2",
+        gpu: "NVIDIA GeForce RTX 5060 8GB GDDR7 (Blackwell) ~ 42 000 ₽",
+        gpuSub: "Архитектура Blackwell • 8GB GDDR7 28 Gbps • DLSS 4",
+        ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
+        ramSub: "Профиль AMD EXPO • Низкие задержки CL30",
+        storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 500 ₽",
+        storageSub: "Чтение: 7100 МБ/с • Запись: 6000 МБ/с",
+        psu: "Montech Century 650W Gold ~ 6 800 ₽",
+        psuSub: "80 PLUS Gold • Полностью модульный • Конденсаторы 105°C",
+        case: "Montech Air 100 ARGB ~ 5 500 ₽",
+        caseSub: "Закаленное стекло • Пылевые фильтры",
+        notes: "Платформа Socket AM5 с быстрой памятью DDR5 и новейшей видеокартой RTX 5060 на быстрой GDDR7 памяти с поддержкой DLSS 4."
+      },
+      {
+        baseCost: 145000,
+        wattage: "~390 Вт",
+        bus: "PCIe 4.0 / 5.0",
+        targetRes: "1440p (2K) Ultra",
+        cpu: "AMD Ryzen 5 7600X / Core i5-13600KF ~ 21 000 ₽",
+        cpuSub: "До 5.3 GHz • 38MB общего кэша • Высокий однопоток",
+        cooler: "Thermalright Peerless Assassin 120 SE ~ 4 500 ₽",
+        coolerSub: "Двухсекционный радиатор • 6 трубок • 265W TDP",
+        mb: "B650 (MSI B650 Gaming Plus WiFi) ~ 16 000 ₽",
+        mbSub: "12+2+1 фаз VRM • WiFi 6E + 2.5G LAN",
+        gpu: "NVIDIA GeForce RTX 5060 Ti 16GB (Blackwell) ~ 58 000 ₽",
+        gpuSub: "16GB GDDR7 • Поддержка DLSS 4 • TDP 180W",
+        ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
+        ramSub: "DDR5 EXPO • Тайминги CL30-36-36",
+        storage: "1 TB M.2 PCIe 4.0 ~ 8 000 ₽",
+        storageSub: "DRAM-буфер • Скорость до 7400 МБ/с",
+        psu: "750W Montech Century Gold ~ 8 800 ₽",
+        psuSub: "80 PLUS Gold • Разъем 12V-2x6 • Тихий вентилятор",
+        case: "Montech Air 903 Base ~ 6 800 ₽",
+        caseSub: "3x 140мм PWM вентилятора в комплекте",
+        notes: "16 ГБ видеопамяти исключают дефицит памяти текстур в тяжелых играх в разрешении 1440p."
+      },
+      {
+        baseCost: 230000,
+        wattage: "~480 Вт",
+        bus: "PCIe 5.0 x16",
+        targetRes: "4K / 1440p Max",
+        cpu: "AMD Ryzen 7 7800X3D (3D V-Cache) ~ 41 000 ₽",
+        cpuSub: "8 ядер / 16 потоков • 96MB L3 V-Cache • Игровой лидер",
+        cooler: "Thermalright Phantom Spirit 120 SE ~ 5 200 ₽",
+        coolerSub: "7 тепловых трубок • 2 радиатора • 280W TDP",
+        mb: "B650E (ASRock Steel Legend WiFi) ~ 24 000 ₽",
+        mbSub: "PCIe 5.0 x16 под видеокарту • 16+2+1 фаз VRM",
+        gpu: "NVIDIA GeForce RTX 5070 Ti 16GB (Blackwell) ~ 98 000 ₽",
+        gpuSub: "16GB GDDR7 28 Gbps • RT-ядра 5-го поколения • 285W",
+        ram: "32 GB (2x16GB) DDR5 6400 MHz CL32 ~ 15 500 ₽",
+        ramSub: "Чипы Hynix A-die • Алюминиевые радиаторы",
+        storage: "2 TB M.2 PCIe 4.0 ~ 16 000 ₽",
+        storageSub: "Чтение: 7300 МБ/с • Запись: 6900 МБ/с",
+        psu: "850W ATX 3.1 Gold (Montech Titan) ~ 13 500 ₽",
+        psuSub: "Стандарт ATX 3.1 • Нативный кабель 12V-2x6",
+        case: "Montech KING 95 Pro ~ 12 000 ₽",
+        caseSub: "Изогнутое закаленное стекло • 6x ARGB кулеров",
+        notes: "Флагманский 3D-кэш процессор и RTX 5070 Ti для максимального фреймрейта и безупречной плавности 1% Low FPS в 1440p и 4K."
+      },
+      {
+        baseCost: 460000,
+        wattage: "~720 Вт",
+        bus: "PCIe 5.0 x16",
+        targetRes: "4K / 8K Path Tracing",
+        cpu: "AMD Ryzen 7 9800X3D / Core Ultra 9 285K ~ 65 000 ₽",
+        cpuSub: "Zen 5 / Arrow Lake • 5.7 GHz Boost • Топ однопотока",
+        cooler: "СЖО 420мм Arctic Liquid Freezer III ~ 16 500 ₽",
+        coolerSub: "3x 140мм вентилятора • Радиатор 38мм толщиной",
+        mb: "X870E (ASUS ROG Strix X870E-E Gaming) ~ 52 000 ₽",
+        mbSub: "PCIe 5.0 x16 • 18+2+2 фазы питания 110A • USB4",
+        gpu: "NVIDIA GeForce RTX 5090 32GB (Blackwell) ~ 245 000 ₽",
+        gpuSub: "Флагман • 32GB GDDR7 512-bit • 24000+ CUDA • 550W",
+        ram: "64 GB (2x32GB) DDR5 6400 MHz CL30 ~ 28 000 ₽",
+        ramSub: "Hynix A-die • Пропускная способность свыше 100 ГБ/с",
+        storage: "4 TB PCIe 5.0/4.0 NVMe (Samsung 990 Pro) ~ 34 000 ₽",
+        storageSub: "Скорость до 12500 МБ/с • Медный радиатор",
+        psu: "1200W ATX 3.1 Platinum (Seasonic / SuperFlower) ~ 27 000 ₽",
+        psuSub: "Сертификат Platinum • Усиленный коннектор 12V-2x6",
+        case: "Lian Li O11 Dynamic EVO XL ~ 22 500 ₽",
+        caseSub: "Панорамный аквариум • Максимальный теплоотвод",
+        notes: "Ультимативный компьютер для 4K Path Tracing, 8K рендера и локальных нейросетей. 32 ГБ GDDR7 памяти на видеокарте."
+      }
+    ];
+
+    /* Games Benchmarking Database */
+    const GAMES_LIST = [
+      { id: 'cs2', name: 'Counter-Strike 2', genre: 'Киберспорт (CPU-heavy)', base1080: 240 },
+      { id: 'cyberpunk', name: 'Cyberpunk 2077', genre: 'AAA Графика (GPU-heavy)', base1080: 85 },
+      { id: 'gta5', name: 'GTA V / GTA Online', genre: 'Открытый мир (CPU/Engine)', base1080: 160 },
+      { id: 'dota2', name: 'Dota 2', genre: 'MOBA (Кэш L3/RAM)', base1080: 230 },
+      { id: 'rdr2', name: 'Red Dead Redemption 2', genre: 'AAA Графика', base1080: 90 },
+      { id: 'beamng', name: 'BeamNG.drive', genre: 'Физика авто (CPU Cores)', base1080: 105 }
+    ];
+
+    let currentResolution = '1080p';
+
+    /* Tab Switcher Logic */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('nav button').forEach(el => {
+        el.classList.remove('pill-active');
+        el.classList.add('text-slate-400');
+      });
+
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
+
+      const pillBtn = document.getElementById(`pill-${tabId}`);
+      if (pillBtn) {
+        pillBtn.classList.add('pill-active');
+        pillBtn.classList.remove('text-slate-400');
+      }
+
+      if (tabId === 'fpsTab') updateFpsCards();
+      if (tabId === 'balanceTab') runDiagnosticCheck();
+    }
+
+    /* Quick set budget from buttons */
+    function quickSetBudget(val) {
+      document.getElementById('heroBudgetInput').value = val;
+      triggerQuickBuild();
+    }
+
+    /* Calculate Build by Input */
+    function triggerQuickBuild() {
+      const budget = parseInt(document.getElementById('heroBudgetInput').value) || 85000;
+      
+      let selected = PC_BUILDS_DATABASE[0];
+      let minDiff = Math.abs(budget - PC_BUILDS_DATABASE[0].baseCost);
+
+      for (let i = 1; i < PC_BUILDS_DATABASE.length; i++) {
+        const diff = Math.abs(budget - PC_BUILDS_DATABASE[i].baseCost);
+        if (diff < minDiff) {
+          minDiff = diff;
+          selected = PC_BUILDS_DATABASE[i];
+        }
+      }
+
+      // Render Specs
+      document.getElementById('cardBudgetValue').textContent = `${budget.toLocaleString('ru-RU')} ₽`;
+      const low = Math.round((budget * 0.96) / 500) * 500;
+      const high = Math.round((budget * 1.04) / 500) * 500;
+      document.getElementById('cardPriceRange').textContent = `${low.toLocaleString('ru-RU')} – ${high.toLocaleString('ru-RU')} ₽`;
+
+      document.getElementById('cardWattage').textContent = selected.wattage;
+      document.getElementById('cardPlatform').textContent = selected.bus;
+      document.getElementById('cardTargetResolution').textContent = selected.targetRes;
+
+      const rows = [
+        { label: 'Процессор (CPU)', title: selected.cpu, sub: selected.cpuSub },
+        { label: 'Охлаждение CPU', title: selected.cooler, sub: selected.coolerSub },
+        { label: 'Материнская плата', title: selected.mb, sub: selected.mbSub },
+        { label: 'Видеокарта (GPU)', title: selected.gpu, sub: selected.gpuSub },
+        { label: 'Оперативная память (RAM)', title: selected.ram, sub: selected.ramSub },
+        { label: 'Накопитель (SSD)', title: selected.storage, sub: selected.storageSub },
+        { label: 'Блок питания (PSU)', title: selected.psu, sub: selected.psuSub },
+        { label: 'Корпус и кулеры', title: selected.case, sub: selected.caseSub }
+      ];
+
+      const tbody = document.getElementById('specsTableBody');
+      tbody.innerHTML = '';
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-pcDark-800/40 transition-colors';
+        tr.innerHTML = `
+          <td class="py-3 px-4 text-xs font-bold text-slate-400 w-1/4 whitespace-nowrap">${r.label}</td>
+          <td class="py-3 px-4">
+            <span class="font-bold text-slate-100 text-sm">${r.title}</span>
+            <span class="block text-xs text-slate-400 font-mono mt-0.5">${r.sub}</span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('buildNotesCard').innerHTML = `
+        <span class="font-bold text-pcCyan-400 block mb-1">💡 Инженерное обоснование выбора:</span>
+        ${selected.notes}
       `;
-    });
 
-    const specBox = document.getElementById('tdInternalSpecs');
-    specBox.innerHTML = '';
-    data.specs.forEach(s => {
-      specBox.innerHTML += `<div class="detail-item"><h4>${s.t}</h4><p>${s.d}</p></div>`;
-    });
+      switchTab('budgetTab');
+    }
 
-    resBox.style.display = 'block';
-    fixTeardownImages();
-  }
+    /* Diagnostics Checker */
+    function runDiagnosticCheck() {
+      const cpu = document.getElementById('diagCpu').value;
+      const gpu = document.getElementById('diagGpu').value;
+      const ram = document.getElementById('diagRam').value;
+      const psu = parseInt(document.getElementById('diagPsu').value) || 500;
 
-  // 3. БАЗА ДЛЯ СРАВНЕНИЯ СМАРТФОНОВ
-  const phoneCatalog = [
-    { id: "s23", name: "Samsung Galaxy S23", score: 92, soc: "Snapdragon 8 Gen 2 (4 нм)", scr: "6.1\" Dynamic AMOLED 2X 120Hz", ram: "8 GB LPDDR5X", rom: "128/256 GB UFS 4.0", bat: "3900 mAh (25W)", cam: "50 MP (OIS) + 12 MP + 10 MP (3x OIS)", ois: "Да (Основная + 3x Зум)", mat: "Armor Aluminum + Victus 2", ip: "IP68", year: 2023, wireless: "Да (15W Qi + Реверс)" },
-    { id: "pocof6", name: "POCO F6", score: 88, soc: "Snapdragon 8s Gen 3 (4 нм)", scr: "6.67\" AMOLED 1.5K 120Hz", ram: "8/12 GB LPDDR5X", rom: "256/512 GB UFS 4.0", bat: "5000 mAh (90W)", cam: "50 MP (OIS Sony) + 8 MP ширик", ois: "Да (Только основная)", mat: "Пластик + Gorilla Glass Victus", ip: "IP64", year: 2024, wireless: "Нет" },
-    { id: "s20plus", name: "Samsung Galaxy S20+", score: 82, soc: "Exynos 990 / SD865 (7 нм)", scr: "6.7\" Dynamic AMOLED 120Hz 1440p", ram: "8/12 GB LPDDR5", rom: "128 GB UFS 3.0 + MicroSD", bat: "4500 mAh (25W)", cam: "12 MP (OIS) + 64 MP (3x OIS) + 12 MP", ois: "Да (Основная + Теле)", mat: "Алюминий + Gorilla Glass 6", ip: "IP68", year: 2020, wireless: "Да (15W Qi)" },
-    { id: "note8", name: "Samsung Galaxy Note 8", score: 68, soc: "Exynos 8895 / SD835 (10 нм)", scr: "6.3\" Super AMOLED 60Hz 1440p", ram: "6 GB LPDDR4X", rom: "64/128 GB + MicroSD", bat: "3300 mAh (15W)", cam: "12 MP (OIS) + 12 MP (2x OIS)", ois: "Да (Двойной OIS)", mat: "Алюминий + Gorilla Glass 5", ip: "IP68", year: 2017, wireless: "Да (10W Qi)" },
-    { id: "a50", name: "Samsung Galaxy A50", score: 55, soc: "Exynos 9610 (10 нм)", scr: "6.4\" Super AMOLED 60Hz", ram: "4/6 GB LPDDR4X", rom: "64/128 GB + MicroSD", bat: "4000 mAh (15W)", cam: "25 MP + 8 MP ширик + 5 MP", ois: "Нет", mat: "Пластик Glasstic", ip: "Нет", year: 2019, wireless: "Нет" },
-    { id: "realme8", name: "Realme 8", score: 66, soc: "MediaTek Helio G95 (12 нм)", scr: "6.4\" Super AMOLED 60Hz", ram: "6/8 GB LPDDR4X", rom: "128 GB UFS 2.1 + MicroSD", bat: "5000 mAh (30W Dart)", cam: "64 MP + 8 MP + 2 MP + 2 MP", ois: "Нет", mat: "Глянцевый пластик", ip: "Нет", year: 2021, wireless: "Нет" },
-    { id: "ip8", name: "Apple iPhone 8", score: 62, soc: "Apple A11 Bionic (10 нм)", scr: "4.7\" Retina IPS 60Hz", ram: "2 GB LPDDR4", rom: "64/128/256 GB NVMe", bat: "1821 mAh (15W)", cam: "12 MP f/1.8", ois: "Да", mat: "Алюминий 7000 + Стекло", ip: "IP67", year: 2017, wireless: "Да (7.5W Qi)" },
-    { id: "ip6s", name: "Apple iPhone 6s", score: 48, soc: "Apple A9 (14/16 нм)", scr: "4.7\" Retina IPS 60Hz (3D Touch)", ram: "2 GB LPDDR4", rom: "16/32/64/128 GB", bat: "1715 mAh (5W)", cam: "12 MP 4K видео", ois: "Нет", mat: "Авиационный алюминий 7000", ip: "Нет", year: 2015, wireless: "Нет" },
-    { id: "ip6", name: "Apple iPhone 6", score: 38, soc: "Apple A8 (20 нм)", scr: "4.7\" Retina IPS 60Hz", ram: "1 GB LPDDR3", rom: "16/64/128 GB", bat: "1810 mAh (5W)", cam: "8 MP 1080p", ois: "Нет", mat: "Анодированный алюминий", ip: "Нет", year: 2014, wireless: "Нет" },
-    { id: "nokia6111", name: "Nokia 6111", score: 10, soc: "Nokia BB5 Processor", scr: "1.8\" TFT 128x160", ram: "2 МБ", rom: "23 МБ", bat: "700 mAh (Съемный)", cam: "1.0 MP со вспышкой", ois: "Нет", mat: "Пластик + Металл слайдера", ip: "Нет", year: 2005, wireless: "Нет" }
-  ];
+      const cpuRankMap = {
+        legacy: 1, intel_lga1155: 2, xeon_v3: 2, ryzen_zen1: 2,
+        intel_mid_old: 3, ryzen_am4_main: 4, intel_lga1700: 4,
+        ryzen_am4_top: 5, am5_base: 5, intel_high: 6, am5_intel_top: 7, am5_zen5_x3d: 8
+      };
 
-  function initCompareSelects() {
-    const s1 = document.getElementById('cmpPhone1');
-    const s2 = document.getElementById('cmpPhone2');
-    s1.innerHTML = '';
-    s2.innerHTML = '';
-    phoneCatalog.forEach((p, idx) => {
-      s1.innerHTML += `<option value="${p.id}" ${idx === 0 ? 'selected' : ''}>${p.name}</option>`;
-      s2.innerHTML += `<option value="${p.id}" ${idx === 1 ? 'selected' : ''}>${p.name}</option>`;
-    });
-  }
+      const gpuRankMap = {
+        gpu_budget_low: 1, gpu_polaris: 2, gpu_entry: 3, gpu_mid: 4,
+        gpu_rtx5060: 5, gpu_mid_high: 5, gpu_rtx5060ti: 6, gpu_high: 6,
+        gpu_rtx5070: 7, gpu_rtx5070ti: 8, gpu_rtx5080: 9, gpu_rtx5090: 10
+      };
 
-  function comparePhones() {
-    const id1 = document.getElementById('cmpPhone1').value;
-    const id2 = document.getElementById('cmpPhone2').value;
+      const gpuTdpMap = {
+        gpu_budget_low: 65, gpu_polaris: 160, gpu_entry: 125, gpu_mid: 160,
+        gpu_rtx5060: 145, gpu_mid_high: 220, gpu_rtx5060ti: 180, gpu_high: 240,
+        gpu_rtx5070: 250, gpu_rtx5070ti: 285, gpu_rtx5080: 360, gpu_rtx5090: 550
+      };
 
-    const p1 = phoneCatalog.find(x => x.id === id1);
-    const p2 = phoneCatalog.find(x => x.id === id2);
+      const cRank = cpuRankMap[cpu] || 4;
+      const gRank = gpuRankMap[gpu] || 4;
+      const gTdp = gpuTdpMap[gpu] || 160;
 
-    const tbl = document.getElementById('cmpTable');
-    tbl.innerHTML = `
-      <thead>
-        <tr>
-          <th>Параметр</th>
-          <th>${p1.name}</th>
-          <th>${p2.name}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><th>Процессор и платформа</th><td>${p1.soc}</td><td>${p2.soc}</td></tr>
-        <tr><th>Экран и герцовка</th><td>${p1.scr}</td><td>${p2.scr}</td></tr>
-        <tr><th>Оперативная память</th><td>${p1.ram}</td><td>${p2.ram}</td></tr>
-        <tr><th>Встроенная память</th><td>${p1.rom}</td><td>${p2.rom}</td></tr>
-        <tr><th>Батарея и мощность зарядки</th><td>${p1.bat}</td><td>${p2.bat}</td></tr>
-        <tr><th>Беспроводная зарядка</th><td>${p1.wireless}</td><td>${p2.wireless}</td></tr>
-        <tr><th>Камеры и сенсоры</th><td>${p1.cam}</td><td>${p2.cam}</td></tr>
-        <tr><th>Оптическая стабилизация (OIS)</th><td>${p1.ois}</td><td>${p2.ois}</td></tr>
-        <tr><th>Материалы корпуса</th><td>${p1.mat}</td><td>${p2.mat}</td></tr>
-        <tr><th>Влагозащита (IP)</th><td>${p1.ip}</td><td>${p2.ip}</td></tr>
-        <tr><th>Год выпуска</th><td>${p1.year} год</td><td>${p2.year} год</td></tr>
-      </tbody>
-    `;
+      const estTotalTdp = gTdp + (cRank >= 5 ? 120 : 70) + 60;
+      document.getElementById('diagWattageSummary').textContent = `Потребление системы: ~${estTotalTdp} Вт`;
 
-    document.getElementById('cmpVerdictTag').textContent = `${p1.name} VS ${p2.name}`;
+      const badge = document.getElementById('diagStatusBadge');
+      const headline = document.getElementById('diagStatusHeadline');
+      const bar = document.getElementById('diagMeterBar');
+      const meterText = document.getElementById('diagMeterValue');
+      const detailsList = document.getElementById('diagDetailsList');
 
-    // ГЕНЕРАЦИЯ ЖИВОГО И ПОНЯТНОГО ВЕРДИКТА
-    let verdictHTML = "";
+      detailsList.innerHTML = '';
 
-    if (p1.id === p2.id) {
-      verdictHTML = `Вы выбрали одну и ту же модель (<strong>${p1.name}</strong>). Выберите два разных смартфона для анализа разницы.`;
-    } else {
-      let leader = p1.score > p2.score ? p1 : p2;
-      let underdog = p1.score > p2.score ? p2 : p1;
+      if (cRank > gRank + 1) {
+        badge.className = 'px-3 py-1 rounded-lg text-xs font-extrabold uppercase font-mono bg-amber-500/20 text-amber-400 border border-amber-500/30';
+        badge.textContent = 'Упор в видеокарту';
+        headline.textContent = 'Процессор простаивает, видеокарта на 100%';
+        bar.style.width = '70%';
+        bar.className = 'h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-300';
+        meterText.textContent = 'GPU Bottleneck ~30%';
 
-      // Конкретные кейсы сравнения
-      if ((p1.id === 's23' && p2.id === 'pocof6') || (p1.id === 'pocof6' && p2.id === 's23')) {
-        verdictHTML = `
-          <strong>Конкретный вердикт:</strong> <strong>Samsung Galaxy S23 будет в целом лучше POCO F6</strong> как флагман на каждый день:
-          <ul>
-            <li>У <strong>Galaxy S23</strong> ощутимо лучше камеры (честный 3x оптический зум, топовый ночной режим, лучше видеосъемка), есть влагозащита IP68, беспроводная зарядка и премиальные материалы (Armor Aluminum + стекло Victus 2).</li>
-            <li><strong>POCO F6</strong> выигрывает только по скорости проводной зарядки (90W против 25W), размеру экрана (6.67" против компактных 6.1") и емкости батареи (5000 мА·ч против 3900 мА·ч).</li>
-          </ul>
-          <strong>Итог:</strong> Если важны фото/видео, компактность и премиальность — однозначно <strong>Samsung S23</strong>. Если нужен большой экран для игр и мгновенная зарядка за полчаса — <strong>POCO F6</strong>.
-        `;
-      } else if ((p1.id === 's20plus' && p2.id === 'pocof6') || (p1.id === 'pocof6' && p2.id === 's20plus')) {
-        verdictHTML = `
-          <strong>Конкретный вердикт:</strong> <strong>POCO F6 будет заметно быстрее и свежее Samsung S20+</strong>:
-          <ul>
-            <li><strong>POCO F6</strong> мощнее процессором на 4 поколения (Snapdragon 8s Gen 3 против ветерана Snapdragon 865/Exynos 990), имеет свежую батарею с зарядкой 90W и будет обновляться годами.</li>
-            <li><strong>Galaxy S20+</strong> выигрывает только разрешением экрана (Quad HD+ 1440p), наличием влагозащиты IP68 и беспроводной зарядки.</li>
-          </ul>
-          <strong>Итог:</strong> Для повседневной быстрой работы в 2026 году лучше брать <strong>POCO F6</strong>.
-        `;
+        addDiagDetail('Видеокарта ограничивает фреймрейт', 'Ваш процессор способен подготовить значительно больше кадров, но текущая видеокарта полностью загружена. Рекомендуется апгрейд GPU.');
+      } else if (gRank > cRank + 1) {
+        badge.className = 'px-3 py-1 rounded-lg text-xs font-extrabold uppercase font-mono bg-rose-500/20 text-rose-400 border border-rose-500/30';
+        badge.textContent = 'Упор в процессор';
+        headline.textContent = 'CPU не успевает загружать видеокарту';
+        bar.style.width = '40%';
+        bar.className = 'h-full bg-gradient-to-r from-rose-600 to-rose-400 rounded-full transition-all duration-300';
+        meterText.textContent = 'CPU Bottleneck ~35%';
+
+        addDiagDetail('Просадки 1% Low FPS', 'В требовательных играх возможны микрофризы и неравномерный фреймтайм. Рекомендуется апгрейд процессора или всей платформы.');
       } else {
-        // Умный динамический генератор сравнения
-        verdictHTML = `
-          <strong>Конкретный вердикт:</strong> <strong>${leader.name} превосходит ${underdog.name}</strong> по общему уровню технологий:
-          <ul>
-            <li><strong>Производительность:</strong> ${leader.soc} обеспечивает существенно более высокую скорость работы и запас актуальности, чем ${underdog.soc}.</li>
-            <li><strong>Камеры:</strong> У ${leader.name} лучше оптическая система (${leader.ois}) и алгоритмы постобработки кадров.</li>
-            <li><strong>Корпус и защита:</strong> ${leader.mat} (${leader.ip}) против ${underdog.mat} (${underdog.ip}).</li>
-          </ul>
-          <strong>Итог:</strong> В прямой битве безоговорочно побеждает <strong>${leader.name}</strong>. Покупать ${underdog.name} имеет смысл только при существенно более низкой цене.
-        `;
+        badge.className = 'px-3 py-1 rounded-lg text-xs font-extrabold uppercase font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        badge.textContent = 'Идеальный баланс';
+        headline.textContent = 'Компоненты подобраны в едином классе';
+        bar.style.width = '96%';
+        bar.className = 'h-full bg-gradient-to-r from-emerald-500 to-pcCyan-400 rounded-full transition-all duration-300';
+        meterText.textContent = 'Максимальный КПД (98%)';
+
+        addDiagDetail('Оптимальная связка', 'Процессор и графический чип работают в синергии. Вы получаете максимум производительности на каждый потраченный рубль.');
+      }
+
+      // Check RAM
+      if (ram === '4') {
+        addDiagDetail('⚠️ Критический дефицит ОЗУ (4 ГБ)', 'Система постоянно сбрасывает данные в медленный файл подкачки на SSD. Необходимо минимум 8–16 ГБ.');
+      } else if (ram === '8_single') {
+        addDiagDetail('⚡ Одноканальный режим (1 планка 8 ГБ)', 'Память работает на половине пропускной способности. Добавление второго модуля повысит FPS в играх на 15–25%.');
+      } else {
+        addDiagDetail('✓ Память в порядке', 'Двухканальный режим активен. Пропускная способность шины памяти не ограничивает процессор.');
+      }
+
+      // Check PSU
+      const safePsu = Math.ceil((estTotalTdp * 1.35) / 50) * 50;
+      if (psu < estTotalTdp) {
+        addDiagDetail('🔥 Опасная нехватка мощности БП!', `Потребление (${estTotalTdp} Вт) превышает номинал блока питания (${psu} Вт). Высокий риск выключения под нагрузкой. Необходим БП от ${safePsu} Вт.`);
+      } else {
+        addDiagDetail('✓ Блок питания в норме', `БП на ${psu} Вт обеспечивает надежный запас над расчетным пиковым потреблением (~${estTotalTdp} Вт).`);
       }
     }
 
-    document.getElementById('cmpVerdictText').innerHTML = verdictHTML;
-    document.getElementById('compareResult').style.display = 'block';
-  }
+    function addDiagDetail(title, text) {
+      const container = document.getElementById('diagDetailsList');
+      const div = document.createElement('div');
+      div.className = 'p-3 rounded-xl bg-pcDark-850/80 border border-pcDark-border text-xs leading-relaxed';
+      div.innerHTML = `<strong class="text-white block mb-0.5">${title}</strong><span class="text-slate-400">${text}</span>`;
+      container.appendChild(div);
+    }
 
-  // Запуск при старте
-  window.onload = function() {
-    initCompareSelects();
-  };
-</script>
+    /* FPS Calculator Logic */
+    function setFpsResolution(res) {
+      currentResolution = res;
+      ['1080p', '1440p', '4k'].forEach(r => {
+        const btn = document.getElementById(`res-${r}`);
+        if (r === res) {
+          btn.className = 'px-3 py-1 rounded-lg text-xs font-bold font-mono transition-all bg-pcBlue-500 text-white shadow-sm';
+        } else {
+          btn.className = 'px-3 py-1 rounded-lg text-xs font-bold font-mono text-slate-400 hover:text-white transition-all';
+        }
+      });
+      updateFpsCards();
+    }
+
+    function filterByGame(gameKey, gameName) {
+      switchTab('fpsTab');
+      // Highlight targeted game
+      setTimeout(() => {
+        const target = document.getElementById(`game-card-${gameKey}`);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.classList.add('ring-2', 'ring-pcCyan-400');
+          setTimeout(() => target.classList.remove('ring-2', 'ring-pcCyan-400'), 1500);
+        }
+      }, 100);
+    }
+
+    function updateFpsCards() {
+      const container = document.getElementById('fpsGridContainer');
+      container.innerHTML = '';
+
+      let resMultiplier = currentResolution === '4k' ? 0.44 : (currentResolution === '1440p' ? 0.72 : 1.0);
+
+      GAMES_LIST.forEach(game => {
+        let fps = Math.round(game.base1080 * resMultiplier);
+
+        let color = 'text-emerald-400';
+        let badgeText = 'Отлично';
+        if (fps < 45) {
+          color = 'text-rose-400';
+          badgeText = 'Тяжело';
+        } else if (fps < 75) {
+          color = 'text-amber-400';
+          badgeText = 'Комфортно';
+        }
+
+        const card = document.createElement('div');
+        card.id = `game-card-${game.id}`;
+        card.className = 'bg-pcDark-800 border border-pcDark-border rounded-xl p-4 flex flex-col justify-between gap-3 hover:border-pcBlue-500/50 transition-all shadow-md';
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <h5 class="text-sm font-extrabold text-white">${game.name}</h5>
+              <span class="text-[11px] text-slate-400 font-medium">${game.genre}</span>
+            </div>
+            <span class="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-pcDark-750 text-slate-300 border border-pcDark-border">
+              ${currentResolution.toUpperCase()}
+            </span>
+          </div>
+
+          <div class="flex items-baseline justify-between pt-2 border-t border-pcDark-border/60">
+            <div class="flex items-baseline gap-1">
+              <span class="text-2xl font-black font-mono ${color}">${fps}</span>
+              <span class="text-xs font-bold text-slate-400">FPS</span>
+            </div>
+            <span class="text-xs font-bold ${color}">${badgeText}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* Live Search Handler */
+    function handleLiveSearch(query) {
+      const dropdown = document.getElementById('searchDropdown');
+      if (!query || query.trim().length < 2) {
+        dropdown.classList.add('hidden');
+        return;
+      }
+
+      const q = query.toLowerCase().trim();
+      const matches = [];
+
+      // Check games
+      GAMES_LIST.forEach(g => {
+        if (g.name.toLowerCase().includes(q)) {
+          matches.push({ title: g.name, type: 'Игра', action: () => filterByGame(g.id, g.name) });
+        }
+      });
+
+      // Check builds
+      PC_BUILDS_DATABASE.forEach(b => {
+        if (b.cpu.toLowerCase().includes(q) || b.gpu.toLowerCase().includes(q) || b.targetRes.toLowerCase().includes(q)) {
+          matches.push({ title: `${b.baseCost.toLocaleString('ru-RU')} ₽ (${b.targetRes})`, type: 'Сборка', action: () => quickSetBudget(b.baseCost) });
+        }
+      });
+
+      if (matches.length === 0) {
+        dropdown.innerHTML = `<div class="p-3 text-xs text-slate-400 text-center">Ничего не найдено по запросу "${query}"</div>`;
+      } else {
+        dropdown.innerHTML = '';
+        matches.slice(0, 5).forEach(m => {
+          const item = document.createElement('div');
+          item.className = 'p-2.5 rounded-xl hover:bg-pcDark-750 flex items-center justify-between text-xs cursor-pointer transition-colors';
+          item.innerHTML = `
+            <span class="font-bold text-white">${m.title}</span>
+            <span class="text-[10px] uppercase font-mono text-pcBlue-400 bg-pcDark-800 px-2 py-0.5 rounded border border-pcDark-border">${m.type}</span>
+          `;
+          item.onclick = () => {
+            m.action();
+            dropdown.classList.add('hidden');
+            document.getElementById('globalSearchInput').value = '';
+          };
+          dropdown.appendChild(item);
+        });
+      }
+
+      dropdown.classList.remove('hidden');
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('searchDropdown');
+      const searchInput = document.getElementById('globalSearchInput');
+      if (!dropdown.contains(e.target) && e.target !== searchInput) {
+        dropdown.classList.add('hidden');
+      }
+    });
+
+    function togglePlatformStatus() {
+      alert("Сервера бенчмарков PcConf активны. Все базы данных обновлены до релизов RTX 50 и Zen 5.");
+    }
+
+    // Initialize application on load
+    window.addEventListener('DOMContentLoaded', () => {
+      triggerQuickBuild();
+      updateFpsCards();
+      runDiagnosticCheck();
+    });
+  </script>
 </body>
 </html>
+```
