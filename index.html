@@ -1,1417 +1,1110 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Street Ride 3D Online - Bike Life Russia</title>
-  <!-- Three.js 3D Engine -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Конфигуратор ПК</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-input: #f1f5f9;
+      --border-accent: #2ea043;
+      --border-subtle: rgba(46, 160, 67, 0.35);
+      --border-card: #c8e6c9;
+      --btn-green: #238636;
+      --btn-green-hover: #1f7a30;
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --badge-bg: rgba(46, 160, 67, 0.08);
+      --radius-sm: 4px;
+      --radius-md: 8px;
+    }
+
     * {
       box-sizing: border-box;
-      user-select: none;
-      -webkit-user-select: none;
       margin: 0;
       padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    body, html {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #05070c;
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Montserrat', Roboto, sans-serif;
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px 14px;
       display: flex;
-      align-items: center;
       justify-content: center;
-    }
-    #game-container {
       position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ФОНОВЫЕ ПЛАВАЮЩИЕ КОМПОНЕНТЫ */
+    .bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
-      height: 56.25vw; /* 16:9 Landscape */
-      max-height: 100vh;
-      max-width: 177.78vh; /* 16:9 Landscape */
-      background: #000;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
       overflow: hidden;
-      box-shadow: 0 14px 50px rgba(0, 0, 0, 0.95);
-    }
-    #canvas3d {
-      width: 100%;
-      height: 100%;
-      display: block;
     }
 
-    #hud {
+    .floater {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      display: none;
-    }
-    .hud-top-left {
-      position: absolute;
-      top: 18px;
-      left: 22px;
-      color: #fff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
-    }
-    .hud-bike-title {
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #00cec9;
-    }
-    .hud-sub {
-      font-size: 13px;
-      color: #dfe6e9;
-      margin-top: 3px;
-      font-weight: 600;
-    }
-    .hud-room-badge {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 3px 10px;
-      background: rgba(46, 204, 113, 0.2);
-      border: 1px solid #2ecc71;
-      border-radius: 12px;
-      font-size: 11px;
-      color: #2ecc71;
-      font-weight: 800;
-      letter-spacing: 1px;
-    }
-    .hud-top-right {
-      position: absolute;
-      top: 18px;
-      right: 22px;
-      text-align: right;
-    }
-    .hud-cash {
-      font-family: 'Impact', 'Arial Black', sans-serif;
-      font-size: 32px;
-      color: #2ecc71;
-      letter-spacing: 1.5px;
-      text-shadow: 0 3px 10px rgba(0,0,0,0.9);
-    }
-    .hud-stunt {
-      font-size: 17px;
-      font-weight: 900;
-      color: #f1c40f;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.9);
-      min-height: 24px;
-      text-transform: uppercase;
-    }
-    .online-players-counter {
-      font-size: 12px;
-      color: #81ecec;
-      font-weight: bold;
-      margin-top: 4px;
+      opacity: 0.14;
+      animation: floatMotion 22s ease-in-out infinite alternate;
     }
 
-    #pc-guide {
-      position: absolute;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(10, 16, 26, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #cbd5e1;
-      padding: 7px 18px;
-      border-radius: 24px;
-      font-size: 11px;
-      letter-spacing: 0.5px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    .f-blur-1 { filter: blur(3px); }
+    .f-blur-2 { filter: blur(5px); }
+
+    .pos-1 { top: 6%; left: 4%; animation-duration: 20s; }
+    .pos-2 { top: 58%; left: 3%; animation-duration: 25s; animation-delay: -3s; }
+    .pos-3 { top: 10%; right: 5%; animation-duration: 23s; animation-delay: -5s; }
+    .pos-4 { top: 52%; right: 4%; animation-duration: 26s; animation-delay: -2s; }
+    .pos-5 { top: 82%; left: 24%; animation-duration: 28s; animation-delay: -7s; }
+
+    @keyframes floatMotion {
+      0% { transform: translateY(0) rotate(0deg) scale(1); }
+      50% { transform: translateY(-30px) rotate(8deg) scale(1.02); }
+      100% { transform: translateY(26px) rotate(-6deg) scale(0.98); }
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 920px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ШАПКА */
+    header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+    }
+
+    .title-row {
       display: flex;
-      gap: 14px;
-      align-items: center;
-      white-space: nowrap;
-    }
-    .kbd-tag {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 2px 6px;
-      border-radius: 5px;
-      color: #fff;
-      font-weight: 700;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-    }
-
-    #mobile-controls {
-      position: absolute;
-      bottom: 14px;
-      left: 0;
-      width: 100%;
-      pointer-events: none;
-      display: none;
       justify-content: space-between;
-      padding: 0 18px;
-    }
-    .control-cluster {
-      display: flex;
-      gap: 10px;
-      pointer-events: auto;
-    }
-    .game-btn {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background: rgba(20, 26, 36, 0.85);
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
-      font-weight: 800;
-      font-size: 10px;
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      touch-action: manipulation;
-      transition: transform 0.08s, background 0.15s;
-    }
-    .game-btn:active, .game-btn.active {
-      transform: scale(0.92);
-      background: rgba(0, 206, 201, 0.85);
-      border-color: #fff;
-    }
-    .btn-brake:active, .btn-brake.active {
-      background: rgba(231, 76, 60, 0.85) !important;
-    }
-    .btn-icon {
-      font-size: 15px;
-      margin-bottom: 2px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    #menu-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(7, 10, 16, 0.96), rgba(18, 24, 34, 0.94));
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      backdrop-filter: blur(10px);
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
     }
-    .menu-header {
-      font-size: 30px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      color: #fff;
-      text-transform: uppercase;
-      margin-bottom: 2px;
-      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
-    }
-    .menu-sub {
-      color: #00cec9;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
+
+    .header-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
       font-weight: 700;
+      color: var(--btn-green);
+      background: var(--badge-bg);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    p.subtitle {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    /* НАВИГАЦИЯ */
+    .tabs-wrapper {
+      width: 100%;
       margin-bottom: 16px;
     }
-    
-    .lobby-box {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 12px 20px;
-      display: flex;
-      gap: 12px;
-      margin-bottom: 18px;
-      align-items: center;
-    }
-    .lobby-input {
-      background: rgba(10, 14, 22, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 8px 14px;
-      color: #fff;
-      font-size: 13px;
-      outline: none;
-      width: 140px;
-    }
-    .lobby-input:focus {
-      border-color: #00cec9;
-    }
 
-    .bikes-row {
+    .tabs {
       display: flex;
-      gap: 14px;
-      margin-bottom: 20px;
+      gap: 8px;
+      width: 100%;
       flex-wrap: wrap;
-      justify-content: center;
-      max-width: 95%;
-    }
-    .bike-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 2px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 14px 12px;
-      width: 200px;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.25s ease;
-      position: relative;
-    }
-    .bike-card:hover {
-      transform: translateY(-4px);
-      border-color: #00cec9;
-      background: rgba(0, 206, 201, 0.08);
-    }
-    .bike-card.active {
-      border-color: #55efc4;
-      background: rgba(85, 239, 196, 0.15);
-      box-shadow: 0 8px 30px rgba(85, 239, 196, 0.25);
-    }
-    .bike-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
-    .badge-free {
-      background: rgba(46, 204, 113, 0.2);
-      color: #2ecc71;
-      border: 1px solid #2ecc71;
-    }
-    .badge-donate {
-      background: linear-gradient(135deg, #e74c3c, #f39c12);
-      color: #fff;
-      box-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
-      animation: pulse 1.6s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    .bike-card h3 {
-      color: #fff;
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-    .bike-card p {
-      color: #a4b0be;
-      font-size: 10.5px;
-      line-height: 1.35;
-      min-height: 42px;
-    }
-    .start-btn {
-      background: linear-gradient(135deg, #00b894, #00cec9);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 12px 42px;
-      border: none;
-      border-radius: 40px;
-      cursor: pointer;
-      box-shadow: 0 6px 25px rgba(0, 184, 148, 0.45);
-      transition: transform 0.15s;
-    }
-    .start-btn:active {
-      transform: scale(0.96);
     }
 
-    #sbp-modal {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-    }
-    .sbp-card {
-      background: #1e272e;
-      border: 2px solid #575fcf;
-      border-radius: 20px;
-      padding: 24px;
-      width: 340px;
+    .tab-btn {
+      background: #ffffff;
+      border: 1px solid var(--border-card);
+      color: var(--text-secondary);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex: 1 1 auto;
       text-align: center;
-      color: #fff;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-      animation: popIn 0.3s ease-out;
-    }
-    @keyframes popIn {
-      0% { transform: scale(0.85); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .sbp-logo {
-      font-size: 26px;
-      font-weight: 900;
-      color: #3867d6;
-      letter-spacing: 2px;
-      margin-bottom: 6px;
-    }
-    .sbp-logo span {
-      color: #ff5252;
-    }
-    .sbp-price {
-      font-size: 30px;
-      font-weight: 900;
-      color: #2ed573;
-      margin: 10px 0;
-    }
-    .sbp-btn {
-      background: #2ed573;
-      color: #fff;
-      border: none;
-      font-size: 15px;
-      font-weight: 800;
-      padding: 12px 24px;
-      border-radius: 12px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 12px;
-      transition: background 0.15s;
-    }
-    .sbp-btn:hover {
-      background: #26af5f;
-    }
-    .sbp-close {
-      background: transparent;
-      color: #a4b0be;
-      border: none;
-      margin-top: 10px;
-      cursor: pointer;
-      font-size: 13px;
+      min-width: 180px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
-    #wasted-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(180, 0, 0, 0.5);
-      display: none;
+    .tab-btn:hover {
+      border-color: var(--border-accent);
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: var(--btn-green);
+      border-color: var(--border-accent);
+      border-width: 2px;
+      padding: 9px 15px;
+      box-shadow: 0 2px 8px rgba(46, 160, 67, 0.14);
+    }
+
+    /* ГЛАВНАЯ КАРТОЧКА */
+    .main-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+      margin-bottom: 20px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .input-group {
+      display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 150;
-      cursor: pointer;
+      gap: 6px;
+      margin-bottom: 16px;
     }
-    .wasted-text {
-      font-family: 'Impact', 'Arial Black', sans-serif;
-      font-size: 70px;
-      color: #d63031;
-      letter-spacing: 6px;
+
+    label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    input, select {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--border-accent);
+      box-shadow: 0 0 0 3px rgba(46, 160, 67, 0.18);
+    }
+
+    .btn-action {
+      width: 100%;
+      background: var(--btn-green);
+      color: #ffffff;
+      border: none;
+      padding: 13px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s, transform 0.05s;
+      box-shadow: 0 2px 8px rgba(35, 134, 54, 0.25);
+    }
+
+    .btn-action:hover {
+      background: var(--btn-green-hover);
+    }
+
+    .btn-action:active {
+      transform: scale(0.995);
+    }
+
+    /* РЕЗУЛЬТАТЫ */
+    .result-box {
+      display: none;
+      margin-top: 22px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 20px;
+    }
+
+    .result-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .result-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag-green {
+      background: rgba(46, 160, 67, 0.1);
+      color: #1e702c;
+      border: 1px solid var(--border-accent);
+    }
+
+    .tag-amber {
+      background: rgba(180, 83, 9, 0.1);
+      color: #b45309;
+      border: 1px solid #b45309;
+    }
+
+    .tag-red {
+      background: rgba(220, 38, 38, 0.1);
+      color: #dc2626;
+      border: 1px solid #dc2626;
+    }
+
+    /* МИНИ-ДАШБОРД ХАРАКТЕРИСТИК */
+    .stats-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat-pill {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-pill-label {
+      font-size: 0.72rem;
       text-transform: uppercase;
-      text-shadow: 3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .stat-pill-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ТАБЛИЦА СПЕЦИФИКАЦИИ */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      margin-bottom: 14px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .spec-table th, .spec-table td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 14px;
+      text-align: left;
+    }
+
+    .spec-table tr:last-child th, .spec-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .spec-table th {
+      background: rgba(46, 160, 67, 0.05);
+      color: var(--text-main);
+      font-weight: 700;
+      width: 26%;
+      border-right: 1px solid var(--border-subtle);
+    }
+
+    .spec-table td {
+      color: var(--text-secondary);
+    }
+
+    .spec-subtext {
+      display: block;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .info-callout {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      background: #f8fafc;
+      border: 1px solid var(--border-subtle);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* FPS КАРТОЧКИ */
+    .fps-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .fps-card {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .fps-game-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--text-main);
+    }
+
+    .fps-game-preset {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .fps-counter {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .fps-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--btn-green);
+    }
+
+    .fps-unit {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 14px 10px; }
+      .main-card { padding: 16px; }
+      h1 { font-size: 1.4rem; }
+      .tab-btn { min-width: 100%; }
+      .spec-table th { width: 34%; }
     }
   </style>
 </head>
 <body>
 
-<div id="game-container">
-  <canvas id="canvas3d"></canvas>
+<div class="bg-canvas">
+  <svg class="floater f-blur-1 pos-1" width="110" height="110" viewBox="0 0 100 100" fill="none">
+    <rect x="8" y="8" width="84" height="84" rx="4" stroke="#2ea043" stroke-width="2.5"/>
+    <rect x="25" y="25" width="50" height="50" rx="3" stroke="#2ea043" stroke-width="2" fill="rgba(46,160,67,0.05)"/>
+    <circle cx="35" cy="35" r="3" fill="#2ea043"/>
+    <line x1="30" y1="50" x2="70" y2="50" stroke="#2ea043" stroke-width="1.8"/>
+  </svg>
+  <svg class="floater f-blur-2 pos-2" width="200" height="85" viewBox="0 0 180 80" fill="none">
+    <rect x="6" y="8" width="168" height="64" rx="6" stroke="#2ea043" stroke-width="2.5"/>
+    <circle cx="50" cy="40" r="18" stroke="#2ea043" stroke-width="2"/>
+    <circle cx="110" cy="40" r="18" stroke="#2ea043" stroke-width="2"/>
+    <rect x="40" y="66" width="100" height="5" fill="#2ea043"/>
+  </svg>
+  <svg class="floater f-blur-1 pos-3" width="140" height="140" viewBox="0 0 120 120" fill="none">
+    <rect x="6" y="6" width="108" height="108" rx="4" stroke="#2ea043" stroke-width="2.5"/>
+    <rect x="20" y="20" width="35" height="35" stroke="#2ea043" stroke-width="1.8"/>
+    <rect x="65" y="20" width="8" height="40" stroke="#2ea043" stroke-width="1.6"/>
+    <rect x="78" y="20" width="8" height="40" stroke="#2ea043" stroke-width="1.6"/>
+  </svg>
+  <svg class="floater f-blur-1 pos-4" width="160" height="55" viewBox="0 0 140 45" fill="none">
+    <rect x="5" y="6" width="130" height="32" rx="3" stroke="#2ea043" stroke-width="2"/>
+    <line x1="12" y1="38" x2="128" y2="38" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+  <svg class="floater f-blur-2 pos-5" width="100" height="100" viewBox="0 0 90 90" fill="none">
+    <rect x="10" y="10" width="70" height="70" rx="4" stroke="#2ea043" stroke-width="2"/>
+    <circle cx="45" cy="45" r="20" stroke="#2ea043" stroke-width="2"/>
+  </svg>
+</div>
 
-  <div id="hud">
-    <div class="hud-top-left">
-      <div class="hud-bike-title" id="hud-bike-name">OUTLEAP VECTOR</div>
-      <div class="hud-sub">СКОРОСТЬ: <span id="speed-val">0</span> КМ/Ч</div>
-      <div class="hud-room-badge" id="hud-room-indicator">КОМНАТА: 777</div>
+<div class="wrapper">
+  <header>
+    <div class="title-row">
+      <h1>Конфигуратор ПК</h1>
+      <span class="header-badge">АРХИТЕКТУРА 2026</span>
     </div>
-    <div class="hud-top-right">
-      <div class="hud-cash">$<span id="cash-val">005000</span></div>
-      <div class="hud-stunt" id="stunt-text"></div>
-      <div class="online-players-counter" id="players-count-text">Игроков рядом: 1</div>
-    </div>
+    <p class="subtitle">Умный подбор сборки под бюджет, проверка баланса связок CPU/GPU и точный расчет FPS в играх.</p>
+  </header>
 
-    <!-- PC Controls Pill -->
-    <div id="pc-guide">
-      <span><span class="kbd-tag">W / S</span> Газ / Тормоз</span>
-      <span><span class="kbd-tag">A / D</span> Руль</span>
-      <span><span class="kbd-tag">Space</span> Вилли</span>
-      <span><span class="kbd-tag">Shift / H</span> Рука</span>
-      <span><span class="kbd-tag">Зажать ПКМ</span> Обзор камеры (как в Roblox)</span>
-    </div>
-
-    <!-- Mobile Touch Controls -->
-    <div id="mobile-controls">
-      <div class="control-cluster">
-        <button class="game-btn" id="btn-left"><span class="btn-icon">◀</span>НАЛЕВО</button>
-        <button class="game-btn" id="btn-right"><span class="btn-icon">▶</span>НАПРАВО</button>
-      </div>
-      <div class="control-cluster">
-        <button class="game-btn btn-brake" id="btn-brake"><span class="btn-icon">■</span>ТОРМОЗ</button>
-        <button class="game-btn" id="btn-wheelie"><span class="btn-icon">▲</span>ВИЛЛИ</button>
-        <button class="game-btn" id="btn-hand"><span class="btn-icon">✋</span>РУКА</button>
-        <button class="game-btn" id="btn-gas"><span class="btn-icon">⚡</span>ГАЗ</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="menu-screen">
-    <h1 class="menu-header">STREET BIKE 3D ONLINE</h1>
-    <div class="menu-sub">Катай с друзьями по городу на заднем колесе</div>
-
-    <!-- Multiplayer Lobby Input Box -->
-    <div class="lobby-box">
-      <div>
-        <label style="display:block; color:#a4b0be; font-size:10px; margin-bottom:3px; text-transform:uppercase;">Твой ник:</label>
-        <input type="text" id="player-nick-input" class="lobby-input" value="Пацан_1" maxlength="12">
-      </div>
-      <div>
-        <label style="display:block; color:#a4b0be; font-size:10px; margin-bottom:3px; text-transform:uppercase;">Комната:</label>
-        <input type="text" id="room-code-input" class="lobby-input" value="777" maxlength="8">
-      </div>
-    </div>
-
-    <div class="bikes-row">
-      <!-- Outleap -->
-      <div class="bike-card active" id="card-outleap" onclick="chooseBike('outleap')">
-        <span class="bike-badge badge-free">В ГАРАЖЕ</span>
-        <h3>OUTLEAP VECTOR</h3>
-        <p>Матовая титан-шампань рама, 29 колеса, хардтейл с воздушной вилкой.</p>
-      </div>
-
-      <!-- Comiron -->
-      <div class="bike-card" id="card-comiron" onclick="chooseBike('comiron')">
-        <span class="bike-badge badge-free">В ГАРАЖЕ</span>
-        <h3>COMIRON STREET</h3>
-        <p>Черный с бирюзовыми надписями, спортивное седло и заднее крыло-щиток.</p>
-      </div>
-
-      <!-- Merida Dual-Crown (Donate) -->
-      <div class="bike-card" id="card-merida" onclick="chooseBike('merida')">
-        <span class="bike-badge badge-donate">ДОНАТ 100 000 ₽</span>
-        <h3 style="color: #ff7675;">MERIDA 2-КОРОНКА</h3>
-        <p>Бордовый двухподвес, золотая двухкоронная вилка, амортизатор и дерзкое крыло.</p>
-      </div>
-    </div>
-
-    <button class="start-btn" onclick="startGame()">ПОЕХАЛИ В ОНЛАЙН</button>
-  </div>
-
-  <!-- SBP Fake Donation Modal -->
-  <div id="sbp-modal">
-    <div class="sbp-card">
-      <div class="sbp-logo">С<span>Б</span>П</div>
-      <h3 style="font-size: 17px; margin-bottom: 5px;">Оплата по СБП (Система быстрых платежей)</h3>
-      <p style="color: #a4b0be; font-size: 13px;">Покупка байка: MERIDA ДВУХКОРОНКА</p>
-      <div class="sbp-price">100 000 ₽</div>
-      <p style="font-size: 12px; color: #747d8c;">Тестовый платеж без списания реальных денег</p>
-      <button class="sbp-btn" onclick="confirmSbpPayment()">ПОДТВЕРДИТЬ ОПЛАТУ</button>
-      <button class="sbp-close" onclick="closeSbpModal()">Отмена</button>
+  <!-- НАВИГАЦИЯ -->
+  <div class="tabs-wrapper">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('budgetTab', this)">Подбор по бюджету</button>
+      <button class="tab-btn" onclick="switchTab('upgradeTab', this)">Проверка совместимости</button>
+      <button class="tab-btn" onclick="switchTab('fpsTab', this)">Тест FPS в играх</button>
     </div>
   </div>
 
-  <!-- Wasted Screen -->
-  <div id="wasted-screen" onclick="respawn()">
-    <div class="wasted-text">WASTED</div>
-    <p style="color: #fff; font-weight: bold; margin-top: 15px; text-transform: uppercase; letter-spacing: 2px;">Нажми, чтобы встать</p>
+  <!-- ВКЛАДКА 1: ПОДБОР ПО БЮДЖЕТУ -->
+  <div id="budgetTab" class="main-card tab-content active">
+    <div class="input-group">
+      <label for="budgetInput">Сумма на системный блок (в рублях):</label>
+      <input type="number" id="budgetInput" min="1000" step="5000" value="85000">
+    </div>
+    <button class="btn-action" onclick="calculateBuild()">Рассчитать конфигурацию</button>
+
+    <div id="budgetResult" class="result-box">
+      <div class="result-head">
+        <div class="result-title" id="buildCategoryName">Бюджет: 85 000 ₽</div>
+        <div class="tag tag-green" id="buildPriceRange">81 500 - 88 500 ₽</div>
+      </div>
+
+      <div class="stats-dashboard">
+        <div class="stat-pill">
+          <span class="stat-pill-label">Расчетное потребление</span>
+          <span class="stat-pill-val" id="bPowerEst">~290 Вт</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-pill-label">Шина видеокарты</span>
+          <span class="stat-pill-val" id="bPcieEst">PCIe 4.0 x8</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-pill-label">Целевой режим</span>
+          <span class="stat-pill-val" id="bTargetRes">1080p Ultra</span>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="spec-table">
+          <tbody>
+            <tr><th>Процессор</th><td><span id="bCpu">-</span><span class="spec-subtext" id="bCpuSub">-</span></td></tr>
+            <tr><th>Охлаждение</th><td><span id="bCooler">-</span><span class="spec-subtext" id="bCoolerSub">-</span></td></tr>
+            <tr><th>Материнская плата</th><td><span id="bMotherboard">-</span><span class="spec-subtext" id="bMotherboardSub">-</span></td></tr>
+            <tr><th>Видеокарта</th><td><span id="bGpu">-</span><span class="spec-subtext" id="bGpuSub">-</span></td></tr>
+            <tr><th>ОЗУ</th><td><span id="bRam">-</span><span class="spec-subtext" id="bRamSub">-</span></td></tr>
+            <tr><th>Накопитель</th><td><span id="bStorage">-</span><span class="spec-subtext" id="bStorageSub">-</span></td></tr>
+            <tr><th>Блок питания</th><td><span id="bPsu">-</span><span class="spec-subtext" id="bPsuSub">-</span></td></tr>
+            <tr><th>Корпус</th><td><span id="bCase">-</span><span class="spec-subtext" id="bCaseSub">-</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-callout" id="buildNotes">Техническое обоснование появится здесь.</div>
+    </div>
+  </div>
+
+  <!-- ВКЛАДКА 2: ПРОВЕРКА СОВМЕСТИМОСТИ -->
+  <div id="upgradeTab" class="main-card tab-content">
+    <div class="form-grid">
+      <div class="input-group">
+        <label for="cCpu">Процессор:</label>
+        <select id="cCpu">
+          <option value="legacy">LGA 775 (Core 2 Quad) / Phenom II</option>
+          <option value="fx_series">AMD FX-6300 / FX-8350 (AM3+)</option>
+          <option value="intel_lga1155">Core i5-2500 / i5-3570 / i7-3770 (LGA 1155)</option>
+          <option value="xeon_v3">Xeon E5-2670 v3 / E5-2680 v4 (LGA 2011-3)</option>
+          <option value="ryzen_zen1">AMD Ryzen 5 1600 / 2600 (AM4)</option>
+          <option value="intel_mid_old">Core i3-10100F / i3-12100F / i5-10400F</option>
+          <option value="ryzen_am4_main" selected>AMD Ryzen 5 3600 / Ryzen 5 5500 / 5600</option>
+          <option value="intel_lga1700">Intel Core i5-12400F / i5-13400F / 14400F</option>
+          <option value="ryzen_am4_top">AMD Ryzen 7 5700X / 5700X3D / 5800X3D (AM4)</option>
+          <option value="am5_base">AMD Ryzen 5 7500F / 7600 / 7600X (AM5)</option>
+          <option value="intel_high">Intel Core i5-13600K / 14600K / Ultra 5 245K</option>
+          <option value="am5_intel_top">AMD Ryzen 7 7800X3D / Core i7-14700K</option>
+          <option value="am5_zen5_x3d">AMD Ryzen 7 9800X3D / Ultra 9 285K</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="cGpu">Видеокарта:</label>
+        <select id="cGpu">
+          <option value="gpu_retro">Встроенная графика / GT 710 / GT 730</option>
+          <option value="gpu_budget_low">GTX 650 / GTX 750 Ti / GT 1030</option>
+          <option value="gpu_budget_old">GTX 950 / GTX 960 / GTX 1050 Ti</option>
+          <option value="gpu_polaris">RX 580 8GB (2048SP) / GTX 1060 6GB</option>
+          <option value="gpu_entry">GTX 1660 Super / GTX 1660 Ti / RTX 2060</option>
+          <option value="gpu_mid" selected>Radeon RX 6600 8GB / RTX 3060 12GB / RTX 4060</option>
+          <option value="gpu_rtx5060">GeForce RTX 5060 8GB GDDR7 (Blackwell)</option>
+          <option value="gpu_mid_high">RTX 4060 Ti / RX 7700 XT 12GB</option>
+          <option value="gpu_rtx5060ti">GeForce RTX 5060 Ti 16GB (Blackwell)</option>
+          <option value="gpu_high">RTX 4070 / RTX 4070 Super 12GB / RX 7800 XT</option>
+          <option value="gpu_rtx5070">GeForce RTX 5070 12GB (Blackwell)</option>
+          <option value="gpu_rtx5070ti">GeForce RTX 5070 Ti 16GB</option>
+          <option value="gpu_enthusiast">RTX 4080 Super 16GB / RX 7900 XTX</option>
+          <option value="gpu_rtx5080">GeForce RTX 5080 16GB (GDDR7)</option>
+          <option value="gpu_top">GeForce RTX 4090 24GB</option>
+          <option value="gpu_rtx5090">GeForce RTX 5090 32GB (Флагман Blackwell)</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="cRam">Оперативная память:</label>
+        <select id="cRam">
+          <option value="4">4 ГБ (DDR2 / DDR3)</option>
+          <option value="8">8 ГБ (Single Channel)</option>
+          <option value="8_dual">8 ГБ (2x4 ГБ Dual)</option>
+          <option value="16" selected>16 ГБ (2x8 ГБ Dual)</option>
+          <option value="32">32 ГБ (2x16 ГБ Dual)</option>
+          <option value="64">64 ГБ и более</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="cPsu">Мощность БП (Вт):</label>
+        <input type="number" id="cPsu" value="700" step="50">
+      </div>
+    </div>
+
+    <button class="btn-action" onclick="analyzeConfiguration()">Проверить конфигурацию</button>
+
+    <div id="upgradeResult" class="result-box">
+      <div class="result-head">
+        <div class="result-title" id="analysisTitle">Результат анализа</div>
+        <div class="tag" id="analysisTag">Статус</div>
+      </div>
+      <div id="analysisDetails" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ВКЛАДКА 3: ТЕСТ FPS В ИГРАХ -->
+  <div id="fpsTab" class="main-card tab-content">
+    <div class="form-grid">
+      <div class="input-group">
+        <label for="fpsCpu">Процессор:</label>
+        <select id="fpsCpu">
+          <option value="cpu_low">Core 2 Quad / FX-серия / Core i3 старый</option>
+          <option value="cpu_budget">Core i5-2500 / i5-3570 / Xeon E5-2670v3</option>
+          <option value="cpu_entry">Ryzen 5 1600 / 2600 / Core i3-10100F</option>
+          <option value="cpu_mid" selected>Ryzen 5 3600 / 5500 / 5600 / i5-12400F</option>
+          <option value="cpu_high">Ryzen 7 5700X3D / Ryzen 5 7500F</option>
+          <option value="cpu_top">Ryzen 7 7800X3D / Core i7-14700K</option>
+          <option value="cpu_zen5_x3d">Ryzen 7 9800X3D / Ultra 9 285K</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="fpsGpu">Видеокарта:</label>
+        <select id="fpsGpu">
+          <option value="gpu_750ti">GTX 750 Ti / GT 1030 2GB</option>
+          <option value="gpu_1050ti">GTX 1050 Ti 4GB / GTX 960</option>
+          <option value="gpu_rx580">RX 580 8GB / GTX 1060 6GB</option>
+          <option value="gpu_1660s">GTX 1660 Super / GTX 1660 Ti 6GB</option>
+          <option value="gpu_rx6600" selected>Radeon RX 6600 8GB / RTX 3060 12GB</option>
+          <option value="gpu_4060">GeForce RTX 4060 8GB</option>
+          <option value="gpu_rtx5060">GeForce RTX 5060 8GB GDDR7</option>
+          <option value="gpu_4060ti">RTX 4060 Ti 8GB</option>
+          <option value="gpu_rtx5060ti">GeForce RTX 5060 Ti 16GB</option>
+          <option value="gpu_4070s">RTX 4070 Super 12GB</option>
+          <option value="gpu_rtx5070">GeForce RTX 5070 12GB</option>
+          <option value="gpu_rtx5070ti">GeForce RTX 5070 Ti 16GB</option>
+          <option value="gpu_4080s">RTX 4080 Super 16GB</option>
+          <option value="gpu_rtx5080">GeForce RTX 5080 16GB</option>
+          <option value="gpu_4090">GeForce RTX 4090 24GB</option>
+          <option value="gpu_rtx5090">GeForce RTX 5090 32GB</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="fpsRam">Оперативная память:</label>
+        <select id="fpsRam">
+          <option value="8_s">8 ГБ (Single Channel)</option>
+          <option value="8_d">8 ГБ (Dual Channel)</option>
+          <option value="16_d" selected>16 ГБ (Dual Channel)</option>
+          <option value="32_d">32 ГБ (Dual Channel)</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="fpsRes">Разрешение экрана:</label>
+        <select id="fpsRes">
+          <option value="1080p" selected>1920x1080 (Full HD)</option>
+          <option value="1440p">2560x1440 (2K QHD)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-action" onclick="calculateFps()">Рассчитать FPS в играх</button>
+
+    <div id="fpsResult" class="result-box">
+      <div class="result-head">
+        <div class="result-title">Прогноз частоты кадров</div>
+        <div class="tag tag-green">Расчет завершен</div>
+      </div>
+      <div class="fps-cards" id="fpsCardsContainer"></div>
+      <div class="info-callout" style="margin-top:14px;">
+        Оценка произведена на основе реальных игровых сцен без трассировки лучей. На картах поколений RTX 40 и RTX 50 включение генерации кадров (DLSS 3 / DLSS 4) повышает итоговый показатель на 40–70%.
+      </div>
+    </div>
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getDatabase, ref, set, onValue, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
-
-// Game State Variables
-window.selectedBike = 'outleap';
-window.isMeridaUnlocked = false;
-window.isPlaying = false;
-window.cash = 5000;
-window.stuntTimer = 0;
-window.isTouchDevice = false;
-
-// Multiplayer references and registry
-let db = null;
-let roomRef = null;
-let playerRef = null;
-let myPlayerId = 'p_' + Math.random().toString(36).substring(2, 9);
-let currentRoomCode = '777';
-let myNick = 'Пацан';
-const remotePlayers = new Map(); // id -> { mesh, nameSprite, target: {}, current: {} }
-
-// Camera controls
-const cameraControls = {
-  isRMBDown: false,
-  isTouchDragging: false,
-  lastTouchX: 0,
-  lastTouchY: 0,
-  yaw: 0,
-  pitch: 0.3,
-  distance: 3.8,
-  minPitch: -0.1,
-  maxPitch: 1.3
-};
-
-// Physics bike state
-const bikeState = {
-  x: (Math.random() - 0.5) * 4,
-  y: 0,
-  z: (Math.random() - 0.5) * 10,
-  speed: 0,
-  maxSpeed: 21.0,
-  accel: 16.0,
-  friction: 5.5,
-  turnAngle: 0,
-  pitchAngle: 0,
-  wheelieTarget: 0,
-  oneHandFactor: 0,
-  steerAngle: 0,
-  wheelSpin: 0,
-  isCrashed: false
-};
-
-const keys = {
-  forward: false,
-  backward: false,
-  left: false,
-  right: false,
-  wheelie: false,
-  oneHand: false
-};
-
-// Three.js entities
-let scene, camera, renderer;
-let bikeGroup, forkGroup, frontWheel, rearWheel;
-let riderGroup, rightArm;
-
-function initMultiplayer() {
-  try {
-    const rawConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
-    if (rawConfig) {
-      const firebaseConfig = JSON.parse(rawConfig);
-      const app = initializeApp(firebaseConfig);
-      db = getDatabase(app);
-      joinRoom(currentRoomCode);
-    } else {
-      console.log("Firebase config not available. Running local simulation.");
-    }
-  } catch(e) {
-    console.warn("Multiplayer initialization error:", e);
+<script>
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
   }
-}
 
-function joinRoom(roomCode) {
-  if (!db) return;
-  currentRoomCode = roomCode;
-  const safeRoom = encodeURIComponent(currentRoomCode);
-  roomRef = ref(db, `rooms/${safeRoom}`);
-  playerRef = ref(db, `rooms/${safeRoom}/${myPlayerId}`);
+  // БАЗА ДАННЫХ СБОРОК
+  const buildsDatabase = [
+    {
+      baseCost: 10000,
+      powerEst: "~160 Вт",
+      pcieEst: "PCIe 2.0 x16",
+      targetRes: "720p / 900p",
+      cpu: "Intel Core i3-2100 / i5-2400 (LGA 1155) ~ 1 100 ₽",
+      cpuSub: "4 ядра • Sandy Bridge 3.1 GHz • 6MB L3 • 32 нм",
+      cooler: "Кулер 2 теплотрубки (Deepcool GAMMAXX) ~ 500 ₽",
+      coolerSub: "Прямой контакт • Рассеивание до 95 Вт",
+      mb: "H61 LGA 1155 (б/у) ~ 1 800 ₽",
+      mbSub: "2 слота DDR3 • SATA 3Gb/s • 4 фазы питания",
+      gpu: "GeForce GTX 750 Ti 2GB (б/у) ~ 3 200 ₽",
+      gpuSub: "GM107 Maxwell • 2GB GDDR5 • TDP 60 Вт",
+      ram: "8 GB (2x4GB) DDR3 1600 MHz ~ 900 ₽",
+      ramSub: "Dual Channel • Пропускная способность ~25.6 ГБ/с",
+      storage: "SATA SSD 240 GB ~ 1 700 ₽",
+      storageSub: "Скорость чтения/записи ~500 МБ/с",
+      psu: "FSP / Accord 450W (б/у) ~ 900 ₽",
+      psuSub: "Линия 12V: до 360 Вт • Базовая схемотехника",
+      case: "Б/у ATX корпус ~ 400 ₽",
+      caseSub: "Стандартный черный корпус • 1х 120мм на выдув",
+      notes: "Начальный системный блок для офиса, веб-серфинга и нетребовательного киберспорта: CS2 на низких настройках, Dota 2, GTA V и Танки."
+    },
+    {
+      baseCost: 20000,
+      powerEst: "~260 Вт",
+      pcieEst: "PCIe 3.0 x16",
+      targetRes: "1080p Low/Med",
+      cpu: "Intel Xeon E5-2670 v3 (LGA 2011-3) ~ 1 200 ₽",
+      cpuSub: "12 ядер / 24 потока • 3.1 GHz Turbo • 30MB L3",
+      cooler: "Башенный кулер 4 трубки (Snowman) ~ 1 400 ₽",
+      coolerSub: "120мм PWM вентилятор • До 150 Вт TDP",
+      mb: "X99 LGA 2011-3 (Machinist) ~ 4 100 ₽",
+      mbSub: "Поддержка 4-канала ОЗУ • Слот M.2 NVMe",
+      gpu: "AMD Radeon RX 580 8GB (2048SP) ~ 6 200 ₽",
+      gpuSub: "8GB GDDR5 • 256-bit • 8-pin питание • TDP 150 Вт",
+      ram: "16 GB (2x8GB) DDR4 ECC REG ~ 2 000 ₽",
+      ramSub: "Серверная память с коррекцией ошибок • Dual Channel",
+      storage: "512 GB M.2 NVMe SSD ~ 2 800 ₽",
+      storageSub: "PCIe 3.0 x4 • Скорость: ~2100/1600 МБ/с",
+      psu: "1stPlayer Black.Sir 500W / Deepcool PF450 ~ 3 000 ₽",
+      psuSub: "80 PLUS White • Линия 12V: 456 Вт",
+      case: "Бюджетный корпус с сеткой ~ 1 800 ₽",
+      caseSub: "Сетчатая лицевая панель • Нижний отсек БП",
+      notes: "Популярная ультрабюджетная платформа для 1080p гейминга. 16 ГБ оперативной памяти и 8 ГБ видеопамяти закрывают большинство современных игр."
+    },
+    {
+      baseCost: 35000,
+      powerEst: "~240 Вт",
+      pcieEst: "PCIe 3.0 x16",
+      targetRes: "1080p Medium",
+      cpu: "AMD Ryzen 5 2600 / Ryzen 5 3600 (б/у) ~ 4 800 ₽",
+      cpuSub: "6 ядер / 12 потоков • 32MB L3 (для 3600) • Zen 2",
+      cooler: "ID-COOLING SE-214-XT ~ 1 500 ₽",
+      coolerSub: "4 теплотрубки • 180 Вт TDP",
+      mb: "A520M / B450M (MSI / Gigabyte) ~ 5 300 ₽",
+      mbSub: "Socket AM4 • Слот M.2 PCIe 3.0",
+      gpu: "GeForce GTX 1660 Super 6GB (б/у) ~ 11 000 ₽",
+      gpuSub: "6GB GDDR6 14 Gbps • 192-bit • TDP 125 Вт",
+      ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 000 ₽",
+      ramSub: "XMP профиль • Dual Channel",
+      storage: "512 GB M.2 NVMe SSD ~ 3 200 ₽",
+      storageSub: "PCIe 3.0 x4 • Чтение ~2400 МБ/с",
+      psu: "Deepcool PF500 (500W) ~ 3 500 ₽",
+      psuSub: "80 PLUS Standard • 12V шина: 480 Вт",
+      case: "Корпус с вентиляцией ~ 2 200 ₽",
+      caseSub: "Продуваемый фасад • Стекло сбоку",
+      notes: "Надежная платформа Socket AM4 с холодным нравом и простым апгрейдом до Ryzen 5 5600 без смены материнской платы."
+    },
+    {
+      baseCost: 50000,
+      powerEst: "~250 Вт",
+      pcieEst: "PCIe 4.0 x16",
+      targetRes: "1080p Med/High",
+      cpu: "Intel Core i3-12100F (OEM) ~ 7 800 ₽",
+      cpuSub: "4 ядра / 8 потоков • Golden Cove • До 4.3 GHz",
+      cooler: "ID-COOLING SE-214-XT Basic ~ 1 600 ₽",
+      coolerSub: "120мм PWM • 4 никелированные трубки",
+      mb: "H610M (MSI PRO H610M-E) ~ 6 800 ₽",
+      mbSub: "Шина PCIe 4.0 • Слот M.2 NVMe",
+      gpu: "AMD Radeon RX 6500 XT / б/у RTX 2060 Super 8GB ~ 16 000 ₽",
+      gpuSub: "8GB GDDR6 • Поддержка DLSS 2 и Ray Tracing",
+      ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
+      ramSub: "Dual Channel • Низкие задержки",
+      storage: "512 GB M.2 NVMe ~ 3 800 ₽",
+      storageSub: "Чтение ~2400 МБ/с • Запись ~1800 МБ/с",
+      psu: "Deepcool PK500D (Bronze) ~ 4 200 ₽",
+      psuSub: "80 PLUS Bronze • DC-DC преобразователи",
+      case: "AeroCool / Prime Box с вертушками ~ 3 500 ₽",
+      caseSub: "Нижнее расположение БП • 2х 120мм в комплекте",
+      notes: "Полностью новая сборка на современном сокете LGA 1700. Высокая производительность на одно ядро дает высокий фреймрейт в киберспортивных играх."
+    },
+    {
+      baseCost: 65000,
+      powerEst: "~270 Вт",
+      pcieEst: "PCIe 4.0 x8",
+      targetRes: "1080p High",
+      cpu: "AMD Ryzen 5 5600 (OEM, кэш 32 МБ) ~ 10 500 ₽",
+      cpuSub: "6 ядер / 12 потоков • 3.5-4.4 GHz • 32MB L3 • Zen 3",
+      cooler: "Deepcool AG400 ~ 2 100 ₽",
+      coolerSub: "Гидродинамический подшипник • До 220 Вт TDP",
+      mb: "B450M / B550M (MSI PRO-VDH) ~ 6 800 ₽",
+      mbSub: "Радиатор на фазах VRM • 4 слота памяти",
+      gpu: "AMD Radeon RX 6600 8GB ~ 26 000 ₽",
+      gpuSub: "RDNA 2 • 8GB GDDR6 • Infinity Cache 32MB • TDP 132 Вт",
+      ram: "16 GB (2x8GB) DDR4 3200 MHz CL16 ~ 4 400 ₽",
+      ramSub: "Kingston FURY Beast • Dual Channel",
+      storage: "1 TB M.2 NVMe PCIe 3.0 ~ 6 200 ₽",
+      storageSub: "Чтение: 3500 МБ/с • Запись: 2800 МБ/с",
+      psu: "Deepcool PK600D (600W Bronze) ~ 5 200 ₽",
+      psuSub: "80 PLUS Bronze • 12V шина: 594 Вт",
+      case: "Montech AIR 100 Lite ~ 4 200 ₽",
+      caseSub: "Петлевая стеклянная дверь • Mesh-фасад",
+      notes: "Оптимальный баланс для комфортного гейминга в Full HD. RX 6600 тянет Cyberpunk 2077 и RDR 2 на высоких настройках графики."
+    },
+    {
+      baseCost: 85000,
+      powerEst: "~290 Вт",
+      pcieEst: "PCIe 4.0 x8",
+      targetRes: "1080p Ultra",
+      cpu: "AMD Ryzen 5 5600 (OEM) ~ 10 500 ₽",
+      cpuSub: "6 ядер / 12 потоков • 32MB L3 • PCIe 4.0 шина",
+      cooler: "Deepcool AG400 ~ 2 400 ₽",
+      coolerSub: "Матричные ребра • Рассеивание 220 Вт",
+      mb: "B550M (GIGABYTE B550M DS3H) ~ 9 800 ₽",
+      mbSub: "Шина PCIe 4.0 x16 • 2x M.2 разъема • 5+3 фазы",
+      gpu: "NVIDIA GeForce RTX 4060 8GB (Palit Dual) ~ 34 500 ₽",
+      gpuSub: "Ada Lovelace • 8GB GDDR6 • DLSS 3 + Frame Gen • TDP 115 Вт",
+      ram: "32 GB (2x16GB) DDR4 3600 MHz CL18 ~ 8 800 ₽",
+      ramSub: "Двухканальный режим • Большой запас под новые игры",
+      storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 400 ₽",
+      storageSub: "Скорость до 7000 МБ/с • Ресурс 800 TBW",
+      psu: "Deepcool PK650D (650W Bronze) ~ 5 800 ₽",
+      psuSub: "80 PLUS Bronze • 12V шина: 648 Вт",
+      case: "Montech AIR 100 ARGB ~ 5 400 ₽",
+      caseSub: "4x 120мм ARGB кулера • Отличный продув",
+      notes: "Сбалансированная связка процессора и видеокарты: шина PCIe 4.0, 32 ГБ памяти, поддержка DLSS 3 и генерации кадров."
+    },
+    {
+      baseCost: 115000,
+      powerEst: "~340 Вт",
+      pcieEst: "PCIe 5.0 / 4.0",
+      targetRes: "1080p / 1440p",
+      cpu: "AMD Ryzen 5 7500F (OEM, Zen 4) ~ 15 000 ₽",
+      cpuSub: "6 ядер / 12 потоков • До 5.0 GHz • Socket AM5 • 5 нм",
+      cooler: "Thermalright Assassin King 120 SE ~ 2 600 ₽",
+      coolerSub: "5 тепловых трубок • 120мм PWM • 225 Вт TDP",
+      mb: "B650M (ASRock B650M-HDV/M.2) ~ 13 000 ₽",
+      mbSub: "Socket AM5 • 8+2+1 фаз DrMOS 50A • Слот PCIe 5.0 M.2",
+      gpu: "NVIDIA GeForce RTX 5060 8GB GDDR7 (Blackwell) ~ 42 000 ₽",
+      gpuSub: "Архитектура Blackwell • 8GB GDDR7 28 Gbps • DLSS 4",
+      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
+      ramSub: "Профиль AMD EXPO • Низкие задержки CL30",
+      storage: "1 TB M.2 NVMe PCIe 4.0 ~ 7 500 ₽",
+      storageSub: "Чтение: 7100 МБ/с • Запись: 6000 МБ/с",
+      psu: "Montech Century 650W Gold ~ 6 800 ₽",
+      psuSub: "80 PLUS Gold • Полностью модульный • Японские конденсаторы",
+      case: "Montech Air 100 ARGB ~ 5 500 ₽",
+      caseSub: "Закаленное стекло • Пылевые фильтры",
+      notes: "Актуальная платформа Socket AM5 с оперативной памятью DDR5 и новейшей видеокартой RTX 5060 на быстрой GDDR7 памяти с поддержкой DLSS 4."
+    },
+    {
+      baseCost: 145000,
+      powerEst: "~390 Вт",
+      pcieEst: "PCIe 4.0 / 5.0",
+      targetRes: "1440p (2K) Ultra",
+      cpu: "AMD Ryzen 5 7600X / Core i5-13600KF ~ 21 000 ₽",
+      cpuSub: "До 5.3 GHz • 38MB общего кэша • Высокий однопоток",
+      cooler: "Thermalright Peerless Assassin 120 SE ~ 4 500 ₽",
+      coolerSub: "Двухсекционный радиатор • 6 трубок • 265 Вт TDP",
+      mb: "B650 (MSI B650 Gaming Plus WiFi) ~ 16 000 ₽",
+      mbSub: "12+2+1 фаз VRM • WiFi 6E + 2.5G LAN",
+      gpu: "NVIDIA GeForce RTX 5060 Ti 16GB (Blackwell) ~ 58 000 ₽",
+      gpuSub: "16GB GDDR7 • Поддержка DLSS 4 • TDP 180 Вт",
+      ram: "32 GB (2x16GB) DDR5 6000 MHz CL30 ~ 13 500 ₽",
+      ramSub: "DDR5 EXPO • Тайминги CL30-36-36",
+      storage: "1 TB M.2 PCIe 4.0 ~ 8 000 ₽",
+      storageSub: "DRAM-буфер • Скорость до 7400 МБ/с",
+      psu: "750W Montech Century Gold ~ 8 800 ₽",
+      psuSub: "80 PLUS Gold • Разъем 12V-2x6 • Тихий вентилятор",
+      case: "Montech Air 903 Base ~ 6 800 ₽",
+      caseSub: "3x 140мм PWM вентилятора в комплекте",
+      notes: "16 ГБ видеопамяти исключают дефицит памяти текстур в тяжелых играх в разрешении 1440p."
+    },
+    {
+      baseCost: 230000,
+      powerEst: "~480 Вт",
+      pcieEst: "PCIe 5.0 x16",
+      targetRes: "4K / 1440p Max",
+      cpu: "AMD Ryzen 7 7800X3D (3D V-Cache) ~ 41 000 ₽",
+      cpuSub: "8 ядер / 16 потоков • 96MB L3 V-Cache • Игровой лидер",
+      cooler: "Thermalright Phantom Spirit 120 SE ~ 5 200 ₽",
+      coolerSub: "7 тепловых трубок • 2 радиатора • 280 Вт TDP",
+      mb: "B650E (ASRock Steel Legend WiFi) ~ 24 000 ₽",
+      mbSub: "PCIe 5.0 x16 под видеокарту • 16+2+1 фаз VRM",
+      gpu: "NVIDIA GeForce RTX 5070 Ti 16GB (Blackwell) ~ 98 000 ₽",
+      gpuSub: "16GB GDDR7 28 Gbps • RT-ядра 5-го поколения • 285 Вт",
+      ram: "32 GB (2x16GB) DDR5 6400 MHz CL32 ~ 15 500 ₽",
+      ramSub: "Чипы Hynix A-die • Алюминиевые радиаторы",
+      storage: "2 TB M.2 PCIe 4.0 ~ 16 000 ₽",
+      storageSub: "Чтение: 7300 МБ/с • Запись: 6900 МБ/с",
+      psu: "850W ATX 3.1 Gold (Montech Titan) ~ 13 500 ₽",
+      psuSub: "Стандарт ATX 3.1 • Нативный кабель 12V-2x6",
+      case: "Montech KING 95 Pro ~ 12 000 ₽",
+      caseSub: "Изогнутое закаленное стекло • 6x ARGB кулеров",
+      notes: "Флагманский 3D-кэш процессор и RTX 5070 Ti для максимального фреймрейта и безупречной плавности 1% Low FPS в 1440p и 4K."
+    }
+  ];
 
-  // Auto clean up when tab closes or disconnects
-  onDisconnect(playerRef).remove();
+  function calculateBuild() {
+    const budget = parseInt(document.getElementById('budgetInput').value) || 0;
+    const resBox = document.getElementById('budgetResult');
 
-  // Listen to all players in the room
-  onValue(roomRef, (snapshot) => {
-    const val = snapshot.val() || {};
-    const playerIds = Object.keys(val);
-    
-    // Update player counter on HUD
-    document.getElementById('players-count-text').innerText = `Игроков рядом: ${playerIds.length}`;
+    if (budget < 1000) {
+      alert("Введите бюджет от 1 000 рублей.");
+      return;
+    }
 
-    // Update or add remote players
-    playerIds.forEach(id => {
-      if (id === myPlayerId) return;
-      const data = val[id];
-      if (!remotePlayers.has(id)) {
-        createRemotePlayer(id, data);
-      } else {
-        const rp = remotePlayers.get(id);
-        rp.target = data;
+    let selected = buildsDatabase[0];
+    let minDiff = Math.abs(budget - buildsDatabase[0].baseCost);
+
+    for (let i = 1; i < buildsDatabase.length; i++) {
+      const diff = Math.abs(budget - buildsDatabase[i].baseCost);
+      if (diff < minDiff) {
+        minDiff = diff;
+        selected = buildsDatabase[i];
       }
+    }
+
+    const rangeLow = Math.round((budget * 0.96) / 500) * 500;
+    const rangeHigh = Math.round((budget * 1.04) / 500) * 500;
+    const tagText = `${rangeLow.toLocaleString('ru-RU')} - ${rangeHigh.toLocaleString('ru-RU')} ₽`;
+
+    document.getElementById('buildCategoryName').textContent = "Бюджет: " + budget.toLocaleString('ru-RU') + " ₽";
+    document.getElementById('buildPriceRange').textContent = tagText;
+
+    document.getElementById('bPowerEst').textContent = selected.powerEst;
+    document.getElementById('bPcieEst').textContent = selected.pcieEst;
+    document.getElementById('bTargetRes').textContent = selected.targetRes;
+
+    document.getElementById('bCpu').textContent = selected.cpu;
+    document.getElementById('bCpuSub').textContent = selected.cpuSub;
+    document.getElementById('bCooler').textContent = selected.cooler;
+    document.getElementById('bCoolerSub').textContent = selected.coolerSub;
+    document.getElementById('bMotherboard').textContent = selected.mb;
+    document.getElementById('bMotherboardSub').textContent = selected.mbSub;
+    document.getElementById('bGpu').textContent = selected.gpu;
+    document.getElementById('bGpuSub').textContent = selected.gpuSub;
+    document.getElementById('bRam').textContent = selected.ram;
+    document.getElementById('bRamSub').textContent = selected.ramSub;
+    document.getElementById('bStorage').textContent = selected.storage;
+    document.getElementById('bStorageSub').textContent = selected.storageSub;
+    document.getElementById('bPsu').textContent = selected.psu;
+    document.getElementById('bPsuSub').textContent = selected.psuSub;
+    document.getElementById('bCase').textContent = selected.case;
+    document.getElementById('bCaseSub').textContent = selected.caseSub;
+    document.getElementById('buildNotes').textContent = selected.notes;
+
+    resBox.style.display = 'block';
+  }
+
+  // ПРОВЕРКА СОВМЕСТИМОСТИ
+  const cpuPower = {
+    legacy: 1, fx_series: 1, intel_lga1155: 2, xeon_v3: 2, ryzen_zen1: 2,
+    intel_mid_old: 3, ryzen_am4_main: 4, intel_lga1700: 4,
+    ryzen_am4_top: 5, am5_base: 5, intel_high: 6,
+    am5_intel_top: 7, am5_zen5_x3d: 8
+  };
+
+  const gpuPower = {
+    gpu_retro: 0, gpu_budget_low: 1, gpu_budget_old: 2, gpu_polaris: 2,
+    gpu_entry: 3, gpu_mid: 4, gpu_rtx5060: 5, gpu_mid_high: 5,
+    gpu_rtx5060ti: 6, gpu_high: 6, gpu_rtx5070: 7, gpu_rtx5070ti: 8,
+    gpu_enthusiast: 8, gpu_rtx5080: 9, gpu_top: 9, gpu_rtx5090: 10
+  };
+
+  const tdpEstimate = {
+    gpu_retro: 30, gpu_budget_low: 65, gpu_budget_old: 90, gpu_polaris: 160,
+    gpu_entry: 125, gpu_mid: 160, gpu_rtx5060: 145, gpu_mid_high: 220,
+    gpu_rtx5060ti: 180, gpu_high: 240, gpu_rtx5070: 250, gpu_rtx5070ti: 285,
+    gpu_enthusiast: 320, gpu_rtx5080: 360, gpu_top: 450, gpu_rtx5090: 550
+  };
+
+  function analyzeConfiguration() {
+    const cpu = document.getElementById('cCpu').value;
+    const gpu = document.getElementById('cGpu').value;
+    const ram = document.getElementById('cRam').value;
+    const psu = parseInt(document.getElementById('cPsu').value) || 450;
+
+    const cP = cpuPower[cpu];
+    const gP = gpuPower[gpu];
+
+    const resBox = document.getElementById('upgradeResult');
+    const title = document.getElementById('analysisTitle');
+    const tag = document.getElementById('analysisTag');
+    const details = document.getElementById('analysisDetails');
+
+    details.innerHTML = '';
+    resBox.style.display = 'block';
+
+    if (cP > gP + 1) {
+      title.textContent = "Упор в видеокарту (GPU Bottleneck)";
+      tag.textContent = "Требуется апгрейд GPU";
+      tag.className = "tag tag-amber";
+      addDetail("Потенциал процессора сдерживается видеокартой", "Процессор способен обеспечить существенно более высокий фреймрейт. Видеокарта загружена на 100% и является сдерживающим звеном системы.");
+    } else if (gP > cP + 1) {
+      title.textContent = "Упор в процессор (CPU Bottleneck)";
+      tag.textContent = "Требуется апгрейд CPU";
+      tag.className = "tag tag-red";
+      addDetail("Процессор сдерживает видеокарту", "Мощности центрального процессора недостаточно для полноценной загрузки графического чипа в современных играх. Возможны неравномерный фреймтайм и просадки.");
+    } else {
+      title.textContent = "Сбалансированная связка";
+      tag.textContent = "Баланс соблюден";
+      tag.className = "tag tag-green";
+      addDetail("Компоненты подобраны корректно", "Производительность связки находится в едином технологическом классе. Обеспечивается максимальный КПД каждого вложенного рубля.");
+    }
+
+    if (ram === '4') {
+      addDetail("Критический дефицит ОЗУ", "4 ГБ приводят к непрерывному обращению к файлу подкачки на диске. Необходим апгрейд минимум до 8-16 ГБ.");
+    } else if (ram === '8') {
+      addDetail("Одноканальный режим ОЗУ", "8 ГБ в одноканале срезают пропускную способность памяти почти в два раза. Установка второго модуля даст заметный прирост стабильности кадров.");
+    } else if (ram === '8_dual') {
+      addDetail("Двухканальный режим активен", "8 ГБ в двухканале достаточно для базовых и киберспортивных задач, но для тяжелых современных игр рекомендуется 16 ГБ.");
+    } else if (ram === '16') {
+      addDetail("ОЗУ: оптимальный стандарт", "16 ГБ в двухканальном режиме полностью закрывают потребности современных рабочих и игровых задач.");
+    } else {
+      addDetail("ОЗУ: резерв под высокие нагрузки", "32 ГБ и более гарантируют полное отсутствие упора в память в любых тяжелых играх и рабочих приложениях.");
+    }
+
+    const totalTdp = tdpEstimate[gpu] + (cP >= 5 ? 120 : 70) + 60;
+    const minSafePsu = Math.ceil((totalTdp * 1.35) / 50) * 50;
+
+    if (psu < totalTdp) {
+      addDetail("Дефицит мощности блока питания", `Расчетная пиковая нагрузка связки составляет порядка ${totalTdp} Вт, а номинал БП — ${psu} Вт. Рекомендуется блок мощностью от ${minSafePsu} Вт.`);
+    } else {
+      addDetail("Запас мощности БП в норме", `Блок питания на ${psu} Вт полностью перекрывает расчетную нагрузку (~${totalTdp} Вт) с необходимым коэффициентом надежности.`);
+    }
+  }
+
+  function addDetail(heading, text) {
+    const container = document.getElementById('analysisDetails');
+    const div = document.createElement('div');
+    div.className = 'info-callout';
+    div.innerHTML = `<strong style="display:block; margin-bottom:4px; color:var(--text-main);">${heading}</strong>${text}`;
+    container.appendChild(div);
+  }
+
+  // FPS КАЛЬКУЛЯТОР
+  const gpuBaseFps = {
+    gpu_750ti:    { cs2: 45,  cyberpunk: 18, gta5: 50,  dota2: 65,  preset: "Низкие" },
+    gpu_1050ti:   { cs2: 70,  cyberpunk: 28, gta5: 70,  dota2: 95,  preset: "Низко-средние" },
+    gpu_rx580:    { cs2: 110, cyberpunk: 42, gta5: 90,  dota2: 130, preset: "Средние" },
+    gpu_1660s:    { cs2: 145, cyberpunk: 55, gta5: 115, dota2: 160, preset: "Высокие" },
+    gpu_rx6600:   { cs2: 195, cyberpunk: 70, gta5: 140, dota2: 210, preset: "Высокие" },
+    gpu_4060:     { cs2: 230, cyberpunk: 85, gta5: 160, dota2: 240, preset: "Ультра" },
+    gpu_rtx5060:  { cs2: 265, cyberpunk: 98, gta5: 170, dota2: 260, preset: "Ультра" },
+    gpu_4060ti:   { cs2: 280, cyberpunk: 105, gta5: 175, dota2: 270, preset: "Ультра" },
+    gpu_rtx5060ti:{ cs2: 325, cyberpunk: 122, gta5: 180, dota2: 290, preset: "Ультра" },
+    gpu_4070s:    { cs2: 350, cyberpunk: 135, gta5: 185, dota2: 310, preset: "Ультра" },
+    gpu_rtx5070:  { cs2: 390, cyberpunk: 155, gta5: 185, dota2: 340, preset: "Ультра" },
+    gpu_rtx5070ti:{ cs2: 430, cyberpunk: 175, gta5: 185, dota2: 360, preset: "Ультра" },
+    gpu_4080s:    { cs2: 440, cyberpunk: 170, gta5: 185, dota2: 350, preset: "Ультра" },
+    gpu_rtx5080:  { cs2: 500, cyberpunk: 205, gta5: 185, dota2: 380, preset: "Ультра" },
+    gpu_4090:     { cs2: 490, cyberpunk: 200, gta5: 185, dota2: 370, preset: "Ультра" },
+    gpu_rtx5090:  { cs2: 580, cyberpunk: 260, gta5: 185, dota2: 410, preset: "Ультра" }
+  };
+
+  const cpuFpsMult = {
+    cpu_low: 0.50, cpu_budget: 0.72, cpu_entry: 0.85,
+    cpu_mid: 1.00, cpu_high: 1.15, cpu_top: 1.25, cpu_zen5_x3d: 1.35
+  };
+
+  const ramFpsMult = { '8_s': 0.78, '8_d': 0.90, '16_d': 1.00, '32_d': 1.05 };
+
+  function calculateFps() {
+    const cpu = document.getElementById('fpsCpu').value;
+    const gpu = document.getElementById('fpsGpu').value;
+    const ram = document.getElementById('fpsRam').value;
+    const res = document.getElementById('fpsRes').value;
+
+    const base = gpuBaseFps[gpu];
+    const cMult = cpuFpsMult[cpu];
+    const rMult = ramFpsMult[ram];
+    const resMult = res === '1440p' ? 0.72 : 1.00;
+
+    const games = [
+      { name: "Counter-Strike 2", key: "cs2", isCpuHeavy: true },
+      { name: "Cyberpunk 2077", key: "cyberpunk", isCpuHeavy: false },
+      { name: "GTA V", key: "gta5", isCpuHeavy: true },
+      { name: "Dota 2", key: "dota2", isCpuHeavy: true }
+    ];
+
+    const container = document.getElementById('fpsCardsContainer');
+    container.innerHTML = '';
+
+    games.forEach(g => {
+      let rawFps = base[g.key];
+      let effCpuMult = g.isCpuHeavy ? cMult : (0.4 + cMult * 0.6);
+      let calculatedFps = Math.round(rawFps * effCpuMult * rMult * resMult);
+
+      if (g.key === 'gta5' && calculatedFps > 185) calculatedFps = 185;
+      if (calculatedFps < 10) calculatedFps = 10;
+
+      const card = document.createElement('div');
+      card.className = 'fps-card';
+      card.innerHTML = `
+        <div>
+          <div class="fps-game-title">${g.name}</div>
+          <div class="fps-game-preset">${base.preset} (${res})</div>
+        </div>
+        <div class="fps-counter">
+          <span class="fps-val">${calculatedFps}</span>
+          <span class="fps-unit">FPS</span>
+        </div>
+      `;
+      container.appendChild(card);
     });
 
-    // Remove disconnected players
-    for (const [id, rp] of remotePlayers.entries()) {
-      if (!val[id]) {
-        scene.remove(rp.group);
-        remotePlayers.delete(id);
-      }
-    }
-  });
-}
-
-function syncMyStateToNetwork() {
-  if (!playerRef || !window.isPlaying) return;
-  set(playerRef, {
-    nick: myNick,
-    bikeType: window.selectedBike,
-    x: Number(bikeState.x.toFixed(2)),
-    y: Number(bikeState.y.toFixed(2)),
-    z: Number(bikeState.z.toFixed(2)),
-    turnAngle: Number(bikeState.turnAngle.toFixed(3)),
-    pitchAngle: Number(bikeState.pitchAngle.toFixed(3)),
-    steerAngle: Number(bikeState.steerAngle.toFixed(3)),
-    oneHand: Number(bikeState.oneHandFactor.toFixed(2)),
-    speed: Number(bikeState.speed.toFixed(1)),
-    lastSeen: Date.now()
-  });
-}
-
-function createNameSprite(text) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 64;
-  const ctx = canvas.getContext('2d');
-
-  ctx.fillStyle = 'rgba(10, 16, 26, 0.85)';
-  ctx.roundRect ? ctx.roundRect(10, 10, 236, 44, 12) : ctx.fillRect(10, 10, 236, 44);
-  ctx.fill();
-  ctx.strokeStyle = '#00cec9';
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  ctx.font = 'bold 22px Arial, sans-serif';
-  ctx.fillStyle = '#ffffff';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, 128, 32);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
-  const sprite = new THREE.Sprite(spriteMat);
-  sprite.scale.set(1.6, 0.4, 1);
-  return sprite;
-}
-
-function createRemotePlayer(id, data) {
-  const group = new THREE.Group();
-  
-  // Build remote bike & rider with corresponding colors
-  const bikeObj = buildBikeHierarchy(data.bikeType || 'outleap');
-  group.add(bikeObj.bike);
-
-  // Floating Nickname Tag
-  const nameSprite = createNameSprite(data.nick || 'Пацан');
-  nameSprite.position.set(0, 2.2, 0);
-  group.add(nameSprite);
-
-  scene.add(group);
-
-  const rp = {
-    group: group,
-    bikeObj: bikeObj,
-    target: data,
-    current: {
-      x: data.x || 0,
-      y: data.y || 0,
-      z: data.z || 0,
-      turnAngle: data.turnAngle || 0,
-      pitchAngle: data.pitchAngle || 0,
-      steerAngle: data.steerAngle || 0,
-      oneHand: data.oneHand || 0
-    }
-  };
-
-  remotePlayers.set(id, rp);
-}
-
-function updateRemotePlayers(dt) {
-  for (const [id, rp] of remotePlayers.entries()) {
-    const t = rp.target;
-    const c = rp.current;
-    if (!t) continue;
-
-    // Smooth lerp positions and rotations
-    c.x = THREE.MathUtils.lerp(c.x, t.x, 0.2);
-    c.y = THREE.MathUtils.lerp(c.y, t.y, 0.2);
-    c.z = THREE.MathUtils.lerp(c.z, t.z, 0.2);
-    c.turnAngle = THREE.MathUtils.lerp(c.turnAngle, t.turnAngle, 0.2);
-    c.pitchAngle = THREE.MathUtils.lerp(c.pitchAngle, t.pitchAngle, 0.2);
-    c.steerAngle = THREE.MathUtils.lerp(c.steerAngle, t.steerAngle, 0.2);
-    c.oneHand = THREE.MathUtils.lerp(c.oneHand, t.oneHand, 0.2);
-
-    rp.group.position.set(c.x, c.y, c.z);
-    rp.group.rotation.y = c.turnAngle;
-    rp.group.rotation.x = c.pitchAngle;
-
-    if (rp.bikeObj.fork) {
-      rp.bikeObj.fork.rotation.y = c.steerAngle;
-    }
-    if (rp.bikeObj.rightArm) {
-      rp.bikeObj.rightArm.position.y = 0.48 + c.oneHand * 0.15;
-      rp.bikeObj.rightArm.rotation.x = THREE.MathUtils.lerp(0, -0.9, c.oneHand);
-      rp.bikeObj.rightArm.rotation.z = THREE.MathUtils.lerp(0, 0.8, c.oneHand);
-    }
+    document.getElementById('fpsResult').style.display = 'block';
   }
-}
-
-function detectDeviceAndSetupHUD() {
-  const hasTouchScreen = (
-    ('ontouchstart' in window) ||
-    (navigator.maxTouchPoints > 0) ||
-    (window.matchMedia('(pointer: coarse)').matches)
-  );
-
-  window.isTouchDevice = hasTouchScreen;
-
-  const pcGuide = document.getElementById('pc-guide');
-  const mobileControls = document.getElementById('mobile-controls');
-
-  if (window.isTouchDevice) {
-    pcGuide.style.display = 'none';
-    mobileControls.style.display = 'flex';
-  } else {
-    pcGuide.style.display = 'flex';
-    mobileControls.style.display = 'none';
-  }
-}
-
-window.chooseBike = function(type) {
-  if (type === 'merida' && !window.isMeridaUnlocked) {
-    document.getElementById('sbp-modal').style.display = 'flex';
-    return;
-  }
-  window.selectedBike = type;
-  document.getElementById('card-outleap').classList.toggle('active', type === 'outleap');
-  document.getElementById('card-comiron').classList.toggle('active', type === 'comiron');
-  document.getElementById('card-merida').classList.toggle('active', type === 'merida');
-};
-
-window.confirmSbpPayment = function() {
-  window.isMeridaUnlocked = true;
-  document.getElementById('sbp-modal').style.display = 'none';
-  const badge = document.querySelector('#card-merida .bike-badge');
-  badge.className = 'bike-badge badge-free';
-  badge.innerText = 'КУПЛЕНО ПО СБП';
-  window.chooseBike('merida');
-};
-
-window.closeSbpModal = function() {
-  document.getElementById('sbp-modal').style.display = 'none';
-};
-
-window.startGame = function() {
-  const nickInput = document.getElementById('player-nick-input').value.trim();
-  const roomInput = document.getElementById('room-code-input').value.trim();
-
-  if (nickInput) myNick = nickInput;
-  if (roomInput) currentRoomCode = roomInput;
-
-  document.getElementById('menu-screen').style.display = 'none';
-  document.getElementById('hud').style.display = 'block';
-  document.getElementById('hud-room-indicator').innerText = 'КОМНАТА: ' + currentRoomCode;
-
-  let title = 'OUTLEAP VECTOR 29';
-  if (window.selectedBike === 'comiron') title = 'COMIRON STREET';
-  if (window.selectedBike === 'merida') title = 'MERIDA DOWNHILL 2-CROWN';
-  document.getElementById('hud-bike-name').innerText = title;
-
-  detectDeviceAndSetupHUD();
-  initThree();
-  buildRealisticEnvironment();
-  buildDetailedBikeAndHuman();
-  setupInputs();
-  setupRobloxCameraControls();
-  initMultiplayer();
-
-  window.isPlaying = true;
-  requestAnimationFrame(mainLoop);
-};
-
-function initThree() {
-  const container = document.getElementById('game-container');
-  const width = container.clientWidth;
-  const height = container.clientHeight;
-
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x99c2ec);
-  scene.fog = new THREE.FogExp2(0x99c2ec, 0.007);
-
-  camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 1000);
-
-  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), antialias: true });
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
-
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
-  scene.add(hemiLight);
-
-  const sunLight = new THREE.DirectionalLight(0xfffaed, 1.25);
-  sunLight.position.set(45, 80, 40);
-  sunLight.castShadow = true;
-  sunLight.shadow.mapSize.width = 2048;
-  sunLight.shadow.mapSize.height = 2048;
-  sunLight.shadow.camera.near = 10;
-  sunLight.shadow.camera.far = 180;
-  sunLight.shadow.camera.left = -35;
-  sunLight.shadow.camera.right = 35;
-  sunLight.shadow.camera.top = 35;
-  sunLight.shadow.camera.bottom = -35;
-  sunLight.shadow.bias = -0.0005;
-  scene.add(sunLight);
-
-  window.addEventListener('resize', () => {
-    const w = container.clientWidth;
-    const h = container.clientHeight;
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-    detectDeviceAndSetupHUD();
-  });
-}
-
-function buildRealisticEnvironment() {
-  const roadGeo = new THREE.PlaneGeometry(18, 1400);
-  const roadMat = new THREE.MeshStandardMaterial({ color: 0x24272c, roughness: 0.88, metalness: 0.05 });
-  const road = new THREE.Mesh(roadGeo, roadMat);
-  road.rotation.x = -Math.PI / 2;
-  road.receiveShadow = true;
-  scene.add(road);
-
-  // Sidewalks
-  for (let side of [-11, 11]) {
-    const swGeo = new THREE.BoxGeometry(4.5, 0.3, 1400);
-    const swMat = new THREE.MeshStandardMaterial({ color: 0x8a939e, roughness: 0.9 });
-    const sidewalk = new THREE.Mesh(swGeo, swMat);
-    sidewalk.position.set(side, 0.15, 0);
-    sidewalk.receiveShadow = true;
-    scene.add(sidewalk);
-
-    const curbGeo = new THREE.BoxGeometry(0.3, 0.35, 1400);
-    const curbMat = new THREE.MeshStandardMaterial({ color: 0x57606f, roughness: 0.8 });
-    const curb = new THREE.Mesh(curbGeo, curbMat);
-    curb.position.set(side > 0 ? 8.85 : -8.85, 0.175, 0);
-    scene.add(curb);
-  }
-
-  // Lines
-  for (let s of [-8.5, 8.5]) {
-    const markGeo = new THREE.PlaneGeometry(0.25, 1400);
-    const markMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const mark = new THREE.Mesh(markGeo, markMat);
-    mark.rotation.x = -Math.PI / 2;
-    mark.position.set(s, 0.015, 0);
-    scene.add(mark);
-  }
-
-  for (let z = -680; z < 680; z += 9) {
-    const dashGeo = new THREE.PlaneGeometry(0.3, 4.5);
-    const dashMat = new THREE.MeshBasicMaterial({ color: 0xf1c40f });
-    const dash = new THREE.Mesh(dashGeo, dashMat);
-    dash.rotation.x = -Math.PI / 2;
-    dash.position.set(0, 0.015, z);
-    scene.add(dash);
-  }
-
-  const facadeColors = [0xe2e8f0, 0xcbd5e1, 0x94a3b8, 0x64748b, 0x334155, 0xd97706];
-  for (let z = -650; z < 650; z += 45) {
-    createModernBuilding(-28 - Math.random() * 10, z, 18, 25 + Math.random() * 45, 26, facadeColors);
-    createModernBuilding(28 + Math.random() * 10, z, 18, 25 + Math.random() * 45, 26, facadeColors);
-    createOakTree(-12.5, z + 12);
-    createOakTree(12.5, z - 8);
-  }
-}
-
-function createModernBuilding(x, z, w, h, d, colors) {
-  const col = colors[Math.floor(Math.random() * colors.length)];
-  const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color: col, roughness: 0.5, metalness: 0.2 }));
-  b.position.set(x, h / 2, z);
-  b.castShadow = true;
-  b.receiveShadow = true;
-  scene.add(b);
-}
-
-function createOakTree(x, z) {
-  const group = new THREE.Group();
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.35, 4.5, 8), new THREE.MeshStandardMaterial({ color: 0x4a3728, roughness: 0.9 }));
-  trunk.position.y = 2.25;
-  trunk.castShadow = true;
-  group.add(trunk);
-
-  const foliageMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.8 });
-  for (let i = 0; i < 4; i++) {
-    const sphere = new THREE.Mesh(new THREE.DodecahedronGeometry(1.6 + Math.random() * 0.5, 1), foliageMat);
-    sphere.position.set((Math.random() - 0.5) * 0.8, 4.2 + i * 0.6, (Math.random() - 0.5) * 0.8);
-    sphere.castShadow = true;
-    group.add(sphere);
-  }
-  group.position.set(x, 0, z);
-  scene.add(group);
-}
-
-function buildDetailedWheel(rubberMat, rimMat, spokeMat, discMat) {
-  const wheel = new THREE.Group();
-  const tire = new THREE.Mesh(new THREE.TorusGeometry(0.44, 0.042, 16, 36), rubberMat);
-  tire.castShadow = true;
-  wheel.add(tire);
-
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.016, 12, 32), rimMat);
-  wheel.add(rim);
-
-  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.12, 12), rimMat);
-  hub.rotation.z = Math.PI / 2;
-  wheel.add(hub);
-
-  const rotor = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.005, 16), discMat);
-  rotor.rotation.z = Math.PI / 2;
-  rotor.position.x = 0.045;
-  wheel.add(rotor);
-
-  for (let i = 0; i < 12; i++) {
-    const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.003, 0.74, 4), spokeMat);
-    spoke.rotation.z = (i * Math.PI) / 12;
-    wheel.add(spoke);
-  }
-  return wheel;
-}
-
-function createTube(radius, length, mat) {
-  const geo = new THREE.CylinderGeometry(radius, radius, length, 12);
-  return new THREE.Mesh(geo, mat);
-}
-
-function buildBikeHierarchy(type) {
-  const bike = new THREE.Group();
-  const rubberTireMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.95 });
-  const rimAlloyMat = new THREE.MeshStandardMaterial({ color: 0x2f3542, roughness: 0.3, metalness: 0.85 });
-  const chromeSpokeMat = new THREE.MeshStandardMaterial({ color: 0xdcdde1, roughness: 0.1, metalness: 0.95 });
-  const discRotorMat = new THREE.MeshStandardMaterial({ color: 0xced6e0, metalness: 0.95, roughness: 0.2 });
-
-  const rearW = buildDetailedWheel(rubberTireMat, rimAlloyMat, chromeSpokeMat, discRotorMat);
-  rearW.position.set(0, 0.44, -0.68);
-  bike.add(rearW);
-
-  const fork = new THREE.Group();
-  fork.position.set(0, 0.44, 0.68);
-
-  const frontW = buildDetailedWheel(rubberTireMat, rimAlloyMat, chromeSpokeMat, discRotorMat);
-  fork.add(frontW);
-
-  const barMat = new THREE.MeshStandardMaterial({ color: 0x1e272e, metalness: 0.8, roughness: 0.3 });
-  const handleBar = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.82, 12), barMat);
-  handleBar.rotation.z = Math.PI / 2;
-  handleBar.position.set(0, 0.62, 0.02);
-  fork.add(handleBar);
-
-  if (type === 'merida') {
-    const wineMat = new THREE.MeshStandardMaterial({ color: 0x7a0d2a, roughness: 0.3, metalness: 0.5 });
-    const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.2, metalness: 0.85 });
-
-    for (let s of [-0.08, 0.08]) {
-      const lowerLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.42, 10), wineMat);
-      lowerLeg.position.set(s, 0.16, 0);
-      fork.add(lowerLeg);
-
-      const upperStanchion = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.55, 10), goldMat);
-      upperStanchion.position.set(s, 0.45, 0);
-      fork.add(upperStanchion);
-    }
-    const crown = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.03, 0.08), new THREE.MeshStandardMaterial({ color: 0x111111 }));
-    crown.position.set(0, 0.62, 0);
-    fork.add(crown);
-
-    const topTube = createTube(0.035, 0.72, wineMat);
-    topTube.position.set(0, 0.82, 0.14);
-    topTube.rotation.x = 0.28;
-    bike.add(topTube);
-
-    const downTube = createTube(0.045, 0.85, wineMat);
-    downTube.position.set(0, 0.55, 0.18);
-    downTube.rotation.x = -0.62;
-    bike.add(downTube);
-
-    const fender = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.018, 0.45), rubberTireMat);
-    fender.position.set(0, 0.82, -0.62);
-    fender.rotation.x = -0.42;
-    bike.add(fender);
-  } else if (type === 'comiron') {
-    const blackMat = new THREE.MeshStandardMaterial({ color: 0x151618, roughness: 0.35, metalness: 0.6 });
-    const cyanMat = new THREE.MeshStandardMaterial({ color: 0x00cec9, roughness: 0.4 });
-
-    for (let s of [-0.075, 0.075]) {
-      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.65, 10), blackMat);
-      leg.position.set(s, 0.28, 0);
-      fork.add(leg);
-    }
-    const crown = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.035, 0.07), blackMat);
-    crown.position.set(0, 0.6, 0);
-    fork.add(crown);
-
-    const downTube = createTube(0.036, 0.86, blackMat);
-    downTube.position.set(0, 0.54, 0.16);
-    downTube.rotation.x = -0.64;
-    bike.add(downTube);
-
-    const decal = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.038, 0.42, 10), cyanMat);
-    decal.position.set(0, 0.54, 0.16);
-    decal.rotation.x = -0.64;
-    bike.add(decal);
-
-    const guard = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.015, 0.42), rubberTireMat);
-    guard.position.set(0, 0.74, -0.64);
-    guard.rotation.x = -0.32;
-    bike.add(guard);
-  } else {
-    // Outleap
-    const outleapMat = new THREE.MeshStandardMaterial({ color: 0xcfc8b6, roughness: 0.4, metalness: 0.65 });
-    const blackForkMat = new THREE.MeshStandardMaterial({ color: 0x1f1f1f, roughness: 0.2, metalness: 0.9 });
-
-    for (let s of [-0.075, 0.075]) {
-      const lower = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.35, 10), outleapMat);
-      lower.position.set(s, 0.15, 0);
-      fork.add(lower);
-      const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.4, 10), blackForkMat);
-      upper.position.set(s, 0.38, 0);
-      fork.add(upper);
-    }
-    const crown = new THREE.Mesh(new THREE.BoxGeometry(0.19, 0.035, 0.07), blackForkMat);
-    crown.position.set(0, 0.58, 0);
-    fork.add(crown);
-
-    const downTube = createTube(0.038, 0.86, outleapMat);
-    downTube.position.set(0, 0.54, 0.16);
-    downTube.rotation.x = -0.64;
-    bike.add(downTube);
-
-    const topTube = createTube(0.032, 0.74, outleapMat);
-    topTube.position.set(0, 0.82, 0.12);
-    topTube.rotation.x = 0.22;
-    bike.add(topTube);
-  }
-
-  bike.add(fork);
-
-  // Rider
-  const rider = new THREE.Group();
-  rider.position.set(0, 0.9, -0.18);
-
-  const skinMat = new THREE.MeshStandardMaterial({ color: 0xf5cda7, roughness: 0.7 });
-  const hoodieMat = new THREE.MeshStandardMaterial({ color: 0x1f242d, roughness: 0.9 });
-  const pantsMat = new THREE.MeshStandardMaterial({ color: 0x2b384e, roughness: 0.85 });
-
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.15, 0.52, 12), hoodieMat);
-  torso.position.set(0, 0.32, 0);
-  torso.rotation.x = 0.28;
-  torso.castShadow = true;
-  rider.add(torso);
-
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 16), skinMat);
-  head.position.set(0, 0.74, 0.09);
-  head.castShadow = true;
-  rider.add(head);
-
-  // Cap backwards
-  const capMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.7 });
-  const capVisor = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.015, 0.11), capMat);
-  capVisor.position.set(0, 0.75, -0.05);
-  rider.add(capVisor);
-
-  // Arms
-  const rArm = new THREE.Group();
-  rArm.position.set(-0.22, 0.48, 0.05);
-  const rUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.3, 10), hoodieMat);
-  rUpper.position.set(0, -0.12, 0.12);
-  rUpper.rotation.x = 0.85;
-  rArm.add(rUpper);
-  rider.add(rArm);
-
-  const lArm = new THREE.Group();
-  lArm.position.set(0.22, 0.48, 0.05);
-  const lUpper = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.3, 10), hoodieMat);
-  lUpper.position.set(0, -0.12, 0.12);
-  lUpper.rotation.x = 0.85;
-  lArm.add(lUpper);
-  rider.add(lArm);
-
-  bike.add(rider);
-
-  return {
-    bike: bike,
-    fork: fork,
-    rearWheel: rearW,
-    frontWheel: frontW,
-    rightArm: rArm,
-    rider: rider
-  };
-}
-
-function buildDetailedBikeAndHuman() {
-  const result = buildBikeHierarchy(window.selectedBike);
-  bikeGroup = result.bike;
-  forkGroup = result.fork;
-  rearWheel = result.rearWheel;
-  frontWheel = result.frontWheel;
-  rightArm = result.rightArm;
-  riderGroup = result.rider;
-
-  // Add my local name sprite
-  const myTag = createNameSprite(myNick);
-  myTag.position.set(0, 2.2, 0);
-  bikeGroup.add(myTag);
-
-  scene.add(bikeGroup);
-}
-
-function setupRobloxCameraControls() {
-  const container = document.getElementById('game-container');
-  container.addEventListener('contextmenu', (e) => e.preventDefault());
-
-  window.addEventListener('mousedown', (e) => {
-    if (e.button === 2) {
-      cameraControls.isRMBDown = true;
-    }
-  });
-
-  window.addEventListener('mouseup', (e) => {
-    if (e.button === 2) {
-      cameraControls.isRMBDown = false;
-    }
-  });
-
-  window.addEventListener('mousemove', (e) => {
-    if (!cameraControls.isRMBDown) return;
-    const sensitivity = 0.0055;
-    cameraControls.yaw -= e.movementX * sensitivity;
-    cameraControls.pitch += e.movementY * sensitivity;
-    cameraControls.pitch = Math.max(cameraControls.minPitch, Math.min(cameraControls.maxPitch, cameraControls.pitch));
-  });
-
-  window.addEventListener('wheel', (e) => {
-    cameraControls.distance += e.deltaY * 0.003;
-    cameraControls.distance = Math.max(2.2, Math.min(7.5, cameraControls.distance));
-  });
-
-  // Mobile Touch Drag to Orbit
-  const canvasEl = document.getElementById('canvas3d');
-  canvasEl.addEventListener('touchstart', (e) => {
-    if (e.touches.length === 1) {
-      cameraControls.isTouchDragging = true;
-      cameraControls.lastTouchX = e.touches[0].clientX;
-      cameraControls.lastTouchY = e.touches[0].clientY;
-    }
-  }, { passive: true });
-
-  canvasEl.addEventListener('touchmove', (e) => {
-    if (!cameraControls.isTouchDragging || e.touches.length !== 1) return;
-    const dx = e.touches[0].clientX - cameraControls.lastTouchX;
-    const dy = e.touches[0].clientY - cameraControls.lastTouchY;
-    cameraControls.lastTouchX = e.touches[0].clientX;
-    cameraControls.lastTouchY = e.touches[0].clientY;
-
-    const sensitivity = 0.007;
-    cameraControls.yaw -= dx * sensitivity;
-    cameraControls.pitch += dy * sensitivity;
-    cameraControls.pitch = Math.max(cameraControls.minPitch, Math.min(cameraControls.maxPitch, cameraControls.pitch));
-  }, { passive: true });
-
-  canvasEl.addEventListener('touchend', () => {
-    cameraControls.isTouchDragging = false;
-  }, { passive: true });
-}
-
-function setupInputs() {
-  window.addEventListener('keydown', (e) => {
-    if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.forward = true;
-    if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.backward = true;
-    if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = true;
-    if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = true;
-    if (e.code === 'Space') keys.wheelie = true;
-    if (e.code === 'KeyH' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') keys.oneHand = true;
-  });
-
-  window.addEventListener('keyup', (e) => {
-    if (e.code === 'KeyW' || e.code === 'ArrowUp') keys.forward = false;
-    if (e.code === 'KeyS' || e.code === 'ArrowDown') keys.backward = false;
-    if (e.code === 'KeyA' || e.code === 'ArrowLeft') keys.left = false;
-    if (e.code === 'KeyD' || e.code === 'ArrowRight') keys.right = false;
-    if (e.code === 'Space') keys.wheelie = false;
-    if (e.code === 'KeyH' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') keys.oneHand = false;
-  });
-
-  bindTouchBtn('btn-gas', (v) => keys.forward = v);
-  bindTouchBtn('btn-brake', (v) => keys.backward = v);
-  bindTouchBtn('btn-left', (v) => keys.left = v);
-  bindTouchBtn('btn-right', (v) => keys.right = v);
-  bindTouchBtn('btn-wheelie', (v) => keys.wheelie = v);
-  bindTouchBtn('btn-hand', (v) => keys.oneHand = v);
-}
-
-function bindTouchBtn(id, cb) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const start = (e) => { e.preventDefault(); el.classList.add('active'); cb(true); };
-  const end = (e) => { e.preventDefault(); el.classList.remove('active'); cb(false); };
-  el.addEventListener('touchstart', start);
-  el.addEventListener('touchend', end);
-  el.addEventListener('mousedown', start);
-  el.addEventListener('mouseup', end);
-}
-
-let lastFrame = performance.now();
-let lastSyncTime = 0;
-
-function mainLoop(now) {
-  if (!window.isPlaying) return;
-  const dt = Math.min((now - lastFrame) / 1000, 0.1);
-  lastFrame = now;
-
-  updatePhysics(dt);
-  updateStuntsAndHUD(dt);
-  updateRobloxCamera();
-  updateRemotePlayers(dt);
-
-  // Sync state with Firebase at ~15 FPS
-  if (now - lastSyncTime > 66) {
-    syncMyStateToNetwork();
-    lastSyncTime = now;
-  }
-
-  renderer.render(scene, camera);
-  requestAnimationFrame(mainLoop);
-}
-
-function updatePhysics(dt) {
-  if (bikeState.isCrashed) return;
-
-  if (keys.forward) {
-    bikeState.speed = Math.min(bikeState.speed + bikeState.accel * dt, bikeState.maxSpeed);
-  } else if (keys.backward) {
-    bikeState.speed = Math.max(bikeState.speed - bikeState.accel * 1.8 * dt, -3);
-  } else {
-    if (bikeState.speed > 0) bikeState.speed = Math.max(bikeState.speed - bikeState.friction * dt, 0);
-    else if (bikeState.speed < 0) bikeState.speed = Math.min(bikeState.speed + bikeState.friction * dt, 0);
-  }
-
-  const steerRate = 2.0;
-  if (keys.left) {
-    bikeState.turnAngle += steerRate * dt;
-    bikeState.steerAngle = THREE.MathUtils.lerp(bikeState.steerAngle, 0.4, 0.15);
-  } else if (keys.right) {
-    bikeState.turnAngle -= steerRate * dt;
-    bikeState.steerAngle = THREE.MathUtils.lerp(bikeState.steerAngle, -0.4, 0.15);
-  } else {
-    bikeState.steerAngle = THREE.MathUtils.lerp(bikeState.steerAngle, 0, 0.2);
-  }
-  forkGroup.rotation.y = bikeState.steerAngle;
-
-  bikeState.x += Math.sin(bikeState.turnAngle) * bikeState.speed * dt;
-  bikeState.z += Math.cos(bikeState.turnAngle) * bikeState.speed * dt;
-
-  if (bikeState.z > 600) bikeState.z = -600;
-  if (bikeState.z < -600) bikeState.z = 600;
-
-  // Wheelie
-  if (keys.wheelie && bikeState.speed > 1.2) {
-    bikeState.wheelieTarget = Math.min(bikeState.wheelieTarget + 1.8 * dt, 0.96);
-  } else {
-    bikeState.wheelieTarget = Math.max(bikeState.wheelieTarget - 3.0 * dt, 0);
-  }
-  bikeState.pitchAngle = THREE.MathUtils.lerp(bikeState.pitchAngle, bikeState.wheelieTarget, 0.16);
-
-  if (bikeState.pitchAngle > 0.91) {
-    triggerWasted();
-    return;
-  }
-
-  // Trick One-hand
-  if (keys.oneHand) {
-    bikeState.oneHandFactor = THREE.MathUtils.lerp(bikeState.oneHandFactor, 1.0, 0.15);
-  } else {
-    bikeState.oneHandFactor = THREE.MathUtils.lerp(bikeState.oneHandFactor, 0, 0.2);
-  }
-
-  rightArm.position.y = 0.48 + bikeState.oneHandFactor * 0.15;
-  rightArm.rotation.x = THREE.MathUtils.lerp(0, -0.9, bikeState.oneHandFactor);
-  rightArm.rotation.z = THREE.MathUtils.lerp(0, 0.8, bikeState.oneHandFactor);
-
-  const spinDelta = bikeState.speed * dt * 4.0;
-  rearWheel.rotation.x += spinDelta;
-  frontWheel.rotation.x += spinDelta;
-
-  const leanRoll = (keys.left ? 0.22 : 0) - (keys.right ? 0.22 : 0);
-  bikeGroup.rotation.z = THREE.MathUtils.lerp(bikeGroup.rotation.z, leanRoll, 0.1);
-
-  bikeGroup.position.set(bikeState.x, 0, bikeState.z);
-  bikeGroup.rotation.y = bikeState.turnAngle;
-  bikeGroup.rotation.x = bikeState.pitchAngle;
-}
-
-function updateStuntsAndHUD(dt) {
-  const kmh = Math.round(Math.abs(bikeState.speed) * 3.6);
-  document.getElementById('speed-val').innerText = kmh;
-
-  const stuntEl = document.getElementById('stunt-text');
-
-  if (bikeState.pitchAngle > 0.35 && bikeState.speed > 2.0) {
-    window.stuntTimer += dt;
-    window.cash += Math.round(dt * 200);
-
-    if (bikeState.oneHandFactor > 0.6) {
-      stuntEl.innerText = '🔥 ONE HAND WHEELIE! +$400';
-      window.cash += Math.round(dt * 300);
-    } else {
-      stuntEl.innerText = '⚡ WHEELIE: ' + Math.round(window.stuntTimer * 10) + ' M';
-    }
-  } else if (bikeState.oneHandFactor > 0.6 && bikeState.speed > 3) {
-    stuntEl.innerText = '🤙 NO HAND CRUISE';
-    window.cash += Math.round(dt * 60);
-  } else {
-    window.stuntTimer = 0;
-    stuntEl.innerText = '';
-  }
-
-  document.getElementById('cash-val').innerText = window.cash.toString().padStart(6, '0');
-}
-
-function updateRobloxCamera() {
-  const targetX = bikeState.x;
-  const targetY = 1.1 + (bikeState.pitchAngle * 0.4);
-  const targetZ = bikeState.z;
-
-  const totalYaw = bikeState.turnAngle + cameraControls.yaw + Math.PI;
-  const horizontalDist = cameraControls.distance * Math.cos(cameraControls.pitch);
-  const verticalDist = cameraControls.distance * Math.sin(cameraControls.pitch);
-
-  const desiredX = targetX + Math.sin(totalYaw) * horizontalDist;
-  const desiredY = targetY + verticalDist;
-  const desiredZ = targetZ + Math.cos(totalYaw) * horizontalDist;
-
-  camera.position.x = THREE.MathUtils.lerp(camera.position.x, desiredX, 0.16);
-  camera.position.y = THREE.MathUtils.lerp(camera.position.y, desiredY, 0.16);
-  camera.position.z = THREE.MathUtils.lerp(camera.position.z, desiredZ, 0.16);
-
-  camera.lookAt(targetX, targetY, targetZ);
-}
-
-function triggerWasted() {
-  if (bikeState.isCrashed) return;
-  bikeState.isCrashed = true;
-  document.getElementById('wasted-screen').style.display = 'flex';
-}
-
-window.respawn = function() {
-  document.getElementById('wasted-screen').style.display = 'none';
-  bikeState.speed = 0;
-  bikeState.pitchAngle = 0;
-  bikeState.wheelieTarget = 0;
-  bikeState.turnAngle = 0;
-  bikeState.isCrashed = false;
-  bikeGroup.rotation.set(0, 0, 0);
-  bikeState.x = 0;
-  syncMyStateToNetwork();
-};
-
-window.onload = function() {
-  detectDeviceAndSetupHUD();
-};
 </script>
 </body>
 </html>
-```
