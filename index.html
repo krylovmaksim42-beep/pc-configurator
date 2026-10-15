@@ -91,6 +91,17 @@ main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:26px 5% 40px}
 }
 .quick button:hover{background:#e6f9f5;border-color:#16a085}
 
+.used-badge{
+  display:none;align-items:center;gap:10px;
+  background:linear-gradient(135deg,#fff7e6,#fef0d6);
+  border:1.5px solid #ffd88a;border-radius:12px;
+  padding:12px 16px;margin-top:16px;
+  font-size:13px;color:#8a5a00;line-height:1.5;
+}
+.used-badge.show{display:flex}
+.used-badge .ub-icon{font-size:20px;flex-shrink:0}
+.used-badge b{color:#a87000}
+
 .result{margin-top:22px;display:none}
 .result.show{display:block;animation:fade .35s ease}
 .result-head{
@@ -98,6 +109,7 @@ main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:26px 5% 40px}
   background:linear-gradient(135deg,#16a085,#1abc9c);color:#ffffff;
   border-radius:18px 18px 0 0;padding:20px 24px;
 }
+.result-head.used{background:linear-gradient(135deg,#e8973c,#f0b158)}
 .result-head h2{margin:0;font-size:20px;color:#ffffff}
 .result-head .total-big{font-size:22px;font-weight:900;color:#ffffff}
 .result-head .total-big small{
@@ -148,6 +160,10 @@ main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:26px 5% 40px}
   text-decoration:none;cursor:pointer;transition:all .15s;
 }
 .buy-btn:hover{background:#16a085;color:#fff;border-color:#16a085}
+.buy-btn.avito{
+  background:#fff7e6;color:#a87000;border-color:#ffd88a;
+}
+.buy-btn.avito:hover{background:#e8973c;color:#fff;border-color:#e8973c}
 .buy-btn svg{width:14px;height:14px;fill:currentColor}
 
 .extra{
@@ -237,6 +253,7 @@ footer{
   .budget-row input{font-size:17px;padding:14px 16px}
   .budget-row button{padding:15px;font-size:16px}
   .quick button{font-size:12px;padding:9px;min-width:80px}
+  .used-badge{font-size:12px;padding:10px 12px}
   .result-head{padding:16px 18px;border-radius:16px 16px 0 0}
   .result-head h2{font-size:17px}
   .result-head .total-big{font-size:19px}
@@ -296,20 +313,26 @@ footer{
   <div class="form-card">
     <label class="form-label" for="budget">Сколько у тебя денег?</label>
     <div class="budget-row">
-      <input id="budget" type="number" value="60000" min="10000" step="1000" inputmode="numeric" placeholder="Например, 60000">
+      <input id="budget" type="number" value="60000" min="5000" step="1000" inputmode="numeric" placeholder="Например, 60000">
       <button onclick="buildPC()">Подобрать</button>
     </div>
     <div class="quick">
+      <button onclick="setBudget(15000)">15 000 ₽</button>
       <button onclick="setBudget(30000)">30 000 ₽</button>
       <button onclick="setBudget(60000)">60 000 ₽</button>
       <button onclick="setBudget(100000)">100 000 ₽</button>
-      <button onclick="setBudget(200000)">200 000 ₽</button>
     </div>
+
+    <div class="used-badge" id="usedBadge">
+      <span class="ub-icon">🛒</span>
+      <span>Для бюджета до 25 000 ₽ подобрана сборка из <b>б/у комплектующих</b>. Кнопка «Найти на Авито» откроет поиск.</span>
+    </div>
+
     <p class="hint">Цены ориентировочные — перед покупкой проверь актуальную стоимость.</p>
   </div>
 
   <div class="result" id="result">
-    <div class="result-head">
+    <div class="result-head" id="resultHead">
       <div>
         <h2 id="headline">Твоя сборка</h2>
         <span class="status" id="status">Ожидание…</span>
@@ -346,9 +369,9 @@ footer{
     </p>
 
     <p>
-      Программа также проверяет совместимость комплектующих
-      (например, сокет процессора и материнской платы, тип памяти)
-      и показывает итоговую стоимость сборки.
+      Для бюджетов до 25 000 ₽ сайт подбирает сборку из б/у комплектующих
+      (со ссылками на Авито), а для больших сумм — из новых деталей
+      с ссылками на Яндекс.Маркет.
     </p>
 
     <div class="author">
@@ -362,11 +385,11 @@ footer{
 
     <h3 style="margin:0 0 4px;font-size:16px;color:#0d3b3b">Что умеет сайт</h3>
     <ul class="feature-list">
-      <li>Подбирает сборку ПК по любому бюджету от 10 000 ₽</li>
+      <li>Подбирает сборку ПК по бюджету от 5 000 ₽</li>
+      <li>Для небольших сумм использует б/у комплектующие с Авито</li>
       <li>Показывает цену каждого комплектующего отдельно</li>
       <li>Считает итоговую стоимость и остаток денег</li>
       <li>Проверяет совместимость процессора, платы и памяти</li>
-      <li>Позволяет заменить любую деталь в один клик</li>
       <li>Работает на компьютере и на телефоне</li>
     </ul>
 
@@ -382,6 +405,20 @@ footer{
 <script>
 const money = n => Math.round(n).toLocaleString("ru-RU") + " ₽";
 let build = [];
+let usedMode = false;
+const USED_THRESHOLD = 25000;
+
+/* Соответствие русских названий категорий и ключей каталога */
+const titleToKey = {
+  "Процессор": "cpu",
+  "Видеокарта": "gpu",
+  "Материнская плата": "motherboard",
+  "Оперативная память": "ram",
+  "Накопитель": "storage",
+  "Блок питания": "psu",
+  "Корпус": "case",
+  "Охлаждение": "cool"
+};
 
 function showPage(page){
   document.getElementById('page-home').classList.toggle('active', page === 'home');
@@ -398,9 +435,9 @@ function setBudget(v){
 }
 
 /* =========================================================
-   КАТАЛОГ С КОНКРЕТНЫМИ МОДЕЛЯМИ
+   КАТАЛОГ НОВЫХ КОМПЛЕКТУЮЩИХ
    ========================================================= */
-const catalog = {
+const catalogNew = {
   cpu: [
     { name: "Intel Celeron G6900", price: 5000, socket: "LGA1700" },
     { name: "AMD Ryzen 3 4100", price: 5500, socket: "AM4" },
@@ -480,6 +517,73 @@ const catalog = {
   ]
 };
 
+/* =========================================================
+   КАТАЛОГ Б/У КОМПЛЕКТУЮЩИХ
+   ========================================================= */
+const catalogUsed = {
+  cpu: [
+    { name: "Intel Core i3-8100 (б/у)", price: 1500, socket: "LGA1151" },
+    { name: "Intel Core i5-8400 (б/у)", price: 2500, socket: "LGA1151" },
+    { name: "Intel Core i3-10100F (б/у)", price: 2800, socket: "LGA1200" },
+    { name: "Intel Core i5-10400F (б/у)", price: 4000, socket: "LGA1200" },
+    { name: "AMD Ryzen 3 3200G (б/у)", price: 3000, socket: "AM4" },
+    { name: "AMD Ryzen 5 2600 (б/у)", price: 3500, socket: "AM4" },
+    { name: "AMD Ryzen 5 3600 (б/у)", price: 4500, socket: "AM4" },
+    { name: "AMD Ryzen 5 5600 (б/у)", price: 6500, socket: "AM4" }
+  ],
+  gpu: [
+    { name: "Без отдельной видеокарты", price: 0 },
+    { name: "GeForce GT 730 2 ГБ (б/у)", price: 1000 },
+    { name: "GeForce GTX 750 Ti 2 ГБ (б/у)", price: 2500 },
+    { name: "GeForce GTX 1050 Ti 4 ГБ (б/у)", price: 4500 },
+    { name: "GeForce GTX 1650 4 ГБ (б/у)", price: 7000 },
+    { name: "Radeon RX 580 8 ГБ (б/у)", price: 8000 },
+    { name: "GeForce GTX 1660 Super 6 ГБ (б/у)", price: 10000 },
+    { name: "Radeon RX 6600 8 ГБ (б/у)", price: 14000 }
+  ],
+  ram: [
+    { name: "4 ГБ DDR4 (б/у)", price: 600, type: "DDR4" },
+    { name: "8 ГБ DDR4 (б/у)", price: 1100, type: "DDR4" },
+    { name: "16 ГБ DDR4 (б/у)", price: 2000, type: "DDR4" },
+    { name: "8 ГБ DDR3 (б/у)", price: 700, type: "DDR3" },
+    { name: "16 ГБ DDR3 (б/у)", price: 1400, type: "DDR3" }
+  ],
+  storage: [
+    { name: "HDD 500 ГБ (б/у)", price: 700 },
+    { name: "SSD 120 ГБ (б/у)", price: 800 },
+    { name: "SSD 240 ГБ (б/у)", price: 1200 },
+    { name: "SSD 480 ГБ (б/у)", price: 2000 },
+    { name: "SSD NVMe 512 ГБ (б/у)", price: 2500 }
+  ],
+  motherboard: [
+    { name: "H310M (LGA1151) (б/у)", price: 1500, socket: "LGA1151" },
+    { name: "B360M (LGA1151) (б/у)", price: 2200, socket: "LGA1151" },
+    { name: "H410M (LGA1200) (б/у)", price: 2500, socket: "LGA1200" },
+    { name: "B460M (LGA1200) (б/у)", price: 3500, socket: "LGA1200" },
+    { name: "A320M (AM4) (б/у)", price: 2000, socket: "AM4" },
+    { name: "B450M (AM4) (б/у)", price: 3000, socket: "AM4" },
+    { name: "B550M (AM4) (б/у)", price: 4500, socket: "AM4" }
+  ],
+  psu: [
+    { name: "Блок питания 400 Вт (б/у)", price: 700 },
+    { name: "Блок питания 450 Вт (б/у)", price: 900 },
+    { name: "Блок питания 500 Вт (б/у)", price: 1200 },
+    { name: "Блок питания 600 Вт (б/у)", price: 1600 },
+    { name: "Блок питания 700 Вт (б/у)", price: 2200 }
+  ],
+  case: [
+    { name: "Б/у корпус Mini-Tower", price: 500 },
+    { name: "Б/у корпус Midi-Tower", price: 1000 },
+    { name: "Б/у корпус с подсветкой", price: 1500 },
+    { name: "Б/у корпус ATX", price: 2000 }
+  ],
+  cool: [
+    { name: "Боксовый кулер (б/у)", price: 300 },
+    { name: "Башенный кулер (б/у)", price: 800 },
+    { name: "Башенный кулер 4 трубки (б/у)", price: 1500 }
+  ]
+};
+
 const shares = {
   cpu: 0.18, gpu: 0.35, motherboard: 0.10, ram: 0.10,
   storage: 0.08, psu: 0.07, case: 0.06, cool: 0.06
@@ -500,7 +604,7 @@ function pickComponent(list, targetBudget, filterFn) {
   return best;
 }
 
-function choose(b){
+function choose(b, catalog){
   const cpuTarget = b * shares.cpu;
   const cpu = pickComponent(catalog.cpu, cpuTarget);
   const socket = cpu.socket;
@@ -509,9 +613,9 @@ function choose(b){
   let motherboard = pickComponent(catalog.motherboard, mbTarget, item => item.socket === socket);
 
   const ramTarget = b * shares.ram;
-  const needDDR5 = socket === "AM5" || (socket === "LGA1700" && motherboard.name.includes("Z790"));
-  const ramType = needDDR5 ? "DDR5" : "DDR4";
+  const ramType = (socket === "AM5") ? "DDR5" : "DDR4";
   let ram = pickComponent(catalog.ram, ramTarget, item => item.type === ramType);
+  if (!ram) ram = pickComponent(catalog.ram, ramTarget);
 
   const gpuTarget = b * shares.gpu;
   let gpu = pickComponent(catalog.gpu, gpuTarget);
@@ -559,54 +663,69 @@ function choose(b){
   ];
 }
 
-const options = {
-  "Процессор": catalog.cpu.map(i => [i.name, i.price]),
-  "Видеокарта": catalog.gpu.map(i => [i.name, i.price]),
-  "Материнская плата": catalog.motherboard.map(i => [i.name, i.price]),
-  "Оперативная память": catalog.ram.map(i => [i.name, i.price]),
-  "Накопитель": catalog.storage.map(i => [i.name, i.price]),
-  "Блок питания": catalog.psu.map(i => [i.name, i.price]),
-  "Корпус": catalog.case.map(i => [i.name, i.price]),
-  "Охлаждение": catalog.cool.map(i => [i.name, i.price])
-};
-
-/* Ссылка на поиск в Яндекс.Маркете — там почти всё есть */
+/* Ссылки */
 function marketLink(name){
   return "https://market.yandex.ru/search?text=" + encodeURIComponent(name);
+}
+function avitoLink(name){
+  const clean = name.replace(/\s*\(б\/у\)\s*/g, "").trim();
+  return "https://www.avito.ru/all?q=" + encodeURIComponent(clean);
+}
+function getBuyLink(name, isUsed){
+  return isUsed ? avitoLink(name) : marketLink(name);
 }
 
 function buildPC(){
   const budget = Number(document.getElementById('budget').value);
-  if (!Number.isFinite(budget) || budget < 10000){
-    alert("Введи бюджет от 10 000 рублей.");
+  if (!Number.isFinite(budget) || budget < 5000){
+    alert("Введи бюджет от 5 000 рублей.");
     return;
   }
 
-  build = choose(budget);
+  usedMode = budget < USED_THRESHOLD;
+  const catalog = usedMode ? catalogUsed : catalogNew;
+
+  build = choose(budget, catalog);
+
+  /* Показать плашку б/у */
+  document.getElementById('usedBadge').classList.toggle('show', usedMode);
+  document.getElementById('resultHead').classList.toggle('used', usedMode);
 
   document.getElementById('result').classList.add('show');
   document.getElementById('extra').style.display = 'block';
 
-  document.getElementById('parts').innerHTML = build.map((p, i) => `
+  document.getElementById('headline').textContent = usedMode
+    ? "Сборка из б/у комплектующих"
+    : "Твоя сборка";
+
+  /* Формируем список деталей */
+  const optionCatalog = usedMode ? catalogUsed : catalogNew;
+
+  document.getElementById('parts').innerHTML = build.map((p, i) => {
+    const key = titleToKey[p.title];
+    const optionList = optionCatalog[key] || [];
+
+    return `
     <div class="part">
       <span class="p-title">${p.title}</span>
       <span class="p-cost" id="cost${i}">${money(p.price)}</span>
       <span class="p-name">${p.name}</span>
       <select onchange="replacePart(${i}, this.value)">
-        ${options[p.title].map(o =>
-          `<option value="${o[0]}" data-price="${o[1]}" ${o[0] === p.name ? "selected" : ""}>
-            ${o[0]} — ${money(o[1])}
+        ${optionList.map(o =>
+          `<option value="${o.name}" data-price="${o.price}" ${o.name === p.name ? "selected" : ""}>
+            ${o.name} — ${money(o.price)}
           </option>`
         ).join("")}
       </select>
       <div class="buy-row">
-        <a class="buy-btn" href="${marketLink(p.name)}" target="_blank" rel="noopener">
+        <a class="buy-btn ${usedMode ? 'avito' : ''}" href="${getBuyLink(p.name, usedMode)}" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42L17.59 5H14V3zM5 5h7v2H7v10h10v-5h2v7H5V5z"/></svg>
-          Где купить
+          ${usedMode ? 'Найти на Авито' : 'Где купить'}
         </a>
       </div>
     </div>
-  `).join("");
+    `;
+  }).join("");
 
   update();
 }
@@ -619,9 +738,9 @@ function replacePart(i, name){
   document.getElementById('cost' + i).textContent = money(build[i].price);
   sel.parentElement.querySelector('.p-name').textContent = name;
 
-  /* Обновляем ссылку "Где купить" */
-  const buyLink = sel.parentElement.querySelector('.buy-btn');
-  if (buyLink) buyLink.href = marketLink(name);
+  /* Обновляем ссылку "Где купить" / "Найти на Авито" */
+  const linkEl = sel.parentElement.querySelector('.buy-btn');
+  if (linkEl) linkEl.href = getBuyLink(name, usedMode);
 
   update();
 }
@@ -664,12 +783,18 @@ function update(){
     : "✓ Предварительная проверка пройдена. Перед покупкой уточни точные модели и разъёмы.";
 
   let perf;
-  if (total < 25000)      perf = "Для офисных задач, браузера, учёбы и лёгких игр на минимальных настройках.";
-  else if (total < 45000) perf = "Для учёбы, программирования и большинства игр в Full HD на средних настройках.";
-  else if (total < 70000) perf = "Для игр в Full HD на высоких настройках и работы с графикой.";
-  else if (total < 100000) perf = "Для игр в Full HD/2K на максимальных настройках, монтажа и 3D.";
-  else if (total < 160000) perf = "Для игр в 2K на ультра-настройках, стриминга, монтажа 4K.";
-  else perf = "Для игр в 4K, профессионального монтажа, рендеринга и ресурсоёмких задач.";
+  if (usedMode){
+    if (total < 12000)      perf = "Для офисных задач, браузера, учёбы и просмотра видео.";
+    else if (total < 18000) perf = "Для учёбы, программирования и старых/лёгких игр.";
+    else                    perf = "Для большинства игр в Full HD на средних настройках и работы.";
+  } else {
+    if (total < 25000)      perf = "Для офисных задач, браузера, учёбы и лёгких игр на минимальных настройках.";
+    else if (total < 45000) perf = "Для учёбы, программирования и большинства игр в Full HD на средних настройках.";
+    else if (total < 70000) perf = "Для игр в Full HD на высоких настройках и работы с графикой.";
+    else if (total < 100000) perf = "Для игр в Full HD/2K на максимальных настройках, монтажа и 3D.";
+    else if (total < 160000) perf = "Для игр в 2K на ультра-настройках, стриминга, монтажа 4K.";
+    else perf = "Для игр в 4K, профессионального монтажа, рендеринга и ресурсоёмких задач.";
+  }
 
   document.getElementById('performance').textContent = perf;
 }
