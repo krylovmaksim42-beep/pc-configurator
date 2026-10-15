@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ПК-Мастер · Подбор ПК по бюджету</title>
+<title>Собери Сам · Конфигуратор ПК под бюджет</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
@@ -160,11 +160,82 @@ main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:26px 5% 40px}
   text-decoration:none;cursor:pointer;transition:all .15s;
 }
 .buy-btn:hover{background:#16a085;color:#fff;border-color:#16a085}
-.buy-btn.avito{
-  background:#fff7e6;color:#a87000;border-color:#ffd88a;
-}
+.buy-btn.avito{background:#fff7e6;color:#a87000;border-color:#ffd88a}
 .buy-btn.avito:hover{background:#e8973c;color:#fff;border-color:#e8973c}
 .buy-btn svg{width:14px;height:14px;fill:currentColor}
+
+.fps-block{
+  background:#ffffff;border:1px solid #d9f2ee;border-radius:16px;
+  padding:22px;margin-top:16px;
+  box-shadow:0 6px 20px rgba(22,160,133,.06);
+}
+.fps-head{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;margin-bottom:16px;
+}
+.fps-head h3{
+  font-size:17px;color:#0d3b3b;margin:0;letter-spacing:-.2px;
+  font-weight:800;
+}
+.fps-res{
+  font-size:12px;color:#16a085;font-weight:700;
+  background:#e6f9f5;padding:6px 12px;border-radius:20px;
+  white-space:nowrap;
+}
+.fps-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;
+}
+.fps-card{
+  background:#f8fdfc;border:1.5px solid #e6f5f2;
+  border-radius:14px;padding:16px 10px 14px;
+  text-align:center;transition:all .15s;
+}
+.fps-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(22,160,133,.1)}
+.fps-card .fps-game{
+  font-size:11.5px;color:#7d9c99;font-weight:800;
+  text-transform:uppercase;letter-spacing:.4px;
+  display:flex;align-items:center;justify-content:center;
+  min-height:30px;margin-bottom:6px;line-height:1.2;
+}
+.fps-value{
+  display:block;font-size:24px;font-weight:900;
+  color:#16a085;line-height:1;letter-spacing:-.5px;
+}
+.fps-value .unit{
+  display:block;font-size:10px;font-weight:700;color:#7d9c99;
+  letter-spacing:1px;margin-top:4px;
+}
+.fps-value.high{color:#16a085}
+.fps-value.mid{color:#e8973c}
+.fps-value.low{color:#e57373}
+.fps-value.none{color:#b0bfbd;font-size:15px;font-weight:700;letter-spacing:0}
+
+.fps-card.high{background:#e6f9f5;border-color:#a8e0d4}
+.fps-card.high:hover{box-shadow:0 6px 16px rgba(22,160,133,.18)}
+.fps-card.mid{background:#fff7e6;border-color:#ffd88a}
+.fps-card.mid:hover{box-shadow:0 6px 16px rgba(232,151,60,.18)}
+.fps-card.low{background:#fdecea;border-color:#f5b8b0}
+.fps-card.low:hover{box-shadow:0 6px 16px rgba(229,115,115,.18)}
+.fps-card.none{background:#f2f5f5;border-color:#e0e5e5}
+
+.fps-legend{
+  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
+  margin-top:16px;padding-top:14px;border-top:1px solid #eef9f7;
+  font-size:12px;color:#7d9c99;
+}
+.fps-legend span{display:inline-flex;align-items:center;gap:6px}
+.fps-legend i{
+  width:10px;height:10px;border-radius:50%;display:inline-block;
+  font-style:normal;
+}
+.fps-legend i.h{background:#16a085}
+.fps-legend i.m{background:#e8973c}
+.fps-legend i.l{background:#e57373}
+.fps-legend i.n{background:#b0bfbd}
+.fps-note{
+  margin:12px 0 0;font-size:12px;color:#7d9c99;
+  line-height:1.5;text-align:center;
+}
 
 .extra{
   background:#ffffff;border:1px solid #d9f2ee;border-radius:14px;
@@ -226,6 +297,147 @@ footer{
   border-top:1px solid #d9f2ee;background:#ffffff;
 }
 
+.support-fab{
+  position:fixed;bottom:22px;right:22px;z-index:99;
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,#16a085,#1abc9c);
+  color:#fff;border:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(22,160,133,.45);
+  transition:transform .2s,box-shadow .2s;
+}
+.support-fab:hover{transform:scale(1.08);box-shadow:0 12px 30px rgba(22,160,133,.55)}
+.support-fab:active{transform:scale(.95)}
+.support-fab svg{width:26px;height:26px;fill:#fff}
+.support-fab::after{
+  content:"";position:absolute;inset:-6px;border-radius:50%;
+  border:2px solid rgba(22,160,133,.5);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{transform:scale(1);opacity:.7}
+  70%{transform:scale(1.35);opacity:0}
+  100%{opacity:0}
+}
+
+.support-modal{
+  position:fixed;inset:0;background:rgba(13,59,59,.55);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;z-index:100;backdrop-filter:blur(3px);
+}
+.support-modal.show{display:flex;animation:fade .2s}
+.support-card{
+  background:#fff;border-radius:20px;
+  max-width:440px;width:100%;
+  height:600px;max-height:90vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  position:relative;overflow:hidden;
+}
+.support-head{
+  padding:16px 20px;
+  background:linear-gradient(135deg,#16a085,#1abc9c);
+  color:#fff;display:flex;align-items:center;gap:12px;
+  flex-shrink:0;
+}
+.support-head .avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.22);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.support-head .info{flex:1;min-width:0}
+.support-head .info h3{margin:0;font-size:16px;color:#fff;font-weight:800}
+.support-head .info p{margin:2px 0 0;font-size:12px;opacity:.85}
+.support-head .close-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.2);border:0;cursor:pointer;
+  color:#fff;font-size:18px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.support-head .close-btn:hover{background:rgba(255,255,255,.35)}
+
+.chat-messages{
+  flex:1;overflow-y:auto;padding:16px;
+  background:#f8fdfc;
+  display:flex;flex-direction:column;gap:10px;
+  scroll-behavior:smooth;
+}
+.chat-messages::-webkit-scrollbar{width:6px}
+.chat-messages::-webkit-scrollbar-thumb{background:#cceee8;border-radius:3px}
+
+.chat-msg{
+  max-width:82%;padding:10px 14px;border-radius:14px;
+  font-size:14px;line-height:1.45;word-wrap:break-word;
+  white-space:pre-wrap;animation:msgIn .25s ease;
+}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.chat-msg.bot{
+  background:#fff;color:#0d3b3b;
+  border:1px solid #e6f5f2;
+  align-self:flex-start;
+  border-bottom-left-radius:4px;
+}
+.chat-msg.user{
+  background:linear-gradient(135deg,#16a085,#1abc9c);
+  color:#fff;align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+.chat-msg.typing{
+  padding:12px 16px;display:flex;gap:4px;
+}
+.chat-msg.typing span{
+  width:7px;height:7px;border-radius:50%;
+  background:#7d9c99;animation:dot 1.2s infinite;
+}
+.chat-msg.typing span:nth-child(2){animation-delay:.2s}
+.chat-msg.typing span:nth-child(3){animation-delay:.4s}
+@keyframes dot{
+  0%,60%,100%{opacity:.3;transform:translateY(0)}
+  30%{opacity:1;transform:translateY(-4px)}
+}
+
+.chat-quick{
+  display:flex;gap:6px;padding:8px 14px 0;
+  background:#f8fdfc;flex-wrap:wrap;flex-shrink:0;
+}
+.chat-quick button{
+  background:#fff;border:1.5px solid #cceee8;
+  color:#16a085;font-size:12px;font-weight:700;
+  padding:6px 11px;border-radius:14px;cursor:pointer;
+  font-family:inherit;transition:all .15s;
+}
+.chat-quick button:hover{background:#e6f9f5;border-color:#16a085}
+.chat-quick button:disabled{opacity:.4;cursor:default}
+
+.chat-input-row{
+  display:flex;gap:8px;padding:12px 14px;
+  background:#fff;border-top:1px solid #e6f5f2;
+  flex-shrink:0;
+}
+.chat-input-row input{
+  flex:1;padding:11px 14px;
+  border:2px solid #d9f2ee;border-radius:22px;
+  background:#f8fdfc;color:#0d3b3b;
+  font-size:14px;font-family:inherit;
+  transition:border-color .15s;
+}
+.chat-input-row input:focus{
+  outline:none;border-color:#16a085;background:#fff;
+}
+.chat-input-row button{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,#16a085,#1abc9c);
+  color:#fff;border:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s;flex-shrink:0;
+}
+.chat-input-row button:hover{transform:scale(1.08)}
+.chat-input-row button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.chat-input-row button svg{width:20px;height:20px;fill:#fff}
+
 @media(max-width:700px){
   .hero{padding:24px 20px}
   .hero h2{font-size:24px}
@@ -233,6 +445,7 @@ footer{
   .form-card{padding:20px}
   .about-card{padding:22px}
   .about-card h2{font-size:23px}
+  .fps-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:560px){
   header{padding:10px 14px}
@@ -265,6 +478,14 @@ footer{
   .buy-btn{font-size:12px;padding:7px 12px}
   .extra{padding:16px;border-radius:12px}
   .extra p{font-size:13px}
+  .fps-block{padding:16px;border-radius:14px}
+  .fps-head h3{font-size:15px}
+  .fps-res{font-size:11px;padding:5px 10px}
+  .fps-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .fps-card{padding:13px 8px}
+  .fps-value{font-size:20px}
+  .fps-card .fps-game{font-size:11px;min-height:26px}
+  .fps-legend{font-size:11px;gap:10px}
   .about-card{padding:20px;border-radius:16px}
   .about-card h2{font-size:21px}
   .about-card p{font-size:14px}
@@ -272,6 +493,12 @@ footer{
   .author-avatar{width:54px;height:54px;font-size:22px}
   .author-info h3{font-size:15px}
   .back-btn{width:100%;padding:14px;font-size:15px}
+
+  .support-fab{width:54px;height:54px;bottom:16px;right:16px}
+  .support-fab svg{width:22px;height:22px}
+  .support-card{height:80vh;max-height:560px;border-radius:16px}
+  .support-head{padding:14px 16px}
+  .chat-msg{font-size:13.5px;max-width:88%}
 }
 @media(max-width:380px){
   .brand h1{font-size:16px}
@@ -289,8 +516,8 @@ footer{
   <a class="brand" href="#" onclick="showPage('home');return false">
     <img class="logo" src="https://sch2087uv.mskobr.ru/attach_files/logo/логопнг-51.png" alt="Эмблема школы 2087" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M50 3 C20 3 6 22 6 48 L6 78 C6 92 22 97 50 97 C78 97 94 92 94 78 L94 48 C94 22 80 3 50 3 Z%22 fill=%22%23ffffff%22 stroke=%22%2316a085%22 stroke-width=%224%22/><text x=%2250%22 y=%2258%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2222%22 font-weight=%22900%22 fill=%22%2316a085%22>2087</text></svg>'">
     <div>
-      <h1>ПК-<span>Мастер</span></h1>
-      <p>Подбор компьютера под твой бюджет</p>
+      <h1>Собери<span>Сам</span></h1>
+      <p>Конфигуратор ПК под твой бюджет</p>
     </div>
   </a>
   <nav>
@@ -307,7 +534,7 @@ footer{
   <div class="hero">
     <div class="hero-tag">Подбор ПК по бюджету</div>
     <h2>Узнай, какой компьютер можно собрать на твои деньги</h2>
-    <p>Введи сумму — и получи готовую сборку с ценами на все комплектующие.</p>
+    <p>Введи сумму — получи сборку, цены и примерный FPS в популярных играх.</p>
   </div>
 
   <div class="form-card">
@@ -325,7 +552,7 @@ footer{
 
     <div class="used-badge" id="usedBadge">
       <span class="ub-icon">🛒</span>
-      <span>Для бюджета до 25 000 ₽ подобрана сборка из <b>б/у комплектующих</b>. Кнопка «Найти на Авито» откроет поиск.</span>
+      <span>Для бюджета до 20 000 ₽ подобрана сборка из <b>б/у комплектующих</b>. Кнопка «Найти на Авито» откроет поиск.</span>
     </div>
 
     <p class="hint">Цены ориентировочные — перед покупкой проверь актуальную стоимость.</p>
@@ -345,6 +572,42 @@ footer{
     <div class="parts" id="parts"></div>
   </div>
 
+  <div class="fps-block" id="fpsBlock" style="display:none">
+    <div class="fps-head">
+      <h3>🎮 Примерный FPS в играх</h3>
+      <span class="fps-res">1920×1080 · высокие настройки</span>
+    </div>
+    <div class="fps-grid">
+      <div class="fps-card" id="cardCs">
+        <span class="fps-game">CS2</span>
+        <span class="fps-value" id="fpsCs">—<span class="unit">FPS</span></span>
+      </div>
+      <div class="fps-card" id="cardMc">
+        <span class="fps-game">Minecraft</span>
+        <span class="fps-value" id="fpsMc">—<span class="unit">FPS</span></span>
+      </div>
+      <div class="fps-card" id="cardGta">
+        <span class="fps-game">GTA V</span>
+        <span class="fps-value" id="fpsGta">—<span class="unit">FPS</span></span>
+      </div>
+      <div class="fps-card" id="cardFn">
+        <span class="fps-game">Fortnite</span>
+        <span class="fps-value" id="fpsFn">—<span class="unit">FPS</span></span>
+      </div>
+      <div class="fps-card" id="cardCb">
+        <span class="fps-game">Cyberpunk 2077</span>
+        <span class="fps-value" id="fpsCb">—<span class="unit">FPS</span></span>
+      </div>
+    </div>
+    <div class="fps-legend">
+      <span><i class="h"></i> Комфортно (60+)</span>
+      <span><i class="m"></i> Играбельно (30–59)</span>
+      <span><i class="l"></i> Слабо (&lt;30)</span>
+      <span><i class="n"></i> Не запустится</span>
+    </div>
+    <p class="fps-note">Значения приблизительные — реальный FPS зависит от версии игры, драйверов и настроек.</p>
+  </div>
+
   <div class="extra" id="extra" style="display:none">
     <h3>Совместимость</h3>
     <p id="compat"></p>
@@ -361,7 +624,7 @@ footer{
     <p class="subtitle">Учебный проект по информатике · 10 класс</p>
 
     <p>
-      <b>«ПК-Мастер»</b> — это веб-приложение, которое помогает подобрать
+      <b>«Собери Сам»</b> — это веб-приложение, которое помогает подобрать
       комплектующие персонального компьютера под заданный бюджет.
       Пользователь вводит сумму, а сайт автоматически подбирает
       подходящие детали: процессор, видеокарту, материнскую плату,
@@ -369,7 +632,13 @@ footer{
     </p>
 
     <p>
-      Для бюджетов до 25 000 ₽ сайт подбирает сборку из б/у комплектующих
+      Также сайт показывает <b>примерный FPS</b> в популярных играх
+      (CS2, Minecraft, GTA V, Fortnite, Cyberpunk 2077) — чтобы сразу
+      понимать, на что способна сборка.
+    </p>
+
+    <p>
+      Для бюджетов до 20 000 ₽ сайт подбирает сборку из б/у комплектующих
       (со ссылками на Авито), а для больших сумм — из новых деталей
       с ссылками на Яндекс.Маркет.
     </p>
@@ -388,9 +657,10 @@ footer{
       <li>Подбирает сборку ПК по бюджету от 5 000 ₽</li>
       <li>Для небольших сумм использует б/у комплектующие с Авито</li>
       <li>Показывает цену каждого комплектующего отдельно</li>
-      <li>Считает итоговую стоимость и остаток денег</li>
+      <li>Считает примерный FPS в 5 популярных играх</li>
       <li>Проверяет совместимость процессора, платы и памяти</li>
       <li>Работает на компьютере и на телефоне</li>
+      <li>Есть чат поддержки — можно спросить что угодно у помощника</li>
     </ul>
 
     <button class="back-btn" onclick="showPage('home')">← Вернуться на главную</button>
@@ -400,15 +670,45 @@ footer{
 
 </main>
 
-<footer>© 2026 · ПК-Мастер · Учебный проект · Максим Крылов, 10 «О»</footer>
+<footer>© 2026 · Собери Сам · Учебный проект · Максим Крылов, 10 «О»</footer>
+
+<button class="support-fab" onclick="openSupport()" aria-label="Написать в поддержку">
+  <svg viewBox="0 0 24 24">
+    <path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-2 10H6v-2h12v2zm0-4H6V6h12v2z"/>
+  </svg>
+</button>
+
+<div class="support-modal" id="supportModal" onclick="if(event.target===this)closeSupport()">
+  <div class="support-card">
+    <div class="support-head">
+      <div class="avatar">🤖</div>
+      <div class="info">
+        <h3>Помощник «Собери Сам»</h3>
+        <p>Отвечу на вопросы о ПК</p>
+      </div>
+      <button class="close-btn" onclick="closeSupport()" aria-label="Закрыть">✕</button>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-quick" id="chatQuick"></div>
+
+    <div class="chat-input-row">
+      <input id="chatInput" type="text" placeholder="Напиши сообщение…" maxlength="500"
+             onkeydown="if(event.key==='Enter')sendChat()">
+      <button onclick="sendChat()" id="chatSendBtn" aria-label="Отправить">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
 
 <script>
 const money = n => Math.round(n).toLocaleString("ru-RU") + " ₽";
 let build = [];
 let usedMode = false;
-const USED_THRESHOLD = 25000;
+const USED_THRESHOLD = 20000;
 
-/* Соответствие русских названий категорий и ключей каталога */
 const titleToKey = {
   "Процессор": "cpu",
   "Видеокарта": "gpu",
@@ -434,12 +734,8 @@ function setBudget(v){
   buildPC();
 }
 
-/* =========================================================
-   КАТАЛОГ НОВЫХ КОМПЛЕКТУЮЩИХ
-   ========================================================= */
 const catalogNew = {
   cpu: [
-    { name: "Intel Celeron G6900", price: 5000, socket: "LGA1700" },
     { name: "AMD Ryzen 3 4100", price: 5500, socket: "AM4" },
     { name: "AMD Ryzen 5 5600G", price: 9500, socket: "AM4" },
     { name: "Intel Core i3-12100F", price: 9000, socket: "LGA1700" },
@@ -453,7 +749,6 @@ const catalogNew = {
     { name: "Intel Core i7-14700K", price: 42000, socket: "LGA1700" }
   ],
   gpu: [
-    { name: "Без отдельной видеокарты", price: 0 },
     { name: "GeForce GT 1030", price: 5000 },
     { name: "Radeon RX 580 8 ГБ (б/у)", price: 8500 },
     { name: "Radeon RX 6600 8 ГБ", price: 16000 },
@@ -517,22 +812,18 @@ const catalogNew = {
   ]
 };
 
-/* =========================================================
-   КАТАЛОГ Б/У КОМПЛЕКТУЮЩИХ
-   ========================================================= */
 const catalogUsed = {
   cpu: [
     { name: "Intel Core i3-8100 (б/у)", price: 1500, socket: "LGA1151" },
     { name: "Intel Core i5-8400 (б/у)", price: 2500, socket: "LGA1151" },
     { name: "Intel Core i3-10100F (б/у)", price: 2800, socket: "LGA1200" },
-    { name: "Intel Core i5-10400F (б/у)", price: 4000, socket: "LGA1200" },
     { name: "AMD Ryzen 3 3200G (б/у)", price: 3000, socket: "AM4" },
     { name: "AMD Ryzen 5 2600 (б/у)", price: 3500, socket: "AM4" },
+    { name: "Intel Core i5-10400F (б/у)", price: 4000, socket: "LGA1200" },
     { name: "AMD Ryzen 5 3600 (б/у)", price: 4500, socket: "AM4" },
     { name: "AMD Ryzen 5 5600 (б/у)", price: 6500, socket: "AM4" }
   ],
   gpu: [
-    { name: "Без отдельной видеокарты", price: 0 },
     { name: "GeForce GT 730 2 ГБ (б/у)", price: 1000 },
     { name: "GeForce GTX 750 Ti 2 ГБ (б/у)", price: 2500 },
     { name: "GeForce GTX 1050 Ti 4 ГБ (б/у)", price: 4500 },
@@ -585,8 +876,8 @@ const catalogUsed = {
 };
 
 const shares = {
-  cpu: 0.18, gpu: 0.35, motherboard: 0.10, ram: 0.10,
-  storage: 0.08, psu: 0.07, case: 0.06, cool: 0.06
+  cpu: 0.20, gpu: 0.40, motherboard: 0.09, ram: 0.09,
+  storage: 0.07, psu: 0.06, case: 0.05, cool: 0.04
 };
 
 function pickComponent(list, targetBudget, filterFn) {
@@ -663,7 +954,6 @@ function choose(b, catalog){
   ];
 }
 
-/* Ссылки */
 function marketLink(name){
   return "https://market.yandex.ru/search?text=" + encodeURIComponent(name);
 }
@@ -673,6 +963,119 @@ function avitoLink(name){
 }
 function getBuyLink(name, isUsed){
   return isUsed ? avitoLink(name) : marketLink(name);
+}
+
+const gpuFPS = {
+  "GeForce GT 730 2 ГБ (б/у)":    { cs: 30,  mc: 25,  gta: 10,  fn: 10,  cb: 0 },
+  "GeForce GT 1030":              { cs: 45,  mc: 35,  gta: 20,  fn: 20,  cb: 0 },
+  "GeForce GTX 750 Ti 2 ГБ (б/у)":{ cs: 65,  mc: 50,  gta: 35,  fn: 30,  cb: 5 },
+  "GeForce GTX 1050 Ti 4 ГБ (б/у)":{ cs: 80, mc: 65,  gta: 45,  fn: 40,  cb: 10 },
+  "GeForce GTX 1650 4 ГБ (б/у)":  { cs: 110, mc: 85,  gta: 60,  fn: 60,  cb: 18 },
+  "Radeon RX 580 8 ГБ (б/у)":     { cs: 125, mc: 100, gta: 75,  fn: 70,  cb: 22 },
+  "GeForce GTX 1660 Super 6 ГБ (б/у)": { cs: 150, mc: 120, gta: 90, fn: 85, cb: 30 },
+  "NVIDIA RTX 3050 8 ГБ":         { cs: 165, mc: 135, gta: 100, fn: 95,  cb: 35 },
+  "Radeon RX 6600 8 ГБ":          { cs: 185, mc: 160, gta: 115, fn: 110, cb: 45 },
+  "Radeon RX 6600 8 ГБ (б/у)":    { cs: 185, mc: 160, gta: 115, fn: 110, cb: 45 },
+  "GeForce RTX 4060 8 ГБ":        { cs: 220, mc: 200, gta: 140, fn: 135, cb: 60 },
+  "GeForce RTX 5060 8 ГБ":        { cs: 240, mc: 220, gta: 155, fn: 150, cb: 70 },
+  "GeForce RTX 5060 Ti 8 ГБ":     { cs: 260, mc: 245, gta: 170, fn: 165, cb: 80 },
+  "Radeon RX 9060 XT 8 ГБ":       { cs: 275, mc: 265, gta: 180, fn: 180, cb: 90 },
+  "GeForce RTX 5070 12 ГБ":       { cs: 310, mc: 300, gta: 200, fn: 200, cb: 110 },
+  "GeForce RTX 5070 Ti 16 ГБ":    { cs: 330, mc: 320, gta: 215, fn: 220, cb: 125 },
+  "GeForce RTX 5080 16 ГБ":       { cs: 350, mc: 350, gta: 230, fn: 250, cb: 145 }
+};
+
+const cpuMultiplier = {
+  "Intel Core i3-8100 (б/у)":     0.65,
+  "AMD Ryzen 3 3200G (б/у)":      0.60,
+  "Intel Core i5-8400 (б/у)":     0.80,
+  "Intel Core i3-10100F (б/у)":   0.85,
+  "AMD Ryzen 5 2600 (б/у)":       0.80,
+  "Intel Core i5-10400F (б/у)":   0.90,
+  "AMD Ryzen 5 3600 (б/у)":       0.92,
+  "AMD Ryzen 5 5600G":            0.90,
+  "Intel Core i3-12100F":         0.95,
+  "AMD Ryzen 5 5600 (б/у)":       1.00,
+  "AMD Ryzen 5 5600":             1.00,
+  "AMD Ryzen 3 4100":             0.65,
+  "Intel Core i5-12400F":         1.00,
+  "AMD Ryzen 7 5700X":            1.05,
+  "AMD Ryzen 5 7500F":            1.05,
+  "Intel Core i5-14400F":         1.08,
+  "AMD Ryzen 7 7700":             1.10,
+  "Intel Core i7-14700K":         1.15,
+  "AMD Ryzen 7 9800X3D":          1.20
+};
+
+const csLimit = {
+  "Intel Core i3-8100 (б/у)":     110,
+  "AMD Ryzen 3 3200G (б/у)":      100,
+  "Intel Core i5-8400 (б/у)":     160,
+  "Intel Core i3-10100F (б/у)":   180,
+  "AMD Ryzen 5 2600 (б/у)":       180,
+  "Intel Core i5-10400F (б/у)":   220,
+  "AMD Ryzen 5 3600 (б/у)":       230,
+  "AMD Ryzen 5 5600G":            220,
+  "Intel Core i3-12100F":         260,
+  "AMD Ryzen 5 5600 (б/у)":       290,
+  "AMD Ryzen 5 5600":             300,
+  "AMD Ryzen 3 4100":             110,
+  "Intel Core i5-12400F":         300,
+  "AMD Ryzen 7 5700X":            340,
+  "AMD Ryzen 5 7500F":            370,
+  "Intel Core i5-14400F":         380,
+  "AMD Ryzen 7 7700":             420,
+  "Intel Core i7-14700K":         470,
+  "AMD Ryzen 7 9800X3D":          520
+};
+
+function estimateFPS(cpuName, gpuName){
+  const gpu = gpuFPS[gpuName] || { cs:0, mc:0, gta:0, fn:0, cb:0 };
+  const mult = cpuMultiplier[cpuName] || 0.8;
+  const limit = csLimit[cpuName] || 300;
+
+  return {
+    cs:  Math.min(Math.round(gpu.cs  * mult), limit),
+    mc:  Math.round(gpu.mc  * mult),
+    gta: Math.round(gpu.gta * mult),
+    fn:  Math.round(gpu.fn  * mult),
+    cb:  Math.round(gpu.cb  * mult)
+  };
+}
+
+function fpsInfo(value){
+  if (value === 0)  return { text: "н/з", cls: "none", cardCls: "none" };
+  if (value >= 60)  return { text: value + "", cls: "high", cardCls: "high" };
+  if (value >= 30)  return { text: value + "", cls: "mid",  cardCls: "mid"  };
+  return                   { text: value + "", cls: "low",  cardCls: "low"  };
+}
+
+function updateFPS(){
+  const cpuName = build[0].name;
+  const gpuName = build[1].name;
+  const fps = estimateFPS(cpuName, gpuName);
+
+  const games = [
+    { id: "Cs",  val: fps.cs  },
+    { id: "Mc",  val: fps.mc  },
+    { id: "Gta", val: fps.gta },
+    { id: "Fn",  val: fps.fn  },
+    { id: "Cb",  val: fps.cb  }
+  ];
+
+  games.forEach(g => {
+    const info = fpsInfo(g.val);
+    const valueEl = document.getElementById('fps' + g.id);
+    const cardEl  = document.getElementById('card' + g.id);
+
+    if (g.val === 0){
+      valueEl.innerHTML = info.text;
+    } else {
+      valueEl.innerHTML = info.text + '<span class="unit">FPS</span>';
+    }
+    valueEl.className = "fps-value " + info.cls;
+    cardEl.className  = "fps-card " + info.cardCls;
+  });
 }
 
 function buildPC(){
@@ -687,18 +1090,17 @@ function buildPC(){
 
   build = choose(budget, catalog);
 
-  /* Показать плашку б/у */
   document.getElementById('usedBadge').classList.toggle('show', usedMode);
   document.getElementById('resultHead').classList.toggle('used', usedMode);
 
   document.getElementById('result').classList.add('show');
   document.getElementById('extra').style.display = 'block';
+  document.getElementById('fpsBlock').style.display = 'block';
 
   document.getElementById('headline').textContent = usedMode
     ? "Сборка из б/у комплектующих"
     : "Твоя сборка";
 
-  /* Формируем список деталей */
   const optionCatalog = usedMode ? catalogUsed : catalogNew;
 
   document.getElementById('parts').innerHTML = build.map((p, i) => {
@@ -738,7 +1140,6 @@ function replacePart(i, name){
   document.getElementById('cost' + i).textContent = money(build[i].price);
   sel.parentElement.querySelector('.p-name').textContent = name;
 
-  /* Обновляем ссылку "Где купить" / "Найти на Авито" */
   const linkEl = sel.parentElement.querySelector('.buy-btn');
   if (linkEl) linkEl.href = getBuyLink(name, usedMode);
 
@@ -785,11 +1186,10 @@ function update(){
   let perf;
   if (usedMode){
     if (total < 12000)      perf = "Для офисных задач, браузера, учёбы и просмотра видео.";
-    else if (total < 18000) perf = "Для учёбы, программирования и старых/лёгких игр.";
-    else                    perf = "Для большинства игр в Full HD на средних настройках и работы.";
+    else                    perf = "Для учёбы, программирования и старых/лёгких игр.";
   } else {
-    if (total < 25000)      perf = "Для офисных задач, браузера, учёбы и лёгких игр на минимальных настройках.";
-    else if (total < 45000) perf = "Для учёбы, программирования и большинства игр в Full HD на средних настройках.";
+    if (total < 30000)      perf = "Для офисных задач, браузера, учёбы и лёгких игр на минимальных настройках.";
+    else if (total < 50000) perf = "Для учёбы, программирования и большинства игр в Full HD на средних настройках.";
     else if (total < 70000) perf = "Для игр в Full HD на высоких настройках и работы с графикой.";
     else if (total < 100000) perf = "Для игр в Full HD/2K на максимальных настройках, монтажа и 3D.";
     else if (total < 160000) perf = "Для игр в 2K на ультра-настройках, стриминга, монтажа 4K.";
@@ -797,10 +1197,282 @@ function update(){
   }
 
   document.getElementById('performance').textContent = perf;
+
+  updateFPS();
 }
 
 document.getElementById('budget').addEventListener('keydown', e => {
   if (e.key === 'Enter') buildPC();
+});
+
+/* =========================================================
+   ПОДДЕРЖКА — чат с ИИ + отправка автору в Telegram
+   =========================================================
+   Режимы работы:
+   - "bot"            — обычный режим, отвечаю по FAQ
+   - "author_msg"     — жду текст сообщения для автора
+   - "author_contact" — жду контакт для ответа
+*/
+const TG_TOKEN = "8855392330:AAGblupQ3ToPGlRb_jWYEnEdbNjqeh7_2XY";
+const TG_CHAT  = "1409444033";
+
+let chatMode = "bot";
+let chatHistory = [];
+let pendingMessage = "";
+let isBugReport = false;
+
+const botReplies = [
+  {
+    keys: ["привет","здравствуй","хай","hello","hi","добрый"],
+    reply: "Привет! 👋 Я помощник сайта «Собери Сам». Могу рассказать:\n• как подобрать ПК\n• что такое FPS\n• как проверить совместимость\n• передать сообщение автору Максиму\n\nЧто интересует?"
+  },
+  {
+    keys: ["как пользоваться","как работает","инструкция","помощь","help","что делать"],
+    reply: "Всё просто:\n\n1️⃣ Введи бюджет в поле на главной\n2️⃣ Нажми «Подобрать»\n3️⃣ Получи сборку с ценами и FPS\n4️⃣ Меняй любую деталь в выпадающем списке\n\nЕсли бюджет меньше 20 000 ₽ — сайт сам подберёт б/у комплектующие. Что-то конкретное интересует?"
+  },
+  {
+    keys: ["цена","стоимость","сколько стоит","дорого","дешевле","рубл"],
+    reply: "Цены в каталоге ориентировочные — они собраны из открытых источников (DNS, Маркет, Авито). Перед покупкой обязательно проверь актуальную стоимость. Кнопка «Где купить» рядом с каждой деталью откроет поиск на Яндекс.Маркете (или на Авито для б/у)."
+  },
+  {
+    keys: ["б/у","бу","авито","подержан"],
+    reply: "Если бюджет меньше 20 000 ₽ — сайт автоматически подбирает сборку из б/у комплектующих. Это позволяет получить больше мощности за те же деньги. Кнопка «Найти на Авито» ведёт на поиск конкретной модели."
+  },
+  {
+    keys: ["fps","фпс","игр","кс","cs2","гта","фортнайт","киберпанк","майнкрафт"],
+    reply: "FPS — кадры в секунду. Чем выше, тем плавнее картинка:\n\n🟢 60+ FPS — комфортно\n🟡 30–59 FPS — играбельно\n🔴 меньше 30 — слабо\n\nНа сайте FPS считается для 1920×1080 на высоких настройках. Реальные цифры зависят от версии игры и драйверов."
+  },
+  {
+    keys: ["совместим","сокет","подходит ли","подойдёт ли"],
+    reply: "Сайт проверяет совместимость:\n✅ Сокет процессора = сокет материнской платы\n✅ Для AM5 нужна память DDR5\n✅ Для AM4 — память DDR4\n\nЕсли что-то не подходит — увидишь предупреждение под сборкой."
+  },
+  {
+    keys: ["автор","кто сделал","максим","крылов","создател"],
+    reply: "Автор проекта — Максим Крылов, ученик 10 «О» класса школы 2087. Проект сделан как учебная работа по информатике в 2026 году. 👨‍💻"
+  },
+  {
+    keys: ["что ты умеешь","возможност","функци","умеешь"],
+    reply: "Я могу:\n• Рассказать, как пользоваться сайтом\n• Объяснить, что такое FPS и совместимость\n• Помочь разобраться с бюджетом\n• Передать твоё сообщение автору Максиму\n\nЕсли не смогу ответить — предложу написать автору. Просто скажи «отправь автору»."
+  },
+  {
+    keys: ["спасибо","благодар","круто","класс","молодец","супер"],
+    reply: "Спасибо! 😊 Если будут ещё вопросы — пиши."
+  },
+  {
+    keys: ["отправь автору","передай автору","написать автору","связаться с автором","передать максиму","напиши автору"],
+    reply: "Хорошо! ✉️ Напиши сообщение для Максима — я отправлю ему в Telegram.\n\nЧто передать?",
+    action: "author"
+  },
+  {
+    keys: ["нашел ошибку","нашёл ошибку","баг","ошибка","не работает","глючит","неправильно","сломалось"],
+    reply: "🐛 Спасибо, что сообщаешь!\n\nОпиши подробно, что не работает — я передам автору. Чем точнее, тем быстрее починим.",
+    action: "bug"
+  }
+];
+
+const fallbackReply = "Хм, не уверен, что правильно понял 🤔\n\nМогу передать твой вопрос автору — просто напиши: «отправь автору». Или спроси что-нибудь о ПК, сборке, FPS или совместимости.";
+
+function openSupport(){
+  document.getElementById('supportModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  if (chatHistory.length === 0){
+    addBotMessage("Привет! 👋 Я помощник сайта «Собери Сам».\n\nМогу рассказать, как подобрать ПК, объяснить про FPS и совместимость или передать сообщение автору Максиму.\n\nЧто тебя интересует?");
+    renderQuickReplies();
+  }
+  setTimeout(() => document.getElementById('chatInput').focus(), 200);
+}
+
+function closeSupport(){
+  document.getElementById('supportModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function addUserMessage(text){
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg user';
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  chatHistory.push({ role: 'user', text });
+}
+
+function addBotMessage(text){
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg bot';
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  chatHistory.push({ role: 'bot', text });
+}
+
+function showTyping(){
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg bot typing';
+  div.id = 'typingIndicator';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function hideTyping(){
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function renderQuickReplies(){
+  const q = document.getElementById('chatQuick');
+  const btns = chatMode === 'bot'
+    ? ["Как пользоваться?", "Про FPS", "Нашёл ошибку", "Написать автору"]
+    : ["Отмена"];
+  q.innerHTML = btns.map(t =>
+    `<button onclick="quickReply('${t.replace(/'/g,"\\'")}')">${t}</button>`
+  ).join('');
+}
+
+function quickReply(text){
+  document.getElementById('chatInput').value = text;
+  sendChat();
+}
+
+function sendChat(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  addUserMessage(text);
+
+  /* Режим: ждём сообщение для автора */
+  if (chatMode === 'author_msg'){
+    if (text.toLowerCase() === "отмена"){
+      chatMode = 'bot';
+      isBugReport = false;
+      addBotMessage("Ок, отменил. Чем могу помочь?");
+      renderQuickReplies();
+      return;
+    }
+    pendingMessage = (isBugReport ? "🐛 БАГ-РЕПОРТ:\n" : "") + text;
+    chatMode = 'author_contact';
+    addBotMessage("Принято! ✍️\n\nУкажи свой Telegram или другой контакт — чтобы Максим мог тебе ответить.\n\nЕсли не хочешь — напиши «пропустить».");
+    renderQuickReplies();
+    return;
+  }
+
+  /* Режим: ждём контакт */
+  if (chatMode === 'author_contact'){
+    if (text.toLowerCase() === "отмена"){
+      chatMode = 'bot';
+      isBugReport = false;
+      pendingMessage = "";
+      addBotMessage("Ок, отменил. Чем могу помочь?");
+      renderQuickReplies();
+      return;
+    }
+    const lower = text.toLowerCase().trim();
+    const skip = ["пропустить","нет","skip","не хочу"].includes(lower);
+    const contact = skip ? "" : text;
+    sendToAuthor(pendingMessage, contact);
+    pendingMessage = "";
+    isBugReport = false;
+    return;
+  }
+
+  /* Обычный режим бота */
+  const lower = text.toLowerCase();
+
+  /* Триггер "написать автору" */
+  const authorTriggers = ["отправь автору","передай автору","написать автору","связаться с автором","передать максиму","напиши автору"];
+  if (authorTriggers.some(t => lower.includes(t))){
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      chatMode = 'author_msg';
+      isBugReport = false;
+      addBotMessage("Хорошо! ✉️ Напиши сообщение для Максима — я отправлю ему в Telegram.\n\nЧто передать?");
+      renderQuickReplies();
+    }, 600);
+    return;
+  }
+
+  /* Поиск по FAQ */
+  let matched = null;
+  for (const item of botReplies){
+    if (item.keys.some(k => lower.includes(k))){
+      matched = item;
+      break;
+    }
+  }
+
+  showTyping();
+  setTimeout(() => {
+    hideTyping();
+    if (matched){
+      addBotMessage(matched.reply);
+      if (matched.action === 'author'){
+        chatMode = 'author_msg';
+        isBugReport = false;
+      } else if (matched.action === 'bug'){
+        chatMode = 'author_msg';
+        isBugReport = true;
+      }
+    } else {
+      addBotMessage(fallbackReply);
+    }
+    renderQuickReplies();
+  }, 700 + Math.random() * 500);
+}
+
+async function sendToAuthor(message, contact){
+  showTyping();
+
+  let fullText = '📨 Сообщение из чата на сайте «Собери Сам»\n\n';
+  fullText += '💬 Текст:\n' + message + '\n\n';
+  if (contact){
+    fullText += '📞 Контакт для ответа: ' + contact + '\n\n';
+  } else {
+    fullText += '📞 Контакт не указан\n\n';
+  }
+  fullText += '🕐 ' + new Date().toLocaleString('ru-RU');
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ chat_id: TG_CHAT, text: fullText })
+    });
+    const data = await res.json();
+    hideTyping();
+
+    if (data.ok){
+      addBotMessage("✓ Отправил автору! Он получит сообщение в Telegram" +
+        (contact ? " и сможет ответить тебе по указанному контакту." : ".") +
+        "\n\nЧто-нибудь ещё?");
+      chatMode = 'bot';
+      renderQuickReplies();
+    } else {
+      console.error('Telegram error:', data);
+      let hint = data.description || 'неизвестная ошибка';
+      if (data.error_code === 403){
+        hint = 'бот не может написать автору первым. Автору нужно нажать «Start» у бота @soberi_Sam_support_bot';
+      }
+      addBotMessage("⚠ Не получилось отправить.\n\nПричина: " + hint + "\n\nПопробуй позже.");
+      chatMode = 'bot';
+      renderQuickReplies();
+    }
+  } catch(err){
+    hideTyping();
+    console.error(err);
+    addBotMessage("⚠ Ошибка соединения. Проверь интернет и попробуй ещё раз.");
+    chatMode = 'bot';
+    renderQuickReplies();
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSupport();
 });
 
 buildPC();
