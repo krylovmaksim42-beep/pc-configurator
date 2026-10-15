@@ -1,169 +1,431 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Сборка ПК под бюджет</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ПК-Мастер | Подбор компьютера</title>
 <style>
-:root{--bg:#f3f5f7;--card:#fff;--ink:#14202b;--mute:#5d6b78;--line:#d8dee4;--acc:#0b7a75;--accink:#fff;--ok:#12803c;--warn:#9a6700;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171d;--card:#18222b;--ink:#e8eef3;--mute:#93a3b1;--line:#2b3946;--acc:#3dd1c6;--accink:#06201e;--ok:#5ad88a;--warn:#f0c04a}}
-:root[data-theme="dark"]{--bg:#10171d;--card:#18222b;--ink:#e8eef3;--mute:#93a3b1;--line:#2b3946;--acc:#3dd1c6;--accink:#06201e;--ok:#5ad88a;--warn:#f0c04a}
+:root {
+  --bg:#060d1b; --panel:#0c1830; --line:#1b3960;
+  --blue:#2388ff; --cyan:#12d9ef; --green:#20e5b2;
+  --text:#edf5ff; --muted:#91a9cc;
+}
 *{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:720px;margin:0 auto;padding:20px 16px 40px}
-h1{font-size:clamp(26px,6vw,38px);line-height:1.1;margin:8px 0 6px;font-weight:800;letter-spacing:-.02em}
-.sub{color:var(--mute);margin:0 0 18px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
-label{font-weight:700;display:block;margin-bottom:8px}
-.in{display:flex;gap:8px}
-input{flex:1;min-width:0;font:inherit;font-size:20px;font-weight:700;padding:11px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
-input:focus{outline:3px solid var(--acc);outline-offset:1px}
-button{font:inherit;cursor:pointer;color:var(--ink)}
-.btn{background:var(--acc);color:var(--accink);border:0;border-radius:10px;padding:11px 18px;font-weight:700}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.chip{background:transparent;border:1.5px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px}
-.chip:hover{border-color:var(--acc)}
-button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-.head h2{margin:0 0 4px;font-size:22px}
-.head p{margin:0;color:var(--mute)}
-.part{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
-.part:last-of-type{border-bottom:0}
-.part small{display:block;color:var(--mute);font-size:13px}
-.part .k{color:var(--mute);font-size:13px}
-.part b{font-weight:700}
-.pr{font-weight:700;white-space:nowrap}
-.tot{display:flex;justify-content:space-between;font-size:20px;font-weight:800;padding-top:10px;border-top:2px solid var(--line);margin-top:6px}
-.note{margin-top:10px;font-size:14px;color:var(--mute)}
-.ok{color:var(--ok);font-weight:700}.warn{color:var(--warn);font-weight:700}
-.row2{display:flex;gap:8px;margin-top:12px}
-h3{margin:0 0 10px;font-size:18px}
-input[type=range]{width:100%;padding:0;border:0;accent-color:var(--acc);background:transparent;margin-top:6px}
-label input[type=number]{width:100%;font-size:17px;margin-top:6px}
-.v{font-weight:700}.no{color:#e5584a;font-weight:700}
-.cost .part{padding:7px 0}
-.btn.sec{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
-select{width:100%;font:inherit;font-size:16px;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);margin:6px 0 10px}
-.chip[aria-pressed=true]{background:var(--acc);color:var(--accink);border-color:var(--acc)}
-#nav .chip{font-size:15px;padding:8px 14px}
-.bar{height:8px;background:var(--line);border-radius:5px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
-.part>span:last-child{white-space:nowrap;text-align:right}
-.cmp{width:100%;border-collapse:collapse;font-size:14px}.cmp td,.cmp th{padding:8px 6px;border-bottom:1px dashed var(--line);text-align:left;vertical-align:top}.cmp th{font-size:13px}.cmp .w{color:var(--ok);font-weight:700}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:Arial,sans-serif}
+header{padding:20px 4%;border-bottom:1px solid var(--line);
+display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:27px;font-weight:900}
+.logo span{color:var(--cyan)}
+nav{display:flex;gap:18px;flex-wrap:wrap}
+nav a{color:var(--muted);text-decoration:none;font-size:14px}
+nav a:hover{color:var(--cyan)}
+main{max-width:1450px;margin:auto;padding:25px 3%}
+.layout{display:grid;grid-template-columns:270px minmax(0,1fr) 260px;gap:16px}
+.panel,.hero,.part{background:var(--panel);border:1px solid var(--line);
+border-radius:14px}
+.panel{padding:18px}
+h2{font-size:20px;margin:0 0 16px}
+h3{font-size:15px;margin:0}
+p{line-height:1.5}
+.muted{color:var(--muted);font-size:13px}
+input,select{width:100%;padding:12px;margin:8px 0 18px;
+background:#071225;color:white;border:1px solid #29466e;
+border-radius:9px;font-size:15px}
+label{font-size:13px;color:var(--muted)}
+.choice{display:flex;gap:10px;align-items:center;padding:12px;
+border:1px solid var(--line);border-radius:10px;margin:9px 0;
+cursor:pointer}
+.choice:has(input:checked){border-color:var(--cyan);background:#102a48}
+.choice input{width:auto;margin:0;accent-color:var(--cyan)}
+button{border:0;border-radius:9px;padding:13px;
+font-weight:bold;cursor:pointer;font-size:14px}
+.primary{background:linear-gradient(100deg,#2479ff,#08bce7);color:white}
+.secondary{background:#132745;color:white;border:1px solid #31517c}
+button:hover{filter:brightness(1.15)}
+.full{width:100%;margin-top:12px}
+.notice{padding:12px;border:1px solid #55419b;background:#1a1740;
+color:#c6c7ff;border-radius:10px;font-size:12px;line-height:1.6;margin-top:17px}
+.hero{padding:23px;position:relative;overflow:hidden;
+background:radial-gradient(ellipse at 90% 15%,#183c77,transparent 55%),var(--panel)}
+.tag{color:var(--cyan);font-size:12px;font-weight:bold}
+.hero h2{font-size:clamp(25px,3vw,34px);margin:12px 0}
+.hero p{color:#b3c9e9;max-width:470px;font-size:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.chip{border:1px solid #285184;border-radius:8px;padding:9px;font-size:12px}
+.parts{display:grid;gap:8px;margin-top:17px}
+.part{padding:14px;display:grid;grid-template-columns:1fr auto;
+gap:6px 12px;align-items:center}
+.part small{color:var(--muted);grid-column:1/-1;line-height:1.5}
+.part strong{font-size:14px}
+.part .cost{color:var(--green);font-weight:bold;font-size:14px}
+.part select{grid-column:1/-1;margin:5px 0 0;padding:9px;font-size:13px}
+.total{font-size:31px;font-weight:900;color:var(--green);margin:7px 0}
+.status{font-size:12px;color:var(--green);background:#0d352f;
+padding:7px;border-radius:8px;display:inline-block}
+.meter{height:6px;background:#233653;border-radius:9px;margin:14px 0;overflow:hidden}
+.meter div{height:100%;width:0;background:linear-gradient(90deg,#2479ff,#20e5b2)}
+.stat{margin-top:17px;font-size:13px}
+.stathead{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+.track{height:7px;border-radius:8px;background:#223550;overflow:hidden}
+.track div{height:100%;background:linear-gradient(90deg,#2479ff,#12d9ef)}
+.checks{padding-left:0;list-style:none;font-size:13px;color:#b4c9e8;line-height:1.8}
+.checks li{margin:8px 0}
+.checks li:before{content:"✓ ";color:var(--green);font-weight:bold}
+footer{text-align:center;color:#6f88ad;padding:25px;font-size:12px}
+#result{display:none}
+@media(max-width:1050px){.layout{grid-template-columns:250px minmax(0,1fr)}
+.right{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.right .panel{margin:0}}
+@media(max-width:650px){header{align-items:flex-start;flex-direction:column}
+.layout{grid-template-columns:1fr}.right{grid-column:auto;display:block}
+.right .panel{margin-bottom:12px}main{padding:15px 12px}
+.panel{padding:15px}.hero{padding:18px}}
+@media print{body{background:white;color:#111}header nav,.left button,.right button,.notice{display:none}
+.layout{display:block}.panel,.hero,.part{background:white;color:#111;border:1px solid #bbb}
+#result{display:block!important}.muted,.part small{color:#444}}
 </style>
 </head>
 <body>
-<main>
-  <h1>Конфигуратор ПК</h1>
-  <p class="sub">Подбирай сборку, сравнивай видеокарты и планируй апгрейд.</p>
-  <div class="chips" id="nav" style="margin:0 0 16px"></div>
-  <section id="t0">
-  <div class="box">
-    <label for="b">Бюджет, ₽</label>
-    <div class="in"><input id="b" type="number" inputmode="numeric" min="1000" step="1000" placeholder="от 1000"><button class="btn" id="go">Подобрать</button></div>
-    <div class="chips" id="chips"></div>
-    <label style="display:flex;gap:10px;align-items:center;font-weight:600;margin:12px 0 0"><input type="checkbox" id="nw" style="width:22px;height:22px;padding:0;flex:none"> Только новое (без б/у)</label>
-  </div>
-  <div id="out"></div>
-  <p class="note">Цены примерные и могут отличаться в магазинах. Монитор, клавиатура и мышь в цену не входят.</p></section><section id="t3" hidden></section><section id="t4" hidden></section>
+<header>
+  <div class="logo">🖥 ПК-<span>Мастер</span></div>
+  <nav>
+    <a href="#home">Главная</a>
+    <a href="#result">Моя сборка</a>
+    <a href="#about">О проекте</a>
+  </nav>
+</header>
+
+<main id="home">
+<div class="layout">
+  <section class="panel left">
+    <h2>Твой бюджет</h2>
+    <label for="budget">Сколько у тебя денег? (₽)</label>
+    <input id="budget" type="number" value="60000" min="10000" step="5000">
+
+    <h3>Для чего нужен ПК?</h3>
+    <label class="choice">
+      <input type="radio" name="purpose" value="gaming" checked>
+      <span>🎮 Игры<br><small class="muted">Для современных игр</small></span>
+    </label>
+    <label class="choice">
+      <input type="radio" name="purpose" value="work">
+      <span>💻 Учёба и работа<br><small class="muted">Программы и браузер</small></span>
+    </label>
+    <label class="choice">
+      <input type="radio" name="purpose" value="power">
+      <span>⚡ Производительность<br><small class="muted">Монтаж и многозадачность</small></span>
+    </label>
+
+    <label for="platform">Предпочтительная платформа</label>
+    <select id="platform">
+      <option value="any">Любая — выгоднее по цене</option>
+      <option value="amd">AMD</option>
+      <option value="intel">Intel</option>
+    </select>
+
+    <button class="primary full" onclick="buildPC()">✨ Подобрать сборку</button>
+    <div class="notice">Цены примерные. Перед покупкой необходимо проверить актуальную стоимость и совместимость деталей.</div>
+  </section>
+
+  <section>
+    <div class="hero">
+      <div class="tag">● УМНЫЙ ПОДБОР КОМПЛЕКТУЮЩИХ</div>
+      <h2 id="headline">Собери ПК под свой бюджет</h2>
+      <p id="intro">Укажи сумму, выбери назначение — и получи рекомендованную конфигурацию компьютера.</p>
+      <div class="chips">
+        <div class="chip">🖥 Full HD</div>
+        <div class="chip">⚙ Подбор деталей</div>
+        <div class="chip">💰 Контроль цены</div>
+      </div>
+    </div>
+
+    <div id="result">
+      <h2 style="margin:20px 0 5px">Состав сборки</h2>
+      <p class="muted" id="description"></p>
+      <div class="parts" id="parts"></div>
+      <div class="panel" style="margin-top:14px">
+        <h3>Проверка сборки</h3>
+        <p id="compat" class="muted"></p>
+        <h3 style="margin-top:15px">Что потянет компьютер?</h3>
+        <p id="performance" class="muted"></p>
+      </div>
+    </div>
+  </section>
+
+  <aside class="right">
+    <div class="panel">
+      <h2>Итоговая стоимость</h2>
+      <div class="total" id="total">—</div>
+      <span id="status" class="status">Ожидание подбора</span>
+      <div class="meter"><div id="meter"></div></div>
+      <div class="muted" id="budgetInfo">Бюджет: 60 000 ₽</div>
+
+      <div class="stat">
+        <div class="stathead"><span>Игры</span><span id="gameLabel">—</span></div>
+        <div class="track"><div id="gameBar" style="width:0%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stathead"><span>Работа и учёба</span><span id="workLabel">—</span></div>
+        <div class="track"><div id="workBar" style="width:0%"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stathead"><span>Многозадачность</span><span id="multiLabel">—</span></div>
+        <div class="track"><div id="multiBar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Что дальше?</h3>
+      <ul class="checks">
+        <li>Изучи выбранные компоненты</li>
+        <li>Сравни цены в магазинах</li>
+        <li>Проверь совместимость перед покупкой</li>
+      </ul>
+      <button class="primary full" onclick="window.print()">⬇ Сохранить в PDF</button>
+      <button class="secondary full" onclick="copyBuild()">▢ Скопировать сборку</button>
+      <button class="secondary full" onclick="buildPC()">↻ Подобрать заново</button>
+    </div>
+  </aside>
+</div>
+
+<section class="panel" id="about" style="margin-top:20px">
+  <h2>О проекте</h2>
+  <p class="muted">ПК-Мастер — учебный проект по информатике для 10 класса. Приложение демонстрирует использование HTML, CSS и JavaScript для подбора компьютерных комплектующих по заданному бюджету.</p>
+</section>
 </main>
+<footer>ПК-Мастер · Учебный проект · Цены ориентировочные</footer>
+
 <script>
-const $=id=>document.getElementById(id),fmt=n=>Math.round(n).toLocaleString("ru-RU")+" ₽";
-// видеокарты: [название, мощность(индекс), цена, Вт, б/у]
-const G=[["Встроенная графика",10,0,0,0],["GeForce GTX 750 Ti (б/у)",12,2000,60,1],["GeForce GTX 1050 Ti (б/у)",25,4000,75,1],["GeForce GTX 1650 (б/у)",33,7000,75,1],["GeForce GTX 1060 6 ГБ (б/у)",40,6000,120,1],["Radeon RX 580 8 ГБ (б/у)",43,5000,185,1],["GeForce RTX 3050 6 ГБ",55,20000,70,0],["GeForce GTX 1660 Super (б/у)",57,11000,125,1],["GeForce RTX 2060 (б/у)",76,14000,160,1],["GeForce RTX 3060 12 ГБ (б/у)",84,19000,170,1],["Radeon RX 6600 (б/у)",86,17000,130,1],["Radeon RX 7600",94,27000,165,0],["GeForce RTX 4060",100,31000,115,0],["Radeon RX 6700 XT (б/у)",116,25000,230,1],["GeForce RTX 4060 Ti",120,40000,160,0],["GeForce RTX 3070 (б/у)",122,27000,220,1],["Radeon RX 7700 XT",140,42000,245,0],["GeForce RTX 3080 (б/у)",150,35000,320,1],["Radeon RX 7800 XT",168,52000,263,0],["GeForce RTX 4070 Super",200,63000,220,0],["GeForce RTX 4070 Ti Super",225,85000,285,0],["GeForce RTX 4080 Super",270,110000,320,0],["GeForce RTX 4090",370,220000,450,0]];
-// характеристики: [видеопамять ГБ, год, технологии: 1 RT, 2 DLSS, 4 DLSS 3, 8 AV1]
-const SP=[[0,0,0],[2,2014,0],[4,2016,0],[4,2019,0],[6,2016,0],[8,2017,0],[6,2024,3],[6,2019,0],[6,2019,3],[12,2021,3],[8,2021,1],[8,2023,9],[8,2023,15],[12,2021,1],[8,2023,15],[8,2020,3],[12,2023,9],[10,2020,3],[16,2023,9],[12,2024,15],[16,2024,15],[16,2024,15],[24,2022,15]];
-const TN=["RT","DLSS","DLSS 3","AV1"],tx=m=>[1,2,4,8].filter(b=>m&b).map(b=>TN[Math.log2(b)]).join(", ")||"нет",tc=m=>[1,2,4,8].filter(b=>m&b).length;
-// процессоры: [название, сокет, цена, какую видеокарту «тянет», Вт, есть графика, б/у]
-const C=[["Core i5-4460 (б/у)","LGA1150",1500,30,84,1,1],["Core i5-7400 (б/у)","LGA1151",3000,45,65,1,1],["Ryzen 5 3600 (б/у)","AM4",5500,120,65,0,1],["Ryzen 5 5500","AM4",7500,150,65,0,0],["Ryzen 5 5600","AM4",11500,190,65,0,0],["Ryzen 7 5700X3D","AM4",24000,300,105,0,0],["Core i3-12100F","LGA1700",6500,130,58,0,0],["Core i5-12400F","LGA1700",11000,190,65,0,0],["Core i5-13400F","LGA1700",16000,230,65,0,0],["Core i7-14700K","LGA1700",41000,450,125,1,0],["Ryzen 5 7600","AM5",19500,240,65,1,0],["Ryzen 7 7800X3D","AM5",36000,420,120,1,0],["Ryzen 7 9800X3D","AM5",48000,520,120,1,0]];
-// платы: [название, сокет, цена, DDR, б/у]
-const MB=[["Плата H81 (б/у)","LGA1150",1500,"DDR3",1],["Плата H110 (б/у)","LGA1151",2500,"DDR4",1],["Плата A320 (б/у)","AM4",3500,"DDR4",1],["Плата B450","AM4",5500,"DDR4",0],["Плата H610","LGA1700",7500,"DDR4",0],["Плата B760","LGA1700",13000,"DDR5",0],["Плата B650","AM5",13500,"DDR5",0]];
-// память: [название, ГБ, цена, DDR, б/у]
-const R=[["8 ГБ DDR3 (б/у)",8,1000,"DDR3",1],["16 ГБ DDR3 (б/у)",16,1800,"DDR3",1],["8 ГБ DDR4 (б/у)",8,1200,"DDR4",1],["16 ГБ DDR4",16,3000,"DDR4",0],["32 ГБ DDR4",32,5500,"DDR4",0],["16 ГБ DDR5",16,4500,"DDR5",0],["32 ГБ DDR5",32,8000,"DDR5",0],["64 ГБ DDR5",64,16000,"DDR5",0]];
-const S=[["SSD 120 ГБ (б/у)",120,700,1],["SSD 240 ГБ",240,1500,0],["SSD 500 ГБ NVMe",500,3500,0],["SSD 1 ТБ NVMe",1000,6000,0],["SSD 2 ТБ NVMe",2000,11000,0]];
-const PS=[["Блок питания 400 Вт (б/у)",400,1200,1],["Блок питания 450 Вт",450,3500,0],["Блок питания 550 Вт",550,5000,0],["Блок питания 650 Вт",650,6500,0],["Блок питания 750 Вт",750,9500,0],["Блок питания 850 Вт",850,12500,0],["Блок питания 1000 Вт",1000,16000,0]];
-const CS=[["Корпус (б/у)",0,1000,1],["Простой корпус",0,3500,0]];
-const GN=["Valorant","Minecraft","Dota 2","CS2","GTA V","Fortnite","Cyberpunk 2077","Black Myth: Wukong"];
-const K=[3,2.4,1.7,1.5,1.3,1,.75,.45],CAP=[500,350,280,320,220,240,200,130];
-const fps=(g,p)=>Math.max(1,Math.min(CAP[g],Math.round(p*K[g])));
-const fv=f=>f>=144?["Киберспорт","ok"]:f>=60?["Плавно","ok"]:f>=30?["Играбельно","warn"]:["Тормозит","no"];
-const opts=a=>a.map((x,i)=>"<option value='"+i+"'>"+x+"</option>").join("");
-const TL=[[20,"Учёба и интернет","Документы, видео, лёгкие игры на низких настройках."],[45,"Лёгкие игры","Minecraft, Dota 2 и CS2 на средних настройках."],[85,"Игровой Full HD","Большинство игр в Full HD на средних настройках."],[150,"Игровой Full HD на высоких","Современные игры в Full HD на высоких, многие в 2K."],[1e9,"Мощный игровой ПК","2K ультра и 4K, стриминг и монтаж видео."]];
-const LB=["Процессор","Материнская плата","Память","Накопитель","Видеокарта","Блок питания","Корпус"];
-let last="";
-function build(b,nw){
-  const f=a=>a.filter(x=>!(nw&&x[x.length-1])).sort((x,y)=>x[2]-y[2]),m=f(MB),r=f(R),s=f(S),p=f(PS),c=f(CS)[0],gg=f(G);let best=null;
-  f(C).forEach(cp=>{const mb=m.find(x=>x[1]===cp[1]);if(!mb)return;const rs=r.filter(x=>x[3]===mb[3]);if(!rs.length)return;
-    const ro=[rs[0],rs.find(x=>x[1]>=16),rs.find(x=>x[1]>=32)].filter(Boolean);
-    gg.forEach(g=>{if(g[3]===0&&!cp[5])return;const ps=p.find(x=>x[1]>=(cp[4]+g[3]+100)*1.2);if(!ps)return;const eff=Math.min(g[1],cp[3]);
-      ro.forEach(rm=>s.forEach(sd=>{const parts=[cp,mb,rm,sd,g,ps,c],tot=parts.reduce((a,x)=>a+x[2],0);if(tot>b)return;
-        const sc=eff*10+(rm[1]>=32?3:0)+(rm[1]<16?-6:0)+(sd[1]>=1000?3:0)+(sd[1]<240?-6:0);
-        if(!best||sc>best.sc||(sc===best.sc&&tot<best.tot))best={sc,tot,eff,parts}}))})});
-  return best}
-function fbox(eff){let g="<div class='box'><h3>Потянет ли игра?</h3>";
-  GN.forEach((n,k)=>{const f=fps(k,eff),v=fv(f);g+="<div class='part'><b>"+n+"</b><span class='"+v[1]+"'>"+f+" FPS · "+v[0]+"</span></div>"});
-  return g+"<p class='note'>Примерно, Full HD, высокие настройки.</p></div>"}
-function shop(b){let r=b,L=[];
-  [["SSD 240 ГБ",1500,"Windows и игры грузятся в разы быстрее"],["+8 ГБ памяти (б/у)",1200,"меньше лагов в браузере и играх"],["Чистка ПК и термопаста",500,"меньше шума и перегрева"]].forEach(x=>{if(x[1]<=r){r-=x[1];L.push(x)}});
-  const g=G.filter(x=>x[2]>0&&x[2]<=r&&x[1]>15).pop();if(g){r-=g[2];L.push([g[0],g[2],"видеокарта для старого ПК: около "+fps(3,g[1])+" FPS в CS2"])}
-  let h="<div class='box head'><h2>Улучшаем старый ПК</h2><p>Полный компьютер собирается от 7 000 ₽ (с б/у деталями). На "+fmt(b)+" лучше улучшить то, что есть.</p></div><div class='box'>";
-  L.forEach(x=>h+="<div class='part'><div><b>"+x[0]+"</b><small>"+x[2]+"</small></div><span class='pr'>"+fmt(x[1])+"</span></div>");
-  return h+"<p class='note'><span class='ok'>Остаётся: "+fmt(r)+".</span> Б/у детали покупай с проверкой и гарантией продавца.</p></div>"}
-function run(){const b=parseFloat($("b").value);
-  if(!b||b<1000){$("out").innerHTML="<div class='box'>Введи сумму от 1 000 ₽.</div>";return}
-  const bd=build(b,$("nw").checked);if(!bd){$("out").innerHTML=$("nw").checked&&b>=7000?"<div class='box head'><h2>Новых деталей маловато</h2><p>Полностью новый ПК с видеокартой собирается от 46 000 ₽. Сними галочку «Только новое», чтобы увидеть варианты с б/у деталями на "+fmt(b)+".</p></div>":shop(b);last="";return}
-  const t=TL.find(x=>bd.eff<x[0]),ord=[0,1,2,3,4,5,6],used=bd.parts.some(x=>x[x.length-1]);
-  let h="<div class='box head'><h2>"+t[1]+"</h2><p>"+t[2]+"</p></div><div class='box'>";
-  bd.parts.forEach((x,i)=>h+="<div class='part'><div><span class='k'>"+LB[i]+"</span><b>"+x[0]+"</b></div><span class='pr'>"+(x[2]?fmt(x[2]):"0 ₽")+"</span></div>");
-  h+="<div class='tot'><span>Итого</span><span>"+fmt(bd.tot)+"</span></div><p class='note'><span class='ok'>Остаётся: "+fmt(b-bd.tot)+".</span>"+(used?" Есть б/у детали: проси проверку и гарантию у продавца.":"")+"</p><div class='row2'><button class='btn sec' id='cp'>Копировать список</button></div></div>"+fbox(bd.eff);
-  $("out").innerHTML=h;last=t[1]+" (бюджет "+fmt(b)+")\n"+bd.parts.map((x,i)=>LB[i]+": "+x[0]).join("\n")+"\nИтого: "+fmt(bd.tot);
-  $("cp").onclick=()=>{const d=()=>{$("cp").textContent="Скопировано";setTimeout(()=>$("cp").textContent="Копировать список",1500)};try{navigator.clipboard.writeText(last).then(d,()=>alert(last))}catch(e){alert(last)}}}
-// вкладки
-const TB=[["Подбор по бюджету","t0"],["Сравнение видеокарт","t3"],["Апгрейд","t4"]];
-TB.forEach((x,i)=>{const b=document.createElement("button");b.className="chip";b.textContent=x[0];
-  b.onclick=()=>{TB.forEach(y=>{$(y[1]).hidden=y[1]!==x[1]});[...$("nav").children].forEach((c,j)=>c.setAttribute("aria-pressed",j===i))};$("nav").appendChild(b)});
-const ix=n=>G.findIndex(g=>g[0].includes(n)),GNm=G.map(g=>g[0]);
-// сравнение
-$("t3").innerHTML="<div class='box'><label>Видеокарта 1<select id='ca'>"+opts(GNm)+"</select></label><label>Видеокарта 2<select id='cb'>"+opts(GNm)+"</select></label><label>Игра<select id='cg'>"+opts(GN)+"</select></label></div><div id='co'></div>";
-$("ca").value=ix("RX 580");$("cb").value=ix("RTX 3050");
-const win=(x,y,hi,t)=>Math.abs(x-y)<=Math.max(Math.abs(x),Math.abs(y))*t?-1:((x>y)===!!hi?0:1),vs=x=>x?x+" ГБ":"общая";
-function ccalc(){const k=+$("cg").value,X=[+$("ca").value,+$("cb").value].map(i=>{const g=G[i],sp=SP[i],a=GN.reduce((s,_,n)=>s+fps(n,g[1]),0)/GN.length;return{n:g[0],p:g[2],w:g[3],u:g[4],f:fps(k,g[1]),a,v:sp[0],y:sp[1],t:sp[2],c:g[2]?a/g[2]*1000:0}}),[A,B]=X;
-  if(A.n===B.n){$("co").innerHTML="<div class='box'>Выбери две разные видеокарты.</div>";return}
-  // [критерий, значение 1, значение 2, победитель, баллы, ключ]
-  const T2=[["FPS в «"+GN[k]+"»",A.f+" FPS",B.f+" FPS",win(A.f,B.f,1,.05),0,"f"],
-   ["Средний FPS, 8 игр",Math.round(A.a)+" FPS",Math.round(B.a)+" FPS",win(A.a,B.a,1,.05),3,"a"],
-   ["Цена",fmt(A.p),fmt(B.p),win(A.p,B.p,0,.05),0,"d"],
-   ["FPS за 1000 ₽",A.c?A.c.toFixed(1):"—",B.c?B.c.toFixed(1):"—",A.c&&B.c?win(A.c,B.c,1,.1):-1,2,"c"],
-   ["Видеопамять",vs(A.v),vs(B.v),win(A.v,B.v,1,0),1,"m"],
-   ["Потребление",A.w?A.w+" Вт":"—",B.w?B.w+" Вт":"—",A.w&&B.w?win(A.w,B.w,0,.15):-1,1,"p"],
-   ["Технологии",tx(A.t),tx(B.t),tc(A.t)===tc(B.t)?-1:(tc(A.t)>tc(B.t)?0:1),1,"t"],
-   ["Год выпуска",A.y||"—",B.y||"—",A.y&&B.y?win(A.y,B.y,1,0):-1,0,"y"],
-   ["Гарантия",A.u?"нет (б/у)":"есть",B.u?"нет (б/у)":"есть",A.u===B.u?-1:(A.u?1:0),1,"g"]];
-  const sc=[0,0];T2.forEach(r=>{if(r[3]>=0)sc[r[3]]+=r[4]});
-  const ph=(c,w,l)=>({f:"быстрее в этой игре: "+w.f+" против "+l.f+" FPS",a:"быстрее на "+Math.round((w.a/l.a-1)*100)+"% в среднем по играм",d:"дешевле на "+fmt(l.p-w.p),c:"выгоднее: "+w.c.toFixed(1)+" FPS за 1000 ₽ против "+l.c.toFixed(1),m:"больше видеопамяти: "+vs(w.v)+" против "+(l.v?l.v+" ГБ":"общей памяти"),p:"экономнее: "+w.w+" Вт против "+l.w+" Вт"+(w.w<=75?", обычно хватает питания от слота":""),t:"поддерживает "+tx(w.t&~l.t),y:"новее: "+w.y+" год против "+l.y,g:"новая, есть гарантия"}[c]);
-  const pts=r=>T2.filter(r2=>r2[3]===r&&r2[4]>0||r2[3]===r&&["d","y"].includes(r2[5])).map(r2=>ph(r2[5],X[r],X[1-r]));
-  const d=sc[0]-sc[1],wn=d>=0?0:1,ln=1-wn;
-  let h="<div class='box'><h3>Вердикт</h3>";
-  h+=Math.abs(d)<=1?"<p><span class='warn'>Карты почти равны.</span> Выбирай по цене и по тому, что важнее: скорость или гарантия.</p>":"<p><span class='ok'>Лучше взять: "+X[wn].n+".</span> Баллы: "+sc[wn]+" против "+sc[ln]+".</p>";
-  if(Math.abs(d)>1){h+="<p style='margin:8px 0 4px;font-weight:700'>Почему:</p><ul style='margin:0;padding-left:20px'>"+pts(wn).map(x=>"<li>"+x+"</li>").join("")+"</ul>";
-    const o=pts(ln);if(o.length)h+="<p style='margin:10px 0 4px;font-weight:700'>Но у "+X[ln].n+" есть плюсы:</p><ul style='margin:0;padding-left:20px'>"+o.map(x=>"<li>"+x+"</li>").join("")+"</ul>"}
-  h+="<p class='note'>Баллы: средний FPS ×3, FPS за 1000 ₽ ×2, видеопамять, потребление, технологии и гарантия ×1.</p></div>";
-  h+="<div class='box'><table class='cmp'><tr><th></th><th>"+A.n+"</th><th>"+B.n+"</th></tr>"+T2.map(r=>"<tr><td>"+r[0]+"</td><td class='"+(r[3]===0?"w":"")+"'>"+r[1]+"</td><td class='"+(r[3]===1?"w":"")+"'>"+r[2]+"</td></tr>").join("")+"</table><p class='note'>Зелёным выделено лучшее значение. FPS примерные, Full HD, высокие настройки.</p></div>";
-  $("co").innerHTML=h}
-["ca","cb","cg"].forEach(id=>$(id).onchange=ccalc);ccalc();
-// апгрейд
-$("t4").innerHTML="<div class='box'><p class='note' style='margin:0 0 10px'>Игры тормозят? Выбери свою видеокарту и сумму: сайт найдёт самый выгодный апгрейд, в том числе б/у.</p><label>Моя видеокарта сейчас<select id='ug'>"+opts(GNm)+"</select></label><label>Игра<select id='ui'>"+opts(GN)+"</select></label><label>Бюджет на апгрейд, ₽<input id='ub' type='number' inputmode='numeric' value='15000' step='1000' min='0'></label></div><div class='box' id='uo'></div>";
-$("ug").value=0;$("ui").value=3;
-function ucalc(){const c=+$("ug").value,k=+$("ui").value,b=parseFloat($("ub").value)||0,f0=fps(k,G[c][1]),v0=fv(f0);
-  const L=G.map((g,i)=>({n:g[0],p:g[2],f:fps(k,g[1]),w:g[3],pf:g[1]})).filter(x=>x.pf>G[c][1]),ok=L.filter(x=>x.p<=b),mf=Math.max(0,...ok.map(x=>x.f)),best=ok.filter(x=>x.f===mf).sort((x,y)=>x.p-y.p)[0];
-  let h="<div class='part'><div><b>Сейчас</b><small>"+G[c][0]+"</small></div><span class='"+v0[1]+"'>"+f0+" FPS · "+v0[0]+"</span></div>";
-  if(!L.length)h+="<p class='note'>Это самая мощная карта из списка, улучшать нечего.</p>";
-  else{L.forEach(x=>{const yes=x.p<=b;h+="<div class='part' style='opacity:"+(yes?1:.5)+"'><div><b>"+(x===best?"✓ ":"")+x.n+"</b><small>"+fmt(x.p)+" · "+(x.f>f0?"+"+Math.round((x.f/f0-1)*100)+"%":"без прироста")+(yes?"":" · не хватает "+fmt(x.p-b))+"</small></div><span class='pr'>"+x.f+" FPS</span></div>"});
-    h+=best&&best.f>f0?"<p class='note'><span class='ok'>Лучший апгрейд: "+best.n+".</span> FPS "+f0+" → "+best.f+", каждые 1000 ₽ дают +"+((best.f-f0)/(best.p/1000)).toFixed(1)+" FPS. Блок питания — от "+Math.ceil((best.w+200)*1.3/50)*50+" Вт.</p>":best?"<p class='note'><span class='warn'>В этой игре апгрейд ничего не даст:</span> упор в процессор или в предел игры.</p>":"<p class='note'><span class='warn'>На эту сумму улучшения нет.</span> Ближайшая карта: "+L[0].n+", не хватает "+fmt(L[0].p-b)+".</p>"}
-  $("uo").innerHTML=h+"<p class='note'>Full HD, высокие настройки. Слабый процессор может ограничить прирост.</p>"}
-["ug","ui","ub"].forEach(id=>$(id).addEventListener("input",ucalc));ucalc();
-$("nav").children[0].click();
-[1000,5000,10000,20000,40000,70000,120000,250000].forEach(v=>{const c=document.createElement("button");c.className="chip";c.textContent=fmt(v);c.onclick=()=>{$("b").value=v;run()};$("chips").appendChild(c)});
-$("go").onclick=run;$("nw").onchange=run;$("b").addEventListener("keydown",e=>{if(e.key==="Enter")run()});
+const fmt=n=>Math.round(n).toLocaleString("ru-RU")+" ₽";
+let currentBuild=[];
+
+const cpuList=[
+ {name:"AMD Ryzen 5 5600",price:9500,socket:"AM4",type:"amd"},
+ {name:"AMD Ryzen 5 7500F",price:14500,socket:"AM5",type:"amd"},
+ {name:"Intel Core i5-12400F",price:11500,socket:"LGA1700",type:"intel"},
+ {name:"Intel Core i5-14400F",price:18500,socket:"LGA1700",type:"intel"}
+];
+
+function choose(budget,purpose,platform){
+ let cpu,gpu,board,ram,ssd,psu,box,cooler;
+ if(budget<25000){
+  cpu={name:"Ryzen 5 3600 (б/у)",price:5500,socket:"AM4",type:"amd"};
+  gpu={name:"Видеокарта б/у начального уровня",price:6500};
+  board={name:"B450 (б/у)",price:5000,socket:"AM4"};
+  ram={name:"16 ГБ DDR4",price:2500,type:"DDR4"};
+  ssd={name:"SSD SATA 480 ГБ",price:2500};
+  psu={name:"Блок питания 500 Вт",price:3500};
+  box={name:"Бюджетный корпус",price:2500};
+  cooler={name:"Кулер для процессора",price:1000};
+ }else if(budget<40000){
+  cpu={name:"AMD Ryzen 5 5600",price:9500,socket:"AM4",type:"amd"};
+  gpu={name:"Radeon RX 580 8 ГБ (б/у)",price:8500};
+  board={name:"B450",price:6500,socket:"AM4"};
+  ram={name:"16 ГБ DDR4 (2×8)",price:3000,type:"DDR4"};
+  ssd={name:"SSD NVMe 500 ГБ",price:3000};
+  psu={name:"Блок питания 550 Вт",price:4500};
+  box={name:"Корпус с вентиляцией",price:3500};
+  cooler={name:"Башенный кулер",price:2000};
+ }else if(budget<60000){
+  cpu={name:"AMD Ryzen 5 5600",price:9500,socket:"AM4",type:"amd"};
+  gpu={name:"Radeon RX 6600 8 ГБ",price:22000};
+  board={name:"B550",price:8000,socket:"AM4"};
+  ram={name:"16 ГБ DDR4 (2×8)",price:3500,type:"DDR4"};
+  ssd={name:"SSD NVMe 1 ТБ",price:5000};
+  psu={name:"Блок питания 600 Вт",price:5000};
+  box={name:"Корпус с вентиляцией",price:4000};
+  cooler={name:"Башенный кулер",price:2000};
+ }else if(budget<85000){
+  cpu={name:"AMD Ryzen 5 7500F",price:14500,socket:"AM5",type:"amd"};
+  gpu={name:"GeForce RTX 4060 8 ГБ",price:33000};
+  board={name:"A620 (AM5)",price:9000,socket:"AM5"};
+  ram={name:"32 ГБ DDR5",price:8500,type:"DDR5"};
+  ssd={name:"SSD NVMe 1 ТБ",price:5500};
+  psu={name:"Блок питания 650 Вт",price:6000};
+  box={name:"Корпус с вентиляцией",price:5000};
+  cooler={name:"Башенный кулер",price:2500};
+ }else{
+  cpu={name:"AMD Ryzen 5 7500F",price:14500,socket:"AM5",type:"amd"};
+  gpu={name:"GeForce RTX 5070 12 ГБ",price:65000};
+  board={name:"B650 (AM5)",price:13000,socket:"AM5"};
+  ram={name:"32 ГБ DDR5",price:9000,type:"DDR5"};
+  ssd={name:"SSD NVMe 2 ТБ",price:9000};
+  psu={name:"Блок питания 750 Вт",price:8500};
+  box={name:"Просторный корпус",price:6500};
+  cooler={name:"Башенный кулер",price:3500};
+ }
+
+ if(platform==="intel"){
+  const c=cpuList.find(x=>x.type==="intel" && budget>=35000);
+  if(c){
+   cpu=c;
+   board={name:"B760 DDR4",price:10000,socket:"LGA1700"};
+   ram={name:"32 ГБ DDR4",price:6000,type:"DDR4"};
+  }
+ }
+
+ if(purpose==="work"){
+  gpu={name:"Встроенная графика (если есть в CPU)",price:0};
+  if(cpu.name.includes("F")){
+   gpu={name:"Бюджетная дискретная видеокарта",price:9000};
+  }
+  ram={name:budget>=50000?"32 ГБ DDR4/DDR5":"16 ГБ DDR4",price:budget>=50000?6000:3000,type:board.socket==="AM5"?"DDR5":"DDR4"};
+  ssd={name:"SSD NVMe 1 ТБ",price:5500};
+ }
+ if(purpose==="power" && budget>=50000){
+  ram={name:"32 ГБ ОЗУ",price:budget>=60000?8000:6000,type:board.socket==="AM5"?"DDR5":"DDR4"};
+  ssd={name:"SSD NVMe 2 ТБ",price:9000};
+ }
+
+ return [
+  {title:"Процессор",...cpu},
+  {title:"Видеокарта",...gpu},
+  {title:"Материнская плата",...board},
+  {title:"Оперативная память",...ram},
+  {title:"Накопитель",...ssd},
+  {title:"Блок питания",...psu},
+  {title:"Корпус",...box},
+  {title:"Охлаждение",...cooler}
+ ];
+}
+
+function buildPC(){
+ const budget=Number(document.getElementById("budget").value);
+ const purpose=document.querySelector('input[name="purpose"]:checked').value;
+ const platform=document.getElementById("platform").value;
+ if(!Number.isFinite(budget)||budget<10000){
+  alert("Введи бюджет не меньше 10 000 рублей.");
+  return;
+ }
+ currentBuild=choose(budget,purpose,platform);
+ const total=currentBuild.reduce((s,p)=>s+p.price,0);
+ document.getElementById("result").style.display="block";
+ document.getElementById("headline").textContent=
+  purpose==="gaming"?"Игровой ПК под твой бюджет":
+  purpose==="work"?"Компьютер для учёбы и работы":"ПК для производительных задач";
+ document.getElementById("intro").textContent=
+  "Рекомендация для бюджета "+fmt(budget)+". Комплектующие можно заменить вручную ниже.";
+ document.getElementById("description").textContent=
+  "Нажми на название комплектующего, чтобы заменить вариант и пересчитать цену.";
+ document.getElementById("parts").innerHTML=currentBuild.map((p,i)=>`
+  <article class="part">
+   <strong>${p.title}</strong><span class="cost" id="cost${i}">${fmt(p.price)}</span>
+   <small>${p.name}</small>
+   <select aria-label="${p.title}" onchange="replacePart(${i},this.value)">
+    ${getAlternatives(p.title,budget).map(a=>
+      `<option value="${a.name}" data-price="${a.price}" ${a.name===p.name?"selected":""}>${a.name} — ${fmt(a.price)}</option>`
+    ).join("")}
+   </select>
+  </article>`).join("");
+ updateTotals(budget,total,purpose);
+ document.getElementById("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function getAlternatives(title,budget){
+ const alternatives={
+  "Процессор":[
+   {name:"AMD Ryzen 5 3600 (б/у)",price:5500},
+   {name:"AMD Ryzen 5 5600",price:9500},
+   {name:"AMD Ryzen 5 7500F",price:14500},
+   {name:"Intel Core i5-12400F",price:11500},
+   {name:"Intel Core i5-14400F",price:18500}],
+  "Видеокарта":[
+   {name:"Без отдельной видеокарты",price:0},
+   {name:"Бюджетная видеокарта б/у",price:6500},
+   {name:"Radeon RX 580 8 ГБ (б/у)",price:8500},
+   {name:"Radeon RX 6600 8 ГБ",price:22000},
+   {name:"GeForce RTX 4060 8 ГБ",price:33000},
+   {name:"GeForce RTX 5070 12 ГБ",price:65000}],
+  "Материнская плата":[
+   {name:"B450 (AM4)",price:6500},
+   {name:"B550 (AM4)",price:8000},
+   {name:"A620 (AM5)",price:9000},
+   {name:"B650 (AM5)",price:13000},
+   {name:"B760 DDR4 (Intel)",price:10000}],
+  "Оперативная память":[
+   {name:"16 ГБ DDR4",price:3000},
+   {name:"32 ГБ DDR4",price:6000},
+   {name:"32 ГБ DDR5",price:8500},
+   {name:"64 ГБ DDR5",price:16000}],
+  "Накопитель":[
+   {name:"SSD SATA 480 ГБ",price:2500},
+   {name:"SSD NVMe 500 ГБ",price:3000},
+   {name:"SSD NVMe 1 ТБ",price:5500},
+   {name:"SSD NVMe 2 ТБ",price:9000}],
+  "Блок питания":[
+   {name:"Блок питания 500 Вт",price:3500},
+   {name:"Блок питания 550 Вт",price:4500},
+   {name:"Блок питания 650 Вт",price:6000},
+   {name:"Блок питания 750 Вт",price:8500},
+   {name:"Блок питания 850 Вт",price:11000}],
+  "Корпус":[
+   {name:"Бюджетный корпус",price:2500},
+   {name:"Корпус с вентиляцией",price:4000},
+   {name:"Корпус с вентиляторами",price:6000}],
+  "Охлаждение":[
+   {name:"Базовый кулер",price:1000},
+   {name:"Башенный кулер",price:2500},
+   {name:"Жидкостное охлаждение",price:6500}]
+ };
+ return alternatives[title]||[{name:"Стандартный вариант",price:0}];
+}
+
+function replacePart(index,name){
+ const p=currentBuild[index];
+ const select=document.querySelectorAll("#parts select")[index];
+ const option=select.options[select.selectedIndex];
+ p.name=name;p.price=Number(option.dataset.price);
+ const small=select.parentElement.querySelector("small");
+ small.textContent=name;
+ document.getElementById("cost"+index).textContent=fmt(p.price);
+ const budget=Number(document.getElementById("budget").value);
+ const purpose=document.querySelector('input[name="purpose"]:checked').value;
+ const total=currentBuild.reduce((s,x)=>s+x.price,0);
+ updateTotals(budget,total,purpose);
+}
+
+function updateTotals(budget,total,purpose){
+ document.getElementById("total").textContent=fmt(total);
+ document.getElementById("budgetInfo").textContent="Бюджет: "+fmt(budget);
+ document.getElementById("meter").style.width=Math.min(100,total/budget*100)+"%";
+ const status=document.getElementById("status");
+ status.textContent=total<=budget?"✓ В пределах бюджета":"⚠ Превышение: "+fmt(total-budget);
+ status.style.color=total<=budget?"#20e5b2":"#ff9aab";
+ status.style.background=total<=budget?"#0d352f":"#401c2a";
+ const levels=purpose==="gaming"?[85,80,70]:purpose==="work"?[45,90,85]:[80,85,95];
+ ["game","work","multi"].forEach((key,i)=>{
+  document.getElementById(key+"Bar").style.width=levels[i]+"%";
+  document.getElementById(key+"Label").textContent=
+   levels[i]>=85?"Высокая":levels[i]>=70?"Хорошая":"Базовая";
+ });
+ const cpu=currentBuild.find(p=>p.title==="Процессор");
+ const board=currentBuild.find(p=>p.title==="Материнская плата");
+ let warning="Проверка выполнена по выбранным классам деталей. Перед покупкой необходимо уточнить точные модели и сокет.";
+ if(cpu.name.includes("7500F") && board.name.includes("B450"))
+  warning="⚠️ Ryzen 5 7500F несовместим с B450. Нужна материнская плата AM5.";
+ else if(cpu.name.includes("5600") && board.name.includes("A620"))
+  warning="⚠️ Ryzen 5 5600 несовместим с A620. Нужна материнская плата AM4.";
+ else if(cpu.name.includes("Intel") && board.name.includes("B550"))
+  warning="⚠️ Процессор Intel несовместим с B550 для AMD.";
+ document.getElementById("compat").textContent=warning;
+ document.getElementById("performance").textContent=
+  purpose==="gaming"?"Игровая производительность зависит от видеокарты, разрешения и настроек игры. Это ориентировочная оценка, а не гарантия FPS.":
+  purpose==="work"?"Сборка ориентирована на браузер, офисные приложения, программирование и повседневную многозадачность.":
+  "Сборка ориентирована на производительные задачи. Результат зависит от конкретной программы и комплектующих.";
+}
+
+function copyBuild(){
+ if(!currentBuild.length){alert("Сначала подбери сборку!");return}
+ const total=currentBuild.reduce((s,p)=>s+p.price,0);
+ const text="ПК-Мастер — моя сборка\n\n"+
+ currentBuild.map(p=>p.title+": "+p.name+" — "+fmt(p.price)).join("\n")+
+ "\n\nИтого: "+fmt(total);
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+  navigator.clipboard.writeText(text).then(()=>alert("Сборка скопирована!"))
+  .catch(()=>prompt("Скопируй сборку:",text));
+ }else prompt("Скопируй сборку:",text);
+}
+buildPC();
 </script>
 </body>
 </html>
