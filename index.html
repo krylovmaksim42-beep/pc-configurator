@@ -2,1480 +2,520 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Собери Сам · Конфигуратор ПК под бюджет</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetroFlow · Модель пассажиропотока</title>
+
+<!-- Библиотека для карты -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0}
-body{
-  background:#f2fbfa;color:#0d3b3b;
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
-  line-height:1.45;-webkit-text-size-adjust:100%;
-  min-height:100vh;display:flex;flex-direction:column;
-}
-header{
-  background:#ffffff;border-bottom:2px solid #d9f2ee;
-  padding:12px 5%;position:sticky;top:0;z-index:10;
-  box-shadow:0 2px 10px rgba(22,160,133,.06);
-}
-.head{max-width:1100px;margin:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;flex:1;min-width:0}
-.logo{width:56px;height:56px;flex-shrink:0;display:block;object-fit:contain}
-.brand h1{margin:0;font-size:22px;line-height:1.15;color:#0d3b3b;letter-spacing:-.3px}
-.brand h1 span{color:#16a085}
-.brand p{margin:2px 0 0;color:#6d8f8c;font-size:12px}
-nav{display:flex;gap:8px;flex-wrap:wrap}
-.nav-btn{
-  background:#ffffff;color:#16a085;border:2px solid #cceee8;border-radius:10px;
-  padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
-  transition:all .15s;
-}
-.nav-btn:hover{background:#e6f9f5;border-color:#16a085}
-.nav-btn.active{background:#16a085;color:#fff;border-color:#16a085}
+  :root {
+    --blue: #0A4DA2;
+    --red: #E63946;
+    --bg: #f4f7fb;
+    --text: #1a2b4c;
+    --gray: #64748B;
+    --border: #d0dceb;
+  }
 
-main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:26px 5% 40px}
-.page{display:none;animation:fade .3s ease}
-.page.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 20px 15px;
+    min-height: 100vh;
+  }
 
-.hero{
-  background:linear-gradient(135deg,#ffffff 0%,#e6f9f5 100%);
-  border:1px solid #d9f2ee;border-radius:20px;padding:32px 28px;
-  text-align:center;margin-bottom:22px;position:relative;overflow:hidden;
-}
-.hero::before{
-  content:"";position:absolute;top:-60px;right:-60px;width:180px;height:180px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(22,160,133,.14),transparent 70%);
-}
-.hero-tag{
-  display:inline-block;background:#e6f9f5;color:#16a085;font-size:11px;font-weight:800;
-  letter-spacing:.8px;text-transform:uppercase;padding:6px 12px;border-radius:20px;
-  margin-bottom:14px;position:relative;
-}
-.hero h2{font-size:30px;margin:0 0 10px;color:#0d3b3b;line-height:1.2;letter-spacing:-.5px;position:relative}
-.hero p{margin:0;color:#5e8582;font-size:15px;position:relative;max-width:520px;margin:0 auto}
+  .container {
+    max-width: 1050px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(10, 77, 162, 0.08);
+    overflow: hidden;
+  }
 
-.form-card{
-  background:#ffffff;border:1px solid #d9f2ee;border-radius:18px;padding:26px;
-  box-shadow:0 6px 20px rgba(22,160,133,.06);
-}
-.form-label{
-  display:block;font-size:13px;font-weight:700;color:#16a085;
-  text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;
-}
-.budget-row{display:flex;gap:12px;flex-wrap:wrap}
-.budget-row input{
-  flex:1;min-width:180px;padding:15px 18px;border:2px solid #cceee8;border-radius:12px;
-  background:#f8fdfc;color:#0d3b3b;font-size:18px;font-weight:700;font-family:inherit;
-  transition:all .15s;
-}
-.budget-row input:focus{
-  outline:none;border-color:#16a085;background:#ffffff;
-  box-shadow:0 0 0 4px rgba(22,160,133,.12);
-}
-.budget-row button{
-  padding:15px 32px;border:0;border-radius:12px;
-  background:linear-gradient(135deg,#16a085,#1abc9c);color:#ffffff;
-  font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;
-  transition:all .15s;box-shadow:0 4px 14px rgba(22,160,133,.3);
-}
-.budget-row button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(22,160,133,.4)}
-.budget-row button:active{transform:scale(.98)}
-.hint{margin-top:14px;font-size:13px;color:#7d9c99}
-.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.quick button{
-  flex:1;min-width:100px;background:#f2fbfa;border:2px solid #d9f2ee;color:#16a085;
-  padding:10px;border-radius:10px;font-size:13px;font-weight:700;
-  font-family:inherit;cursor:pointer;transition:all .15s;
-}
-.quick button:hover{background:#e6f9f5;border-color:#16a085}
+  /* Шапка */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    border-bottom: 1px solid var(--border);
+    background: #fafafa;
+  }
+  
+  header img { height: 40px; object-fit: contain; }
+  header h1 { font-size: 20px; color: var(--blue); margin-bottom: 2px; font-weight: 800; }
+  header p { font-size: 12px; color: var(--gray); }
 
-.used-badge{
-  display:none;align-items:center;gap:10px;
-  background:linear-gradient(135deg,#fff7e6,#fef0d6);
-  border:1.5px solid #ffd88a;border-radius:12px;
-  padding:12px 16px;margin-top:16px;
-  font-size:13px;color:#8a5a00;line-height:1.5;
-}
-.used-badge.show{display:flex}
-.used-badge .ub-icon{font-size:20px;flex-shrink:0}
-.used-badge b{color:#a87000}
+  /* Сетка */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
 
-.result{margin-top:22px;display:none}
-.result.show{display:block;animation:fade .35s ease}
-.result-head{
-  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
-  background:linear-gradient(135deg,#16a085,#1abc9c);color:#ffffff;
-  border-radius:18px 18px 0 0;padding:20px 24px;
-}
-.result-head.used{background:linear-gradient(135deg,#e8973c,#f0b158)}
-.result-head h2{margin:0;font-size:20px;color:#ffffff}
-.result-head .total-big{font-size:22px;font-weight:900;color:#ffffff}
-.result-head .total-big small{
-  display:block;font-size:11px;font-weight:600;opacity:.85;
-  letter-spacing:.5px;text-transform:uppercase;
-}
-.status{
-  display:inline-block;padding:6px 12px;border-radius:20px;
-  font-size:12px;font-weight:700;background:rgba(255,255,255,.22);
-  color:#ffffff;margin-top:8px;
-}
-.status.over{background:#ff6b6b}
-.parts{
-  background:#ffffff;border:1px solid #d9f2ee;border-top:0;
-  border-radius:0 0 18px 18px;padding:8px;
-}
-.part{
-  display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;
-  padding:14px 16px;border-bottom:1px solid #eef9f7;
-}
-.part:last-child{border-bottom:0}
-.part .p-title{
-  font-size:12px;color:#7d9c99;text-transform:uppercase;
-  letter-spacing:.4px;font-weight:700;
-}
-.part .p-name{grid-column:1;font-size:15px;font-weight:700;color:#0d3b3b}
-.part .p-cost{
-  grid-column:2;grid-row:1 / span 2;font-size:16px;font-weight:800;
-  color:#16a085;align-self:center;
-}
-.part select{
-  grid-column:1/-1;margin-top:6px;padding:10px 12px;
-  border:2px solid #d9f2ee;border-radius:9px;background:#f8fdfc;
-  color:#0d3b3b;font-size:13px;font-family:inherit;cursor:pointer;
-  transition:border-color .15s;
-}
-.part select:focus{outline:none;border-color:#16a085;background:#fff}
+  /* Карта */
+  .map-section {
+    padding: 25px;
+    border-right: 1px solid var(--border);
+    background: #f8fbff;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
 
-.buy-row{
-  grid-column:1/-1;display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;
-}
-.buy-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:8px 14px;border-radius:9px;
-  background:#e6f9f5;color:#16a085;
-  border:1.5px solid #cceee8;
-  font-size:13px;font-weight:700;font-family:inherit;
-  text-decoration:none;cursor:pointer;transition:all .15s;
-}
-.buy-btn:hover{background:#16a085;color:#fff;border-color:#16a085}
-.buy-btn.avito{background:#fff7e6;color:#a87000;border-color:#ffd88a}
-.buy-btn.avito:hover{background:#e8973c;color:#fff;border-color:#e8973c}
-.buy-btn svg{width:14px;height:14px;fill:currentColor}
+  .map-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-.fps-block{
-  background:#ffffff;border:1px solid #d9f2ee;border-radius:16px;
-  padding:22px;margin-top:16px;
-  box-shadow:0 6px 20px rgba(22,160,133,.06);
-}
-.fps-head{
-  display:flex;justify-content:space-between;align-items:center;
-  flex-wrap:wrap;gap:10px;margin-bottom:16px;
-}
-.fps-head h3{
-  font-size:17px;color:#0d3b3b;margin:0;letter-spacing:-.2px;
-  font-weight:800;
-}
-.fps-res{
-  font-size:12px;color:#16a085;font-weight:700;
-  background:#e6f9f5;padding:6px 12px;border-radius:20px;
-  white-space:nowrap;
-}
-.fps-grid{
-  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;
-}
-.fps-card{
-  background:#f8fdfc;border:1.5px solid #e6f5f2;
-  border-radius:14px;padding:16px 10px 14px;
-  text-align:center;transition:all .15s;
-}
-.fps-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(22,160,133,.1)}
-.fps-card .fps-game{
-  font-size:11.5px;color:#7d9c99;font-weight:800;
-  text-transform:uppercase;letter-spacing:.4px;
-  display:flex;align-items:center;justify-content:center;
-  min-height:30px;margin-bottom:6px;line-height:1.2;
-}
-.fps-value{
-  display:block;font-size:24px;font-weight:900;
-  color:#16a085;line-height:1;letter-spacing:-.5px;
-}
-.fps-value .unit{
-  display:block;font-size:10px;font-weight:700;color:#7d9c99;
-  letter-spacing:1px;margin-top:4px;
-}
-.fps-value.high{color:#16a085}
-.fps-value.mid{color:#e8973c}
-.fps-value.low{color:#e57373}
-.fps-value.none{color:#b0bfbd;font-size:15px;font-weight:700;letter-spacing:0}
+  .btn-reset {
+    background: none;
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--gray);
+    transition: all 0.2s;
+  }
+  .btn-reset:hover { background: var(--border); color: var(--text); }
 
-.fps-card.high{background:#e6f9f5;border-color:#a8e0d4}
-.fps-card.high:hover{box-shadow:0 6px 16px rgba(22,160,133,.18)}
-.fps-card.mid{background:#fff7e6;border-color:#ffd88a}
-.fps-card.mid:hover{box-shadow:0 6px 16px rgba(232,151,60,.18)}
-.fps-card.low{background:#fdecea;border-color:#f5b8b0}
-.fps-card.low:hover{box-shadow:0 6px 16px rgba(229,115,115,.18)}
-.fps-card.none{background:#f2f5f5;border-color:#e0e5e5}
+  #map {
+    width: 100%;
+    height: 450px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    z-index: 1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    background: #e5e5e5; /* Серый фон, пока грузится карта */
+  }
 
-.fps-legend{
-  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
-  margin-top:16px;padding-top:14px;border-top:1px solid #eef9f7;
-  font-size:12px;color:#7d9c99;
-}
-.fps-legend span{display:inline-flex;align-items:center;gap:6px}
-.fps-legend i{
-  width:10px;height:10px;border-radius:50%;display:inline-block;
-  font-style:normal;
-}
-.fps-legend i.h{background:#16a085}
-.fps-legend i.m{background:#e8973c}
-.fps-legend i.l{background:#e57373}
-.fps-legend i.n{background:#b0bfbd}
-.fps-note{
-  margin:12px 0 0;font-size:12px;color:#7d9c99;
-  line-height:1.5;text-align:center;
-}
+  .map-hint {
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 10px;
+    text-align: center;
+  }
 
-.extra{
-  background:#ffffff;border:1px solid #d9f2ee;border-radius:14px;
-  padding:18px;margin-top:14px;
-}
-.extra h3{
-  font-size:14px;color:#16a085;text-transform:uppercase;
-  letter-spacing:.4px;margin:0 0 8px;
-}
-.extra h3:not(:first-child){margin-top:16px}
-.extra p{margin:0;color:#5e8582;font-size:14px;line-height:1.55}
+  /* Калькулятор */
+  .calc-section {
+    padding: 25px;
+  }
 
-.about-card{
-  background:#ffffff;border:1px solid #d9f2ee;border-radius:20px;padding:32px;
-  box-shadow:0 6px 20px rgba(22,160,133,.06);
-}
-.about-card h2{margin:0 0 6px;font-size:28px;color:#0d3b3b;letter-spacing:-.5px}
-.about-card .subtitle{
-  color:#16a085;font-weight:700;font-size:14px;margin:0 0 24px;
-  text-transform:uppercase;letter-spacing:.6px;
-}
-.about-card p{margin:0 0 14px;color:#3d5f5c;font-size:15px;line-height:1.7}
-.author{
-  display:flex;align-items:center;gap:16px;
-  background:linear-gradient(135deg,#e6f9f5,#f2fbfa);
-  border-radius:14px;padding:20px;margin:24px 0;
-}
-.author-avatar{
-  width:64px;height:64px;border-radius:50%;
-  background:linear-gradient(135deg,#16a085,#1abc9c);
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:26px;font-weight:900;flex-shrink:0;
-}
-.author-info h3{margin:0 0 4px;font-size:17px;color:#0d3b3b}
-.author-info p{margin:0;font-size:13px;color:#16a085;font-weight:600}
-.author-info span{display:block;font-size:12px;color:#7d9c99;font-weight:400;margin-top:3px}
-.feature-list{list-style:none;padding:0;margin:20px 0}
-.feature-list li{
-  padding:12px 0 12px 34px;position:relative;color:#3d5f5c;
-  font-size:14px;line-height:1.55;border-bottom:1px dashed #e6f5f2;
-}
-.feature-list li:last-child{border-bottom:0}
-.feature-list li::before{
-  content:"✓";position:absolute;left:0;top:11px;width:22px;height:22px;
-  border-radius:50%;background:#e6f9f5;color:#16a085;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:13px;
-}
-.back-btn{
-  display:inline-block;margin-top:16px;padding:13px 26px;border:0;
-  border-radius:11px;background:linear-gradient(135deg,#16a085,#1abc9c);
-  color:#fff;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;
-  box-shadow:0 4px 14px rgba(22,160,133,.3);transition:all .15s;
-}
-.back-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(22,160,133,.4)}
+  .form-group { margin-bottom: 14px; }
+  
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--gray);
+  }
 
-footer{
-  text-align:center;padding:24px 5%;color:#8faeab;font-size:12px;
-  border-top:1px solid #d9f2ee;background:#ffffff;
-}
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.2s;
+    background: #fff;
+  }
 
-.support-fab{
-  position:fixed;bottom:22px;right:22px;z-index:99;
-  width:60px;height:60px;border-radius:50%;
-  background:linear-gradient(135deg,#16a085,#1abc9c);
-  color:#fff;border:0;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 24px rgba(22,160,133,.45);
-  transition:transform .2s,box-shadow .2s;
-}
-.support-fab:hover{transform:scale(1.08);box-shadow:0 12px 30px rgba(22,160,133,.55)}
-.support-fab:active{transform:scale(.95)}
-.support-fab svg{width:26px;height:26px;fill:#fff}
-.support-fab::after{
-  content:"";position:absolute;inset:-6px;border-radius:50%;
-  border:2px solid rgba(22,160,133,.5);
-  animation:pulse 2s infinite;
-}
-@keyframes pulse{
-  0%{transform:scale(1);opacity:.7}
-  70%{transform:scale(1.35);opacity:0}
-  100%{opacity:0}
-}
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(10, 77, 162, 0.1);
+  }
 
-.support-modal{
-  position:fixed;inset:0;background:rgba(13,59,59,.55);
-  display:none;align-items:center;justify-content:center;
-  padding:20px;z-index:100;backdrop-filter:blur(3px);
-}
-.support-modal.show{display:flex;animation:fade .2s}
-.support-card{
-  background:#fff;border-radius:20px;
-  max-width:440px;width:100%;
-  height:600px;max-height:90vh;
-  display:flex;flex-direction:column;
-  box-shadow:0 20px 60px rgba(0,0,0,.3);
-  position:relative;overflow:hidden;
-}
-.support-head{
-  padding:16px 20px;
-  background:linear-gradient(135deg,#16a085,#1abc9c);
-  color:#fff;display:flex;align-items:center;gap:12px;
-  flex-shrink:0;
-}
-.support-head .avatar{
-  width:42px;height:42px;border-radius:50%;
-  background:rgba(255,255,255,.22);
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;flex-shrink:0;
-}
-.support-head .info{flex:1;min-width:0}
-.support-head .info h3{margin:0;font-size:16px;color:#fff;font-weight:800}
-.support-head .info p{margin:2px 0 0;font-size:12px;opacity:.85}
-.support-head .close-btn{
-  width:34px;height:34px;border-radius:50%;
-  background:rgba(255,255,255,.2);border:0;cursor:pointer;
-  color:#fff;font-size:18px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  transition:background .15s;flex-shrink:0;
-}
-.support-head .close-btn:hover{background:rgba(255,255,255,.35)}
+  .inputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 
-.chat-messages{
-  flex:1;overflow-y:auto;padding:16px;
-  background:#f8fdfc;
-  display:flex;flex-direction:column;gap:10px;
-  scroll-behavior:smooth;
-}
-.chat-messages::-webkit-scrollbar{width:6px}
-.chat-messages::-webkit-scrollbar-thumb{background:#cceee8;border-radius:3px}
+  .btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
 
-.chat-msg{
-  max-width:82%;padding:10px 14px;border-radius:14px;
-  font-size:14px;line-height:1.45;word-wrap:break-word;
-  white-space:pre-wrap;animation:msgIn .25s ease;
-}
-@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .btn:hover { 
+    background: #07376f; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(10, 77, 162, 0.2);
+  }
 
-.chat-msg.bot{
-  background:#fff;color:#0d3b3b;
-  border:1px solid #e6f5f2;
-  align-self:flex-start;
-  border-bottom-left-radius:4px;
-}
-.chat-msg.user{
-  background:linear-gradient(135deg,#16a085,#1abc9c);
-  color:#fff;align-self:flex-end;
-  border-bottom-right-radius:4px;
-}
-.chat-msg.typing{
-  padding:12px 16px;display:flex;gap:4px;
-}
-.chat-msg.typing span{
-  width:7px;height:7px;border-radius:50%;
-  background:#7d9c99;animation:dot 1.2s infinite;
-}
-.chat-msg.typing span:nth-child(2){animation-delay:.2s}
-.chat-msg.typing span:nth-child(3){animation-delay:.4s}
-@keyframes dot{
-  0%,60%,100%{opacity:.3;transform:translateY(0)}
-  30%{opacity:1;transform:translateY(-4px)}
-}
+  /* Результат */
+  .result-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--blue), #083b7c);
+    color: white;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(10, 77, 162, 0.2);
+  }
 
-.chat-quick{
-  display:flex;gap:6px;padding:8px 14px 0;
-  background:#f8fdfc;flex-wrap:wrap;flex-shrink:0;
-}
-.chat-quick button{
-  background:#fff;border:1.5px solid #cceee8;
-  color:#16a085;font-size:12px;font-weight:700;
-  padding:6px 11px;border-radius:14px;cursor:pointer;
-  font-family:inherit;transition:all .15s;
-}
-.chat-quick button:hover{background:#e6f9f5;border-color:#16a085}
-.chat-quick button:disabled{opacity:.4;cursor:default}
+  .result-box h2 {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 
-.chat-input-row{
-  display:flex;gap:8px;padding:12px 14px;
-  background:#fff;border-top:1px solid #e6f5f2;
-  flex-shrink:0;
-}
-.chat-input-row input{
-  flex:1;padding:11px 14px;
-  border:2px solid #d9f2ee;border-radius:22px;
-  background:#f8fdfc;color:#0d3b3b;
-  font-size:14px;font-family:inherit;
-  transition:border-color .15s;
-}
-.chat-input-row input:focus{
-  outline:none;border-color:#16a085;background:#fff;
-}
-.chat-input-row button{
-  width:44px;height:44px;border-radius:50%;
-  background:linear-gradient(135deg,#16a085,#1abc9c);
-  color:#fff;border:0;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:transform .15s;flex-shrink:0;
-}
-.chat-input-row button:hover{transform:scale(1.08)}
-.chat-input-row button:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.chat-input-row button svg{width:20px;height:20px;fill:#fff}
+  .result-number {
+    font-size: 46px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 10px;
+    font-variant-numeric: tabular-nums;
+  }
 
-@media(max-width:700px){
-  .hero{padding:24px 20px}
-  .hero h2{font-size:24px}
-  .hero p{font-size:14px}
-  .form-card{padding:20px}
-  .about-card{padding:22px}
-  .about-card h2{font-size:23px}
-  .fps-grid{grid-template-columns:repeat(3,1fr)}
-}
-@media(max-width:560px){
-  header{padding:10px 14px}
-  .head{gap:10px}
-  .logo{width:46px;height:46px}
-  .brand h1{font-size:18px}
-  .brand p{display:none}
-  nav{gap:6px}
-  .nav-btn{padding:8px 12px;font-size:13px;border-radius:9px}
-  main{padding:18px 14px 30px}
-  .hero{padding:22px 16px;border-radius:16px;margin-bottom:16px}
-  .hero h2{font-size:21px}
-  .hero p{font-size:13px}
-  .hero-tag{font-size:10px;padding:5px 10px}
-  .form-card{padding:18px;border-radius:16px}
-  .budget-row{flex-direction:column}
-  .budget-row input,.budget-row button{width:100%}
-  .budget-row input{font-size:17px;padding:14px 16px}
-  .budget-row button{padding:15px;font-size:16px}
-  .quick button{font-size:12px;padding:9px;min-width:80px}
-  .used-badge{font-size:12px;padding:10px 12px}
-  .result-head{padding:16px 18px;border-radius:16px 16px 0 0}
-  .result-head h2{font-size:17px}
-  .result-head .total-big{font-size:19px}
-  .parts{padding:6px;border-radius:0 0 16px 16px}
-  .part{padding:12px 12px}
-  .part .p-name{font-size:14px}
-  .part .p-cost{font-size:15px}
-  .part select{font-size:14px;padding:11px}
-  .buy-btn{font-size:12px;padding:7px 12px}
-  .extra{padding:16px;border-radius:12px}
-  .extra p{font-size:13px}
-  .fps-block{padding:16px;border-radius:14px}
-  .fps-head h3{font-size:15px}
-  .fps-res{font-size:11px;padding:5px 10px}
-  .fps-grid{grid-template-columns:repeat(2,1fr);gap:8px}
-  .fps-card{padding:13px 8px}
-  .fps-value{font-size:20px}
-  .fps-card .fps-game{font-size:11px;min-height:26px}
-  .fps-legend{font-size:11px;gap:10px}
-  .about-card{padding:20px;border-radius:16px}
-  .about-card h2{font-size:21px}
-  .about-card p{font-size:14px}
-  .author{padding:16px;gap:12px}
-  .author-avatar{width:54px;height:54px;font-size:22px}
-  .author-info h3{font-size:15px}
-  .back-btn{width:100%;padding:14px;font-size:15px}
+  .progress-container {
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+    margin-bottom: 15px;
+    overflow: hidden;
+  }
 
-  .support-fab{width:54px;height:54px;bottom:16px;right:16px}
-  .support-fab svg{width:22px;height:22px}
-  .support-card{height:80vh;max-height:560px;border-radius:16px}
-  .support-head{padding:14px 16px}
-  .chat-msg{font-size:13.5px;max-width:88%}
-}
-@media(max-width:380px){
-  .brand h1{font-size:16px}
-  .logo{width:40px;height:40px}
-  .hero h2{font-size:19px}
-  .quick{flex-direction:column}
-  .quick button{width:100%}
-}
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #fff;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .result-desc {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+  }
+
+  /* Подвал */
+  footer {
+    padding: 15px 25px;
+    background: #fafafa;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--gray);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  footer b { color: var(--text); }
+  footer code { background: #e2e8f0; padding: 3px 6px; border-radius: 4px; color: var(--blue); font-weight: 600; }
+
+  /* Маркеры */
+  .custom-marker {
+    background: var(--blue);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    width: 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: bold; font-size: 10px;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  
+  .custom-marker.active {
+    background: var(--red);
+    transform: scale(1.3);
+    box-shadow: 0 0 0 10px rgba(230, 57, 70, 0.3);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.5); }
+    70% { box-shadow: 0 0 0 15px rgba(230, 57, 70, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); }
+  }
+
+  /* Адаптив */
+  @media (max-width: 800px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .map-section { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+    #map { height: 350px; }
+    .inputs-row { grid-template-columns: 1fr; }
+    header { flex-direction: column; text-align: center; gap: 8px; }
+    footer { flex-direction: column; align-items: center; text-align: center; }
+    .result-number { font-size: 36px; }
+  }
 </style>
 </head>
 <body>
 
-<header>
-<div class="head">
-  <a class="brand" href="#" onclick="showPage('home');return false">
-    <img class="logo" src="https://sch2087uv.mskobr.ru/attach_files/logo/логопнг-51.png" alt="Эмблема школы 2087" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M50 3 C20 3 6 22 6 48 L6 78 C6 92 22 97 50 97 C78 97 94 92 94 78 L94 48 C94 22 80 3 50 3 Z%22 fill=%22%23ffffff%22 stroke=%22%2316a085%22 stroke-width=%224%22/><text x=%2250%22 y=%2258%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2222%22 font-weight=%22900%22 fill=%22%2316a085%22>2087</text></svg>'">
+<div class="container">
+  <header>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <img src="https://sch2087uv.mskobr.ru/attach_files/logo/логопнг-51.png" alt="Школа" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230A4DA2%22/><text x=%2250%22 y=%2265%22 text-anchor=%22middle%22 font-size=%2240%22 fill=%22white%22>Ш</text></svg>'">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Moscow_Metro_logo.svg/1024px-Moscow_Metro_logo.svg.png" alt="Метро" onerror="this.style.display='none'" style="height: 32px;">
+    </div>
     <div>
-      <h1>Собери<span>Сам</span></h1>
-      <p>Конфигуратор ПК под твой бюджет</p>
+      <h1>MetroFlow</h1>
+      <p>Интерактивная модель пассажиропотока</p>
     </div>
-  </a>
-  <nav>
-    <button class="nav-btn active" data-page="home" onclick="showPage('home')">Главная</button>
-    <button class="nav-btn" data-page="about" onclick="showPage('about')">О проекте</button>
-  </nav>
-</div>
-</header>
+  </header>
 
-<main>
+  <div class="main-grid">
+    <!-- Левая часть: КАРТА -->
+    <div class="map-section">
+      <div class="map-header">
+        <div class="map-title">🗺️ Карта станций</div>
+        <button class="btn-reset" onclick="resetMap()">Показать всю Москву</button>
+      </div>
+      <div id="map"></div>
+      <div class="map-hint">Нажмите на метку, чтобы загрузить данные</div>
+    </div>
 
-<section class="page active" id="page-home">
+    <!-- Правая часть: КАЛЬКУЛЯТОР -->
+    <div class="calc-section">
+      <div class="form-group">
+        <label>Выберите станцию из списка:</label>
+        <select id="stationSelect" onchange="changeStation(this.value)">
+          <option value="custom">-- Свои параметры --</option>
+          <optgroup label="Спальные районы">
+            <option value="maryino">Марьино</option>
+            <option value="vyhino">Выхино</option>
+            <option value="yasenevo">Ясенево</option>
+            <option value="otradnoe">Отрадное</option>
+            <option value="strogino">Строгино</option>
+          </optgroup>
+          <optgroup label="Центр и деловые кластеры">
+            <option value="delovoy">Деловой центр</option>
+            <option value="ohotny">Охотный Ряд</option>
+            <option value="arbatskaya">Арбатская</option>
+            <option value="kitay">Китай-город</option>
+            <option value="tverskaya">Тверская</option>
+          </optgroup>
+          <optgroup label="Пересадочные хабы">
+            <option value="pobedy">Парк Победы</option>
+            <option value="komsomol">Комсомольская</option>
+            <option value="kievskaya">Киевская</option>
+            <option value="belorusskaya">Белорусская</option>
+            <option value="kurskaya">Курская</option>
+          </optgroup>
+          <optgroup label="Выставочные и ВУЗы">
+            <option value="vdnh">ВДНХ</option>
+            <option value="universitet">Университет</option>
+            <option value="sportivnaya">Спортивная</option>
+          </optgroup>
+        </select>
+      </div>
 
-  <div class="hero">
-    <div class="hero-tag">Подбор ПК по бюджету</div>
-    <h2>Узнай, какой компьютер можно собрать на твои деньги</h2>
-    <p>Введи сумму — получи сборку, цены и примерный FPS в популярных играх.</p>
+      <div class="inputs-row">
+        <div class="form-group">
+          <label>Население (чел.)</label>
+          <input type="number" id="pop" value="35000" oninput="calculate()">
+        </div>
+        <div class="form-group">
+          <label>Рабочие места (чел.)</label>
+          <input type="number" id="jobs" value="15000" oninput="calculate()">
+        </div>
+        <div class="form-group">
+          <label>Точки притяжения (шт.)</label>
+          <input type="number" id="attr" value="3" oninput="calculate()">
+        </div>
+        <div class="form-group">
+          <label>Пересадки (шт.)</label>
+          <input type="number" id="trans" value="1" oninput="calculate()">
+        </div>
+      </div>
+
+      <button class="btn" onclick="calculate(true)">Рассчитать прогноз</button>
+
+      <div class="result-box">
+        <h2>Нагрузка в час пик</h2>
+        <div class="result-number" id="resultValue">0</div>
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="result-desc" id="resultStatus">Ожидание расчета...</div>
+      </div>
+    </div>
   </div>
 
-  <div class="form-card">
-    <label class="form-label" for="budget">Сколько у тебя денег?</label>
-    <div class="budget-row">
-      <input id="budget" type="number" value="60000" min="5000" step="1000" inputmode="numeric" placeholder="Например, 60000">
-      <button onclick="buildPC()">Подобрать</button>
-    </div>
-    <div class="quick">
-      <button onclick="setBudget(15000)">15 000 ₽</button>
-      <button onclick="setBudget(30000)">30 000 ₽</button>
-      <button onclick="setBudget(60000)">60 000 ₽</button>
-      <button onclick="setBudget(100000)">100 000 ₽</button>
-    </div>
-
-    <div class="used-badge" id="usedBadge">
-      <span class="ub-icon">🛒</span>
-      <span>Для бюджета до 20 000 ₽ подобрана сборка из <b>б/у комплектующих</b>. Кнопка «Найти на Авито» откроет поиск.</span>
-    </div>
-
-    <p class="hint">Цены ориентировочные — перед покупкой проверь актуальную стоимость.</p>
-  </div>
-
-  <div class="result" id="result">
-    <div class="result-head" id="resultHead">
-      <div>
-        <h2 id="headline">Твоя сборка</h2>
-        <span class="status" id="status">Ожидание…</span>
-      </div>
-      <div class="total-big">
-        <small>Итого</small>
-        <span id="total">—</span>
-      </div>
-    </div>
-    <div class="parts" id="parts"></div>
-  </div>
-
-  <div class="fps-block" id="fpsBlock" style="display:none">
-    <div class="fps-head">
-      <h3>🎮 Примерный FPS в играх</h3>
-      <span class="fps-res">1920×1080 · высокие настройки</span>
-    </div>
-    <div class="fps-grid">
-      <div class="fps-card" id="cardCs">
-        <span class="fps-game">CS2</span>
-        <span class="fps-value" id="fpsCs">—<span class="unit">FPS</span></span>
-      </div>
-      <div class="fps-card" id="cardMc">
-        <span class="fps-game">Minecraft</span>
-        <span class="fps-value" id="fpsMc">—<span class="unit">FPS</span></span>
-      </div>
-      <div class="fps-card" id="cardGta">
-        <span class="fps-game">GTA V</span>
-        <span class="fps-value" id="fpsGta">—<span class="unit">FPS</span></span>
-      </div>
-      <div class="fps-card" id="cardFn">
-        <span class="fps-game">Fortnite</span>
-        <span class="fps-value" id="fpsFn">—<span class="unit">FPS</span></span>
-      </div>
-      <div class="fps-card" id="cardCb">
-        <span class="fps-game">Cyberpunk 2077</span>
-        <span class="fps-value" id="fpsCb">—<span class="unit">FPS</span></span>
-      </div>
-    </div>
-    <div class="fps-legend">
-      <span><i class="h"></i> Комфортно (60+)</span>
-      <span><i class="m"></i> Играбельно (30–59)</span>
-      <span><i class="l"></i> Слабо (&lt;30)</span>
-      <span><i class="n"></i> Не запустится</span>
-    </div>
-    <p class="fps-note">Значения приблизительные — реальный FPS зависит от версии игры, драйверов и настроек.</p>
-  </div>
-
-  <div class="extra" id="extra" style="display:none">
-    <h3>Совместимость</h3>
-    <p id="compat"></p>
-    <h3>Для чего подойдёт</h3>
-    <p id="performance"></p>
-  </div>
-
-</section>
-
-<section class="page" id="page-about">
-
-  <div class="about-card">
-    <h2>О проекте</h2>
-    <p class="subtitle">Учебный проект по информатике · 10 класс</p>
-
-    <p>
-      <b>«Собери Сам»</b> — это веб-приложение, которое помогает подобрать
-      комплектующие персонального компьютера под заданный бюджет.
-      Пользователь вводит сумму, а сайт автоматически подбирает
-      подходящие детали: процессор, видеокарту, материнскую плату,
-      оперативную память, накопитель, блок питания, корпус и охлаждение.
-    </p>
-
-    <p>
-      Также сайт показывает <b>примерный FPS</b> в популярных играх
-      (CS2, Minecraft, GTA V, Fortnite, Cyberpunk 2077) — чтобы сразу
-      понимать, на что способна сборка.
-    </p>
-
-    <p>
-      Для бюджетов до 20 000 ₽ сайт подбирает сборку из б/у комплектующих
-      (со ссылками на Авито), а для больших сумм — из новых деталей
-      с ссылками на Яндекс.Маркет.
-    </p>
-
-    <div class="author">
-      <div class="author-avatar">М</div>
-      <div class="author-info">
-        <h3>Максим Крылов</h3>
-        <p>10 «О» класс</p>
-        <span>Автор проекта · 2026 год</span>
-      </div>
-    </div>
-
-    <h3 style="margin:0 0 4px;font-size:16px;color:#0d3b3b">Что умеет сайт</h3>
-    <ul class="feature-list">
-      <li>Подбирает сборку ПК по бюджету от 5 000 ₽</li>
-      <li>Для небольших сумм использует б/у комплектующие с Авито</li>
-      <li>Показывает цену каждого комплектующего отдельно</li>
-      <li>Считает примерный FPS в 5 популярных играх</li>
-      <li>Проверяет совместимость процессора, платы и памяти</li>
-      <li>Работает на компьютере и на телефоне</li>
-      <li>Есть чат поддержки — можно спросить что угодно у помощника</li>
-    </ul>
-
-    <button class="back-btn" onclick="showPage('home')">← Вернуться на главную</button>
-  </div>
-
-</section>
-
-</main>
-
-<footer>© 2026 · Собери Сам · Учебный проект · Максим Крылов, 10 «О»</footer>
-
-<button class="support-fab" onclick="openSupport()" aria-label="Написать в поддержку">
-  <svg viewBox="0 0 24 24">
-    <path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-2 10H6v-2h12v2zm0-4H6V6h12v2z"/>
-  </svg>
-</button>
-
-<div class="support-modal" id="supportModal" onclick="if(event.target===this)closeSupport()">
-  <div class="support-card">
-    <div class="support-head">
-      <div class="avatar">🤖</div>
-      <div class="info">
-        <h3>Помощник «Собери Сам»</h3>
-        <p>Отвечу на вопросы о ПК</p>
-      </div>
-      <button class="close-btn" onclick="closeSupport()" aria-label="Закрыть">✕</button>
-    </div>
-
-    <div class="chat-messages" id="chatMessages"></div>
-
-    <div class="chat-quick" id="chatQuick"></div>
-
-    <div class="chat-input-row">
-      <input id="chatInput" type="text" placeholder="Напиши сообщение…" maxlength="500"
-             onkeydown="if(event.key==='Enter')sendChat()">
-      <button onclick="sendChat()" id="chatSendBtn" aria-label="Отправить">
-        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </button>
-    </div>
-  </div>
+  <footer>
+    <div><b>Автор:</b> Максим Крылов, 10 «О» класс</div>
+    <div><b>Формула:</b> <code>Y = 0.15P + 0.25J + 1500A + 5000T</code></div>
+  </footer>
 </div>
 
 <script>
-const money = n => Math.round(n).toLocaleString("ru-RU") + " ₽";
-let build = [];
-let usedMode = false;
-const USED_THRESHOLD = 20000;
-
-const titleToKey = {
-  "Процессор": "cpu",
-  "Видеокарта": "gpu",
-  "Материнская плата": "motherboard",
-  "Оперативная память": "ram",
-  "Накопитель": "storage",
-  "Блок питания": "psu",
-  "Корпус": "case",
-  "Охлаждение": "cool"
-};
-
-function showPage(page){
-  document.getElementById('page-home').classList.toggle('active', page === 'home');
-  document.getElementById('page-about').classList.toggle('active', page === 'about');
-  document.querySelectorAll('.nav-btn').forEach(b =>
-    b.classList.toggle('active', b.dataset.page === page)
-  );
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function setBudget(v){
-  document.getElementById('budget').value = v;
-  buildPC();
-}
-
-const catalogNew = {
-  cpu: [
-    { name: "AMD Ryzen 3 4100", price: 5500, socket: "AM4" },
-    { name: "AMD Ryzen 5 5600G", price: 9500, socket: "AM4" },
-    { name: "Intel Core i3-12100F", price: 9000, socket: "LGA1700" },
-    { name: "AMD Ryzen 5 5600", price: 11550, socket: "AM4" },
-    { name: "AMD Ryzen 7 5700X", price: 13500, socket: "AM4" },
-    { name: "Intel Core i5-12400F", price: 14000, socket: "LGA1700" },
-    { name: "AMD Ryzen 5 7500F", price: 15500, socket: "AM5" },
-    { name: "Intel Core i5-14400F", price: 18500, socket: "LGA1700" },
-    { name: "AMD Ryzen 7 7700", price: 24000, socket: "AM5" },
-    { name: "AMD Ryzen 7 9800X3D", price: 35000, socket: "AM5" },
-    { name: "Intel Core i7-14700K", price: 42000, socket: "LGA1700" }
-  ],
-  gpu: [
-    { name: "GeForce GT 1030", price: 5000 },
-    { name: "Radeon RX 580 8 ГБ (б/у)", price: 8500 },
-    { name: "Radeon RX 6600 8 ГБ", price: 16000 },
-    { name: "NVIDIA RTX 3050 8 ГБ", price: 17000 },
-    { name: "GeForce RTX 4060 8 ГБ", price: 20000 },
-    { name: "GeForce RTX 5060 8 ГБ", price: 27000 },
-    { name: "GeForce RTX 5060 Ti 8 ГБ", price: 37000 },
-    { name: "Radeon RX 9060 XT 8 ГБ", price: 42500 },
-    { name: "GeForce RTX 5070 12 ГБ", price: 71000 },
-    { name: "GeForce RTX 5070 Ti 16 ГБ", price: 90000 },
-    { name: "GeForce RTX 5080 16 ГБ", price: 111000 }
-  ],
-  ram: [
-    { name: "Kingston FURY Beast 8 ГБ DDR4", price: 3500, type: "DDR4" },
-    { name: "Patriot Viper Elite II 16 ГБ DDR4", price: 7000, type: "DDR4" },
-    { name: "G.Skill Aegis 32 ГБ DDR4", price: 13000, type: "DDR4" },
-    { name: "Kingston FURY Beast 16 ГБ DDR5", price: 10000, type: "DDR5" },
-    { name: "Patriot Viper Elite 5 RGB 32 ГБ DDR5", price: 20000, type: "DDR5" },
-    { name: "ADATA XPG Lancer 64 ГБ DDR5", price: 40000, type: "DDR5" }
-  ],
-  storage: [
-    { name: "Kingston A400 480 ГБ", price: 3500 },
-    { name: "ADATA LEGEND 710 512 ГБ NVMe", price: 5000 },
-    { name: "Samsung 990 EVO 1 ТБ NVMe", price: 8000 },
-    { name: "MSI SPATIUM M480 PRO 2 ТБ", price: 15000 },
-    { name: "Samsung 990 PRO 4 ТБ NVMe", price: 28000 }
-  ],
-  motherboard: [
-    { name: "ASRock A320M-HDV", price: 5000, socket: "AM4" },
-    { name: "MSI A520M-A PRO", price: 5500, socket: "AM4" },
-    { name: "Gigabyte B550M K", price: 7500, socket: "AM4" },
-    { name: "MSI B550-A PRO", price: 11000, socket: "AM4" },
-    { name: "MSI PRO H610M-G DDR4", price: 6000, socket: "LGA1700" },
-    { name: "Gigabyte B760M DS3H", price: 10000, socket: "LGA1700" },
-    { name: "ASUS ROG STRIX Z790-A", price: 30000, socket: "LGA1700" },
-    { name: "MSI PRO A620M-E", price: 8000, socket: "AM5" },
-    { name: "MSI B650 GAMING PLUS WIFI", price: 14000, socket: "AM5" },
-    { name: "Gigabyte B650M AORUS ELITE AX ICE", price: 22000, socket: "AM5" }
-  ],
-  psu: [
-    { name: "Chieftec CORE 500W BBS-500S", price: 3000 },
-    { name: "1STPLAYER ACK 550W", price: 4300 },
-    { name: "DEEPCOOL GamerStorm PN650M", price: 5400 },
-    { name: "Chieftec A80 750W CTG-750C", price: 8500 },
-    { name: "ZALMAN GigaMax III 850W", price: 12000 },
-    { name: "FSP ADVAN GM 1000W", price: 16000 }
-  ],
-  case: [
-    { name: "Ginzzu CL413 Mini-Tower", price: 2500 },
-    { name: "MONTECH X3 MESH", price: 4000 },
-    { name: "Ginzzu GL300 RGB", price: 5500 },
-    { name: "ARDOR GAMING Rare M6", price: 7000 },
-    { name: "ASUS A23 PLUS", price: 12000 }
-  ],
-  cool: [
-    { name: "DEEPCOOL AG300", price: 1000 },
-    { name: "Arctic Cooling Freezer i35 A-RGB", price: 2000 },
-    { name: "DEEPCOOL AK500 DIGITAL", price: 3500 },
-    { name: "DEEPCOOL GAMMAXX L240 A-RGB", price: 7000 },
-    { name: "DEEPCOOL LE360 V2", price: 12000 }
-  ]
-};
-
-const catalogUsed = {
-  cpu: [
-    { name: "Intel Core i3-8100 (б/у)", price: 1500, socket: "LGA1151" },
-    { name: "Intel Core i5-8400 (б/у)", price: 2500, socket: "LGA1151" },
-    { name: "Intel Core i3-10100F (б/у)", price: 2800, socket: "LGA1200" },
-    { name: "AMD Ryzen 3 3200G (б/у)", price: 3000, socket: "AM4" },
-    { name: "AMD Ryzen 5 2600 (б/у)", price: 3500, socket: "AM4" },
-    { name: "Intel Core i5-10400F (б/у)", price: 4000, socket: "LGA1200" },
-    { name: "AMD Ryzen 5 3600 (б/у)", price: 4500, socket: "AM4" },
-    { name: "AMD Ryzen 5 5600 (б/у)", price: 6500, socket: "AM4" }
-  ],
-  gpu: [
-    { name: "GeForce GT 730 2 ГБ (б/у)", price: 1000 },
-    { name: "GeForce GTX 750 Ti 2 ГБ (б/у)", price: 2500 },
-    { name: "GeForce GTX 1050 Ti 4 ГБ (б/у)", price: 4500 },
-    { name: "GeForce GTX 1650 4 ГБ (б/у)", price: 7000 },
-    { name: "Radeon RX 580 8 ГБ (б/у)", price: 8000 },
-    { name: "GeForce GTX 1660 Super 6 ГБ (б/у)", price: 10000 },
-    { name: "Radeon RX 6600 8 ГБ (б/у)", price: 14000 }
-  ],
-  ram: [
-    { name: "4 ГБ DDR4 (б/у)", price: 600, type: "DDR4" },
-    { name: "8 ГБ DDR4 (б/у)", price: 1100, type: "DDR4" },
-    { name: "16 ГБ DDR4 (б/у)", price: 2000, type: "DDR4" },
-    { name: "8 ГБ DDR3 (б/у)", price: 700, type: "DDR3" },
-    { name: "16 ГБ DDR3 (б/у)", price: 1400, type: "DDR3" }
-  ],
-  storage: [
-    { name: "HDD 500 ГБ (б/у)", price: 700 },
-    { name: "SSD 120 ГБ (б/у)", price: 800 },
-    { name: "SSD 240 ГБ (б/у)", price: 1200 },
-    { name: "SSD 480 ГБ (б/у)", price: 2000 },
-    { name: "SSD NVMe 512 ГБ (б/у)", price: 2500 }
-  ],
-  motherboard: [
-    { name: "H310M (LGA1151) (б/у)", price: 1500, socket: "LGA1151" },
-    { name: "B360M (LGA1151) (б/у)", price: 2200, socket: "LGA1151" },
-    { name: "H410M (LGA1200) (б/у)", price: 2500, socket: "LGA1200" },
-    { name: "B460M (LGA1200) (б/у)", price: 3500, socket: "LGA1200" },
-    { name: "A320M (AM4) (б/у)", price: 2000, socket: "AM4" },
-    { name: "B450M (AM4) (б/у)", price: 3000, socket: "AM4" },
-    { name: "B550M (AM4) (б/у)", price: 4500, socket: "AM4" }
-  ],
-  psu: [
-    { name: "Блок питания 400 Вт (б/у)", price: 700 },
-    { name: "Блок питания 450 Вт (б/у)", price: 900 },
-    { name: "Блок питания 500 Вт (б/у)", price: 1200 },
-    { name: "Блок питания 600 Вт (б/у)", price: 1600 },
-    { name: "Блок питания 700 Вт (б/у)", price: 2200 }
-  ],
-  case: [
-    { name: "Б/у корпус Mini-Tower", price: 500 },
-    { name: "Б/у корпус Midi-Tower", price: 1000 },
-    { name: "Б/у корпус с подсветкой", price: 1500 },
-    { name: "Б/у корпус ATX", price: 2000 }
-  ],
-  cool: [
-    { name: "Боксовый кулер (б/у)", price: 300 },
-    { name: "Башенный кулер (б/у)", price: 800 },
-    { name: "Башенный кулер 4 трубки (б/у)", price: 1500 }
-  ]
-};
-
-const shares = {
-  cpu: 0.20, gpu: 0.40, motherboard: 0.09, ram: 0.09,
-  storage: 0.07, psu: 0.06, case: 0.05, cool: 0.04
-};
-
-function pickComponent(list, targetBudget, filterFn) {
-  let filtered = filterFn ? list.filter(filterFn) : list.slice();
-  if (filtered.length === 0) filtered = list.slice();
-  let best = filtered[0];
-  let bestDiff = Math.abs(filtered[0].price - targetBudget);
-  for (const item of filtered) {
-    const diff = Math.abs(item.price - targetBudget);
-    if (diff < bestDiff || (diff === bestDiff && item.price <= targetBudget)) {
-      best = item;
-      bestDiff = diff;
-    }
-  }
-  return best;
-}
-
-function choose(b, catalog){
-  const cpuTarget = b * shares.cpu;
-  const cpu = pickComponent(catalog.cpu, cpuTarget);
-  const socket = cpu.socket;
-
-  const mbTarget = b * shares.motherboard;
-  let motherboard = pickComponent(catalog.motherboard, mbTarget, item => item.socket === socket);
-
-  const ramTarget = b * shares.ram;
-  const ramType = (socket === "AM5") ? "DDR5" : "DDR4";
-  let ram = pickComponent(catalog.ram, ramTarget, item => item.type === ramType);
-  if (!ram) ram = pickComponent(catalog.ram, ramTarget);
-
-  const gpuTarget = b * shares.gpu;
-  let gpu = pickComponent(catalog.gpu, gpuTarget);
-
-  let storage = pickComponent(catalog.storage, b * shares.storage);
-  let psu     = pickComponent(catalog.psu,     b * shares.psu);
-  let box     = pickComponent(catalog.case,    b * shares.case);
-  let cool    = pickComponent(catalog.cool,    b * shares.cool);
-
-  let total = cpu.price + gpu.price + motherboard.price + ram.price +
-              storage.price + psu.price + box.price + cool.price;
-
-  const maxAllowed = b * 1.10;
-  if (total > maxAllowed) {
-    const cheaperGpus = catalog.gpu.filter(g => g.price < gpu.price).sort((a,b) => b.price - a.price);
-    for (const cheaper of cheaperGpus) {
-      const newTotal = total - gpu.price + cheaper.price;
-      if (newTotal <= maxAllowed) { gpu = cheaper; total = newTotal; break; }
-    }
-  }
-
-  const steps = ['cool', 'box', 'psu', 'storage', 'ram', 'motherboard'];
-  const current = { cpu, gpu, motherboard, ram, storage, psu, box, cool };
-  for (const key of steps) {
-    if (total <= maxAllowed) break;
-    const list = catalog[key];
-    const cur = current[key];
-    const cheaper = list.filter(i => i.price < cur.price).sort((a,b) => b.price - a.price)[0];
-    if (cheaper) { total = total - cur.price + cheaper.price; current[key] = cheaper; }
-  }
-
-  gpu = current.gpu; ram = current.ram; storage = current.storage;
-  psu = current.psu; box = current.box; cool = current.cool;
-  motherboard = current.motherboard;
-
-  return [
-    { title: "Процессор", name: cpu.name, price: cpu.price, socket: cpu.socket },
-    { title: "Видеокарта", name: gpu.name, price: gpu.price, socket: "" },
-    { title: "Материнская плата", name: motherboard.name, price: motherboard.price, socket: motherboard.socket },
-    { title: "Оперативная память", name: ram.name, price: ram.price, socket: ram.type },
-    { title: "Накопитель", name: storage.name, price: storage.price, socket: "" },
-    { title: "Блок питания", name: psu.name, price: psu.price, socket: "" },
-    { title: "Корпус", name: box.name, price: box.price, socket: "" },
-    { title: "Охлаждение", name: cool.name, price: cool.price, socket: "" }
-  ];
-}
-
-function marketLink(name){
-  return "https://market.yandex.ru/search?text=" + encodeURIComponent(name);
-}
-function avitoLink(name){
-  const clean = name.replace(/\s*\(б\/у\)\s*/g, "").trim();
-  return "https://www.avito.ru/all?q=" + encodeURIComponent(clean);
-}
-function getBuyLink(name, isUsed){
-  return isUsed ? avitoLink(name) : marketLink(name);
-}
-
-const gpuFPS = {
-  "GeForce GT 730 2 ГБ (б/у)":    { cs: 30,  mc: 25,  gta: 10,  fn: 10,  cb: 0 },
-  "GeForce GT 1030":              { cs: 45,  mc: 35,  gta: 20,  fn: 20,  cb: 0 },
-  "GeForce GTX 750 Ti 2 ГБ (б/у)":{ cs: 65,  mc: 50,  gta: 35,  fn: 30,  cb: 5 },
-  "GeForce GTX 1050 Ti 4 ГБ (б/у)":{ cs: 80, mc: 65,  gta: 45,  fn: 40,  cb: 10 },
-  "GeForce GTX 1650 4 ГБ (б/у)":  { cs: 110, mc: 85,  gta: 60,  fn: 60,  cb: 18 },
-  "Radeon RX 580 8 ГБ (б/у)":     { cs: 125, mc: 100, gta: 75,  fn: 70,  cb: 22 },
-  "GeForce GTX 1660 Super 6 ГБ (б/у)": { cs: 150, mc: 120, gta: 90, fn: 85, cb: 30 },
-  "NVIDIA RTX 3050 8 ГБ":         { cs: 165, mc: 135, gta: 100, fn: 95,  cb: 35 },
-  "Radeon RX 6600 8 ГБ":          { cs: 185, mc: 160, gta: 115, fn: 110, cb: 45 },
-  "Radeon RX 6600 8 ГБ (б/у)":    { cs: 185, mc: 160, gta: 115, fn: 110, cb: 45 },
-  "GeForce RTX 4060 8 ГБ":        { cs: 220, mc: 200, gta: 140, fn: 135, cb: 60 },
-  "GeForce RTX 5060 8 ГБ":        { cs: 240, mc: 220, gta: 155, fn: 150, cb: 70 },
-  "GeForce RTX 5060 Ti 8 ГБ":     { cs: 260, mc: 245, gta: 170, fn: 165, cb: 80 },
-  "Radeon RX 9060 XT 8 ГБ":       { cs: 275, mc: 265, gta: 180, fn: 180, cb: 90 },
-  "GeForce RTX 5070 12 ГБ":       { cs: 310, mc: 300, gta: 200, fn: 200, cb: 110 },
-  "GeForce RTX 5070 Ti 16 ГБ":    { cs: 330, mc: 320, gta: 215, fn: 220, cb: 125 },
-  "GeForce RTX 5080 16 ГБ":       { cs: 350, mc: 350, gta: 230, fn: 250, cb: 145 }
-};
-
-const cpuMultiplier = {
-  "Intel Core i3-8100 (б/у)":     0.65,
-  "AMD Ryzen 3 3200G (б/у)":      0.60,
-  "Intel Core i5-8400 (б/у)":     0.80,
-  "Intel Core i3-10100F (б/у)":   0.85,
-  "AMD Ryzen 5 2600 (б/у)":       0.80,
-  "Intel Core i5-10400F (б/у)":   0.90,
-  "AMD Ryzen 5 3600 (б/у)":       0.92,
-  "AMD Ryzen 5 5600G":            0.90,
-  "Intel Core i3-12100F":         0.95,
-  "AMD Ryzen 5 5600 (б/у)":       1.00,
-  "AMD Ryzen 5 5600":             1.00,
-  "AMD Ryzen 3 4100":             0.65,
-  "Intel Core i5-12400F":         1.00,
-  "AMD Ryzen 7 5700X":            1.05,
-  "AMD Ryzen 5 7500F":            1.05,
-  "Intel Core i5-14400F":         1.08,
-  "AMD Ryzen 7 7700":             1.10,
-  "Intel Core i7-14700K":         1.15,
-  "AMD Ryzen 7 9800X3D":          1.20
-};
-
-const csLimit = {
-  "Intel Core i3-8100 (б/у)":     110,
-  "AMD Ryzen 3 3200G (б/у)":      100,
-  "Intel Core i5-8400 (б/у)":     160,
-  "Intel Core i3-10100F (б/у)":   180,
-  "AMD Ryzen 5 2600 (б/у)":       180,
-  "Intel Core i5-10400F (б/у)":   220,
-  "AMD Ryzen 5 3600 (б/у)":       230,
-  "AMD Ryzen 5 5600G":            220,
-  "Intel Core i3-12100F":         260,
-  "AMD Ryzen 5 5600 (б/у)":       290,
-  "AMD Ryzen 5 5600":             300,
-  "AMD Ryzen 3 4100":             110,
-  "Intel Core i5-12400F":         300,
-  "AMD Ryzen 7 5700X":            340,
-  "AMD Ryzen 5 7500F":            370,
-  "Intel Core i5-14400F":         380,
-  "AMD Ryzen 7 7700":             420,
-  "Intel Core i7-14700K":         470,
-  "AMD Ryzen 7 9800X3D":          520
-};
-
-function estimateFPS(cpuName, gpuName){
-  const gpu = gpuFPS[gpuName] || { cs:0, mc:0, gta:0, fn:0, cb:0 };
-  const mult = cpuMultiplier[cpuName] || 0.8;
-  const limit = csLimit[cpuName] || 300;
-
-  return {
-    cs:  Math.min(Math.round(gpu.cs  * mult), limit),
-    mc:  Math.round(gpu.mc  * mult),
-    gta: Math.round(gpu.gta * mult),
-    fn:  Math.round(gpu.fn  * mult),
-    cb:  Math.round(gpu.cb  * mult)
+  const stations = {
+    maryino: { name: "Марьино", lat: 55.650, lon: 37.750, pop: 45000, jobs: 5000, attr: 2, trans: 0 },
+    vyhino: { name: "Выхино", lat: 55.715, lon: 37.818, pop: 60000, jobs: 10000, attr: 1, trans: 1 },
+    yasenevo: { name: "Ясенево", lat: 55.606, lon: 37.533, pop: 40000, jobs: 4000, attr: 2, trans: 0 },
+    otradnoe: { name: "Отрадное", lat: 55.863, lon: 37.604, pop: 38000, jobs: 6000, attr: 1, trans: 0 },
+    strogino: { name: "Строгино", lat: 55.803, lon: 37.403, pop: 35000, jobs: 8000, attr: 2, trans: 0 },
+    
+    delovoy: { name: "Деловой центр", lat: 55.749, lon: 37.539, pop: 5000, jobs: 85000, attr: 4, trans: 2 },
+    ohotny: { name: "Охотный Ряд", lat: 55.757, lon: 37.615, pop: 10000, jobs: 50000, attr: 5, trans: 2 },
+    arbatskaya: { name: "Арбатская", lat: 55.752, lon: 37.601, pop: 15000, jobs: 40000, attr: 4, trans: 1 },
+    kitay: { name: "Китай-город", lat: 55.756, lon: 37.632, pop: 12000, jobs: 55000, attr: 5, trans: 2 },
+    tverskaya: { name: "Тверская", lat: 55.765, lon: 37.605, pop: 14000, jobs: 45000, attr: 3, trans: 1 },
+    
+    pobedy: { name: "Парк Победы", lat: 55.736, lon: 37.518, pop: 25000, jobs: 15000, attr: 2, trans: 2 },
+    komsomol: { name: "Комсомольская", lat: 55.775, lon: 37.655, pop: 20000, jobs: 60000, attr: 3, trans: 3 },
+    kievskaya: { name: "Киевская", lat: 55.743, lon: 37.566, pop: 22000, jobs: 35000, attr: 3, trans: 2 },
+    belorusskaya: { name: "Белорусская", lat: 55.777, lon: 37.584, pop: 18000, jobs: 30000, attr: 2, trans: 2 },
+    kurskaya: { name: "Курская", lat: 55.758, lon: 37.660, pop: 19000, jobs: 28000, attr: 2, trans: 2 },
+    
+    vdnh: { name: "ВДНХ", lat: 55.821, lon: 37.641, pop: 30000, jobs: 20000, attr: 4, trans: 1 },
+    universitet: { name: "Университет", lat: 55.692, lon: 37.537, pop: 50000, jobs: 25000, attr: 3, trans: 0 },
+    sportivnaya: { name: "Спортивная", lat: 55.723, lon: 37.564, pop: 28000, jobs: 12000, attr: 2, trans: 1 }
   };
-}
 
-function fpsInfo(value){
-  if (value === 0)  return { text: "н/з", cls: "none", cardCls: "none" };
-  if (value >= 60)  return { text: value + "", cls: "high", cardCls: "high" };
-  if (value >= 30)  return { text: value + "", cls: "mid",  cardCls: "mid"  };
-  return                   { text: value + "", cls: "low",  cardCls: "low"  };
-}
+  let map;
+  let markers = {};
 
-function updateFPS(){
-  const cpuName = build[0].name;
-  const gpuName = build[1].name;
-  const fps = estimateFPS(cpuName, gpuName);
+  function initMap() {
+    map = L.map('map', { 
+      zoomControl: false,
+      attributionControl: false
+    }).setView([55.755, 37.617], 10);
 
-  const games = [
-    { id: "Cs",  val: fps.cs  },
-    { id: "Mc",  val: fps.mc  },
-    { id: "Gta", val: fps.gta },
-    { id: "Fn",  val: fps.fn  },
-    { id: "Cb",  val: fps.cb  }
-  ];
+    // ИСПОЛЬЗУЕМ ОФИЦИАЛЬНЫЙ СЕРВЕР OPENSTREETMAP (БЕЗ КЛЮЧЕЙ И ОШИБОК)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(map);
 
-  games.forEach(g => {
-    const info = fpsInfo(g.val);
-    const valueEl = document.getElementById('fps' + g.id);
-    const cardEl  = document.getElementById('card' + g.id);
+    for (let key in stations) {
+      const s = stations[key];
+      const icon = L.divIcon({
+        className: 'custom-wrapper',
+        html: `<div class="custom-marker" id="marker-${key}">M</div>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9]
+      });
 
-    if (g.val === 0){
-      valueEl.innerHTML = info.text;
+      const marker = L.marker([s.lat, s.lon], { icon: icon }).addTo(map);
+      
+      marker.on('click', () => {
+        document.getElementById('stationSelect').value = key;
+        changeStation(key);
+      });
+
+      markers[key] = marker;
+    }
+  }
+
+  function resetMap() {
+    map.flyTo([55.755, 37.617], 10, { duration: 1 });
+  }
+
+  function changeStation(key) {
+    document.querySelectorAll('.custom-marker').forEach(el => el.classList.remove('active'));
+
+    if (key !== 'custom' && stations[key]) {
+      const s = stations[key];
+      
+      document.getElementById('pop').value = s.pop;
+      document.getElementById('jobs').value = s.jobs;
+      document.getElementById('attr').value = s.attr;
+      document.getElementById('trans').value = s.trans;
+
+      const markerEl = document.getElementById('marker-' + key);
+      if (markerEl) markerEl.classList.add('active');
+
+      // Зум 12 — оптимально для просмотра района
+      map.flyTo([s.lat, s.lon], 12, { duration: 1 });
     } else {
-      valueEl.innerHTML = info.text + '<span class="unit">FPS</span>';
+      resetMap();
     }
-    valueEl.className = "fps-value " + info.cls;
-    cardEl.className  = "fps-card " + info.cardCls;
-  });
-}
-
-function buildPC(){
-  const budget = Number(document.getElementById('budget').value);
-  if (!Number.isFinite(budget) || budget < 5000){
-    alert("Введи бюджет от 5 000 рублей.");
-    return;
+    
+    calculate(true);
   }
 
-  usedMode = budget < USED_THRESHOLD;
-  const catalog = usedMode ? catalogUsed : catalogNew;
-
-  build = choose(budget, catalog);
-
-  document.getElementById('usedBadge').classList.toggle('show', usedMode);
-  document.getElementById('resultHead').classList.toggle('used', usedMode);
-
-  document.getElementById('result').classList.add('show');
-  document.getElementById('extra').style.display = 'block';
-  document.getElementById('fpsBlock').style.display = 'block';
-
-  document.getElementById('headline').textContent = usedMode
-    ? "Сборка из б/у комплектующих"
-    : "Твоя сборка";
-
-  const optionCatalog = usedMode ? catalogUsed : catalogNew;
-
-  document.getElementById('parts').innerHTML = build.map((p, i) => {
-    const key = titleToKey[p.title];
-    const optionList = optionCatalog[key] || [];
-
-    return `
-    <div class="part">
-      <span class="p-title">${p.title}</span>
-      <span class="p-cost" id="cost${i}">${money(p.price)}</span>
-      <span class="p-name">${p.name}</span>
-      <select onchange="replacePart(${i}, this.value)">
-        ${optionList.map(o =>
-          `<option value="${o.name}" data-price="${o.price}" ${o.name === p.name ? "selected" : ""}>
-            ${o.name} — ${money(o.price)}
-          </option>`
-        ).join("")}
-      </select>
-      <div class="buy-row">
-        <a class="buy-btn ${usedMode ? 'avito' : ''}" href="${getBuyLink(p.name, usedMode)}" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42L17.59 5H14V3zM5 5h7v2H7v10h10v-5h2v7H5V5z"/></svg>
-          ${usedMode ? 'Найти на Авито' : 'Где купить'}
-        </a>
-      </div>
-    </div>
-    `;
-  }).join("");
-
-  update();
-}
-
-function replacePart(i, name){
-  const sel = document.querySelectorAll('#parts select')[i];
-  const opt = sel.options[sel.selectedIndex];
-  build[i].name  = name;
-  build[i].price = Number(opt.dataset.price);
-  document.getElementById('cost' + i).textContent = money(build[i].price);
-  sel.parentElement.querySelector('.p-name').textContent = name;
-
-  const linkEl = sel.parentElement.querySelector('.buy-btn');
-  if (linkEl) linkEl.href = getBuyLink(name, usedMode);
-
-  update();
-}
-
-function update(){
-  const total  = build.reduce((s, p) => s + p.price, 0);
-  const budget = Number(document.getElementById('budget').value) || 0;
-
-  document.getElementById('total').textContent = money(total);
-
-  const st = document.getElementById('status');
-  const diff = total - budget;
-  if (total <= budget){
-    st.textContent = "✓ В пределах бюджета";
-    st.classList.remove('over');
-    st.style.background = "rgba(255,255,255,.22)";
-  } else if (diff <= budget * 0.10){
-    st.textContent = "✓ В пределах нормы (+" + money(diff) + ")";
-    st.classList.remove('over');
-    st.style.background = "rgba(255,255,255,.35)";
-  } else {
-    st.textContent = "⚠ Превышение на " + money(diff);
-    st.classList.add('over');
+  function animateValue(obj, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3); 
+      const current = Math.floor(easeOut * (end - start) + start);
+      obj.innerHTML = current.toLocaleString('ru-RU');
+      if (progress < 1) window.requestAnimationFrame(step);
+      else obj.innerHTML = end.toLocaleString('ru-RU');
+    };
+    window.requestAnimationFrame(step);
   }
 
-  const cpuSocket = build[0].socket;
-  const boardSocket = build[2].socket;
-  const ramType = build[3].socket;
-  const issues = [];
+  function calculate(animate = false) {
+    const pop = Number(document.getElementById('pop').value) || 0;
+    const jobs = Number(document.getElementById('jobs').value) || 0;
+    const attr = Number(document.getElementById('attr').value) || 0;
+    const trans = Number(document.getElementById('trans').value) || 0;
 
-  if (cpuSocket && boardSocket && cpuSocket !== boardSocket)
-    issues.push(`Сокет процессора (${cpuSocket}) не совпадает с сокетом платы (${boardSocket}).`);
-  if (build[2].name.includes("AM5") && ramType === "DDR4")
-    issues.push("Для платформы AM5 нужна память DDR5.");
-  if (build[2].name.includes("AM4") && ramType === "DDR5")
-    issues.push("Для платформы AM4 нужна память DDR4.");
-
-  document.getElementById('compat').textContent = issues.length
-    ? "⚠ " + issues.join(" ")
-    : "✓ Предварительная проверка пройдена. Перед покупкой уточни точные модели и разъёмы.";
-
-  let perf;
-  if (usedMode){
-    if (total < 12000)      perf = "Для офисных задач, браузера, учёбы и просмотра видео.";
-    else                    perf = "Для учёбы, программирования и старых/лёгких игр.";
-  } else {
-    if (total < 30000)      perf = "Для офисных задач, браузера, учёбы и лёгких игр на минимальных настройках.";
-    else if (total < 50000) perf = "Для учёбы, программирования и большинства игр в Full HD на средних настройках.";
-    else if (total < 70000) perf = "Для игр в Full HD на высоких настройках и работы с графикой.";
-    else if (total < 100000) perf = "Для игр в Full HD/2K на максимальных настройках, монтажа и 3D.";
-    else if (total < 160000) perf = "Для игр в 2K на ультра-настройках, стриминга, монтажа 4K.";
-    else perf = "Для игр в 4K, профессионального монтажа, рендеринга и ресурсоёмких задач.";
-  }
-
-  document.getElementById('performance').textContent = perf;
-
-  updateFPS();
-}
-
-document.getElementById('budget').addEventListener('keydown', e => {
-  if (e.key === 'Enter') buildPC();
-});
-
-/* =========================================================
-   ПОДДЕРЖКА — чат с ИИ + отправка автору в Telegram
-   =========================================================
-   Режимы работы:
-   - "bot"            — обычный режим, отвечаю по FAQ
-   - "author_msg"     — жду текст сообщения для автора
-   - "author_contact" — жду контакт для ответа
-*/
-const TG_TOKEN = "8855392330:AAGblupQ3ToPGlRb_jWYEnEdbNjqeh7_2XY";
-const TG_CHAT  = "1409444033";
-
-let chatMode = "bot";
-let chatHistory = [];
-let pendingMessage = "";
-let isBugReport = false;
-
-const botReplies = [
-  {
-    keys: ["привет","здравствуй","хай","hello","hi","добрый"],
-    reply: "Привет! 👋 Я помощник сайта «Собери Сам». Могу рассказать:\n• как подобрать ПК\n• что такое FPS\n• как проверить совместимость\n• передать сообщение автору Максиму\n\nЧто интересует?"
-  },
-  {
-    keys: ["как пользоваться","как работает","инструкция","помощь","help","что делать"],
-    reply: "Всё просто:\n\n1️⃣ Введи бюджет в поле на главной\n2️⃣ Нажми «Подобрать»\n3️⃣ Получи сборку с ценами и FPS\n4️⃣ Меняй любую деталь в выпадающем списке\n\nЕсли бюджет меньше 20 000 ₽ — сайт сам подберёт б/у комплектующие. Что-то конкретное интересует?"
-  },
-  {
-    keys: ["цена","стоимость","сколько стоит","дорого","дешевле","рубл"],
-    reply: "Цены в каталоге ориентировочные — они собраны из открытых источников (DNS, Маркет, Авито). Перед покупкой обязательно проверь актуальную стоимость. Кнопка «Где купить» рядом с каждой деталью откроет поиск на Яндекс.Маркете (или на Авито для б/у)."
-  },
-  {
-    keys: ["б/у","бу","авито","подержан"],
-    reply: "Если бюджет меньше 20 000 ₽ — сайт автоматически подбирает сборку из б/у комплектующих. Это позволяет получить больше мощности за те же деньги. Кнопка «Найти на Авито» ведёт на поиск конкретной модели."
-  },
-  {
-    keys: ["fps","фпс","игр","кс","cs2","гта","фортнайт","киберпанк","майнкрафт"],
-    reply: "FPS — кадры в секунду. Чем выше, тем плавнее картинка:\n\n🟢 60+ FPS — комфортно\n🟡 30–59 FPS — играбельно\n🔴 меньше 30 — слабо\n\nНа сайте FPS считается для 1920×1080 на высоких настройках. Реальные цифры зависят от версии игры и драйверов."
-  },
-  {
-    keys: ["совместим","сокет","подходит ли","подойдёт ли"],
-    reply: "Сайт проверяет совместимость:\n✅ Сокет процессора = сокет материнской платы\n✅ Для AM5 нужна память DDR5\n✅ Для AM4 — память DDR4\n\nЕсли что-то не подходит — увидишь предупреждение под сборкой."
-  },
-  {
-    keys: ["автор","кто сделал","максим","крылов","создател"],
-    reply: "Автор проекта — Максим Крылов, ученик 10 «О» класса школы 2087. Проект сделан как учебная работа по информатике в 2026 году. 👨‍💻"
-  },
-  {
-    keys: ["что ты умеешь","возможност","функци","умеешь"],
-    reply: "Я могу:\n• Рассказать, как пользоваться сайтом\n• Объяснить, что такое FPS и совместимость\n• Помочь разобраться с бюджетом\n• Передать твоё сообщение автору Максиму\n\nЕсли не смогу ответить — предложу написать автору. Просто скажи «отправь автору»."
-  },
-  {
-    keys: ["спасибо","благодар","круто","класс","молодец","супер"],
-    reply: "Спасибо! 😊 Если будут ещё вопросы — пиши."
-  },
-  {
-    keys: ["отправь автору","передай автору","написать автору","связаться с автором","передать максиму","напиши автору"],
-    reply: "Хорошо! ✉️ Напиши сообщение для Максима — я отправлю ему в Telegram.\n\nЧто передать?",
-    action: "author"
-  },
-  {
-    keys: ["нашел ошибку","нашёл ошибку","баг","ошибка","не работает","глючит","неправильно","сломалось"],
-    reply: "🐛 Спасибо, что сообщаешь!\n\nОпиши подробно, что не работает — я передам автору. Чем точнее, тем быстрее починим.",
-    action: "bug"
-  }
-];
-
-const fallbackReply = "Хм, не уверен, что правильно понял 🤔\n\nМогу передать твой вопрос автору — просто напиши: «отправь автору». Или спроси что-нибудь о ПК, сборке, FPS или совместимости.";
-
-function openSupport(){
-  document.getElementById('supportModal').classList.add('show');
-  document.body.style.overflow = 'hidden';
-  if (chatHistory.length === 0){
-    addBotMessage("Привет! 👋 Я помощник сайта «Собери Сам».\n\nМогу рассказать, как подобрать ПК, объяснить про FPS и совместимость или передать сообщение автору Максиму.\n\nЧто тебя интересует?");
-    renderQuickReplies();
-  }
-  setTimeout(() => document.getElementById('chatInput').focus(), 200);
-}
-
-function closeSupport(){
-  document.getElementById('supportModal').classList.remove('show');
-  document.body.style.overflow = '';
-}
-
-function addUserMessage(text){
-  const box = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'chat-msg user';
-  div.textContent = text;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-  chatHistory.push({ role: 'user', text });
-}
-
-function addBotMessage(text){
-  const box = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'chat-msg bot';
-  div.textContent = text;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-  chatHistory.push({ role: 'bot', text });
-}
-
-function showTyping(){
-  const box = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'chat-msg bot typing';
-  div.id = 'typingIndicator';
-  div.innerHTML = '<span></span><span></span><span></span>';
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-
-function hideTyping(){
-  const el = document.getElementById('typingIndicator');
-  if (el) el.remove();
-}
-
-function renderQuickReplies(){
-  const q = document.getElementById('chatQuick');
-  const btns = chatMode === 'bot'
-    ? ["Как пользоваться?", "Про FPS", "Нашёл ошибку", "Написать автору"]
-    : ["Отмена"];
-  q.innerHTML = btns.map(t =>
-    `<button onclick="quickReply('${t.replace(/'/g,"\\'")}')">${t}</button>`
-  ).join('');
-}
-
-function quickReply(text){
-  document.getElementById('chatInput').value = text;
-  sendChat();
-}
-
-function sendChat(){
-  const input = document.getElementById('chatInput');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-
-  addUserMessage(text);
-
-  /* Режим: ждём сообщение для автора */
-  if (chatMode === 'author_msg'){
-    if (text.toLowerCase() === "отмена"){
-      chatMode = 'bot';
-      isBugReport = false;
-      addBotMessage("Ок, отменил. Чем могу помочь?");
-      renderQuickReplies();
-      return;
-    }
-    pendingMessage = (isBugReport ? "🐛 БАГ-РЕПОРТ:\n" : "") + text;
-    chatMode = 'author_contact';
-    addBotMessage("Принято! ✍️\n\nУкажи свой Telegram или другой контакт — чтобы Максим мог тебе ответить.\n\nЕсли не хочешь — напиши «пропустить».");
-    renderQuickReplies();
-    return;
-  }
-
-  /* Режим: ждём контакт */
-  if (chatMode === 'author_contact'){
-    if (text.toLowerCase() === "отмена"){
-      chatMode = 'bot';
-      isBugReport = false;
-      pendingMessage = "";
-      addBotMessage("Ок, отменил. Чем могу помочь?");
-      renderQuickReplies();
-      return;
-    }
-    const lower = text.toLowerCase().trim();
-    const skip = ["пропустить","нет","skip","не хочу"].includes(lower);
-    const contact = skip ? "" : text;
-    sendToAuthor(pendingMessage, contact);
-    pendingMessage = "";
-    isBugReport = false;
-    return;
-  }
-
-  /* Обычный режим бота */
-  const lower = text.toLowerCase();
-
-  /* Триггер "написать автору" */
-  const authorTriggers = ["отправь автору","передай автору","написать автору","связаться с автором","передать максиму","напиши автору"];
-  if (authorTriggers.some(t => lower.includes(t))){
-    showTyping();
-    setTimeout(() => {
-      hideTyping();
-      chatMode = 'author_msg';
-      isBugReport = false;
-      addBotMessage("Хорошо! ✉️ Напиши сообщение для Максима — я отправлю ему в Telegram.\n\nЧто передать?");
-      renderQuickReplies();
-    }, 600);
-    return;
-  }
-
-  /* Поиск по FAQ */
-  let matched = null;
-  for (const item of botReplies){
-    if (item.keys.some(k => lower.includes(k))){
-      matched = item;
-      break;
-    }
-  }
-
-  showTyping();
-  setTimeout(() => {
-    hideTyping();
-    if (matched){
-      addBotMessage(matched.reply);
-      if (matched.action === 'author'){
-        chatMode = 'author_msg';
-        isBugReport = false;
-      } else if (matched.action === 'bug'){
-        chatMode = 'author_msg';
-        isBugReport = true;
-      }
+    const total = Math.round(pop * 0.15) + Math.round(jobs * 0.25) + (attr * 1500) + (trans * 5000);
+    const resultEl = document.getElementById('resultValue');
+    
+    if (animate) {
+      animateValue(resultEl, 0, total, 800);
     } else {
-      addBotMessage(fallbackReply);
+      resultEl.innerText = total.toLocaleString('ru-RU');
     }
-    renderQuickReplies();
-  }, 700 + Math.random() * 500);
-}
 
-async function sendToAuthor(message, contact){
-  showTyping();
+    const maxLoad = 80000;
+    let percent = Math.min((total / maxLoad) * 100, 100);
+    document.getElementById('progressBar').style.width = percent + '%';
 
-  let fullText = '📨 Сообщение из чата на сайте «Собери Сам»\n\n';
-  fullText += '💬 Текст:\n' + message + '\n\n';
-  if (contact){
-    fullText += '📞 Контакт для ответа: ' + contact + '\n\n';
-  } else {
-    fullText += '📞 Контакт не указан\n\n';
-  }
-  fullText += '🕐 ' + new Date().toLocaleString('ru-RU');
-
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ chat_id: TG_CHAT, text: fullText })
-    });
-    const data = await res.json();
-    hideTyping();
-
-    if (data.ok){
-      addBotMessage("✓ Отправил автору! Он получит сообщение в Telegram" +
-        (contact ? " и сможет ответить тебе по указанному контакту." : ".") +
-        "\n\nЧто-нибудь ещё?");
-      chatMode = 'bot';
-      renderQuickReplies();
+    const statusBox = document.getElementById('resultStatus');
+    if (total > 50000) {
+      statusBox.innerText = "⚠️ Высокая нагрузка. Возможна давка.";
+      statusBox.style.color = "#FF8A80";
+    } else if (total > 25000) {
+      statusBox.innerText = "⚡ Средняя нагрузка. Будут очереди в пик.";
+      statusBox.style.color = "#FFD54F";
     } else {
-      console.error('Telegram error:', data);
-      let hint = data.description || 'неизвестная ошибка';
-      if (data.error_code === 403){
-        hint = 'бот не может написать автору первым. Автору нужно нажать «Start» у бота @soberi_Sam_support_bot';
-      }
-      addBotMessage("⚠ Не получилось отправить.\n\nПричина: " + hint + "\n\nПопробуй позже.");
-      chatMode = 'bot';
-      renderQuickReplies();
+      statusBox.innerText = "✅ Комфортная нагрузка. Станция справится.";
+      statusBox.style.color = "#A5D6A7";
     }
-  } catch(err){
-    hideTyping();
-    console.error(err);
-    addBotMessage("⚠ Ошибка соединения. Проверь интернет и попробуй ещё раз.");
-    chatMode = 'bot';
-    renderQuickReplies();
   }
-}
 
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeSupport();
-});
-
-buildPC();
+  window.onload = () => {
+    initMap();
+    document.getElementById('stationSelect').value = 'maryino';
+    changeStation('maryino');
+    setTimeout(resetMap, 800);
+  };
 </script>
+
 </body>
 </html>
