@@ -1,521 +1,765 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MetroFlow · Модель пассажиропотока</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#eff8f6">
+<title>MetroFlow — Москва</title>
 
-<!-- Библиотека для карты -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-  :root {
-    --blue: #0A4DA2;
-    --red: #E63946;
-    --bg: #f4f7fb;
-    --text: #1a2b4c;
-    --gray: #64748B;
-    --border: #d0dceb;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  
-  body {
-    font-family: 'Inter', Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.5;
-    padding: 20px 15px;
-    min-height: 100vh;
-  }
-
-  .container {
-    max-width: 1050px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(10, 77, 162, 0.08);
-    overflow: hidden;
-  }
-
-  /* Шапка */
-  header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px 25px;
-    border-bottom: 1px solid var(--border);
-    background: #fafafa;
-  }
-  
-  header img { height: 40px; object-fit: contain; }
-  header h1 { font-size: 20px; color: var(--blue); margin-bottom: 2px; font-weight: 800; }
-  header p { font-size: 12px; color: var(--gray); }
-
-  /* Сетка */
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-  }
-
-  /* Карта */
-  .map-section {
-    padding: 25px;
-    border-right: 1px solid var(--border);
-    background: #f8fbff;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .map-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .map-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .btn-reset {
-    background: none;
-    border: 1px solid var(--border);
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    cursor: pointer;
-    color: var(--gray);
-    transition: all 0.2s;
-  }
-  .btn-reset:hover { background: var(--border); color: var(--text); }
-
-  #map {
-    width: 100%;
-    height: 450px;
-    border-radius: 8px;
-    border: 2px solid var(--border);
-    z-index: 1;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    background: #e5e5e5; /* Серый фон, пока грузится карта */
-  }
-
-  .map-hint {
-    font-size: 12px;
-    color: var(--gray);
-    margin-top: 10px;
-    text-align: center;
-  }
-
-  /* Калькулятор */
-  .calc-section {
-    padding: 25px;
-  }
-
-  .form-group { margin-bottom: 14px; }
-  
-  label {
-    display: block;
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    color: var(--gray);
-  }
-
-  input, select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
-    font-size: 15px;
-    font-family: inherit;
-    font-weight: 600;
-    transition: all 0.2s;
-    background: #fff;
-  }
-
-  input:focus, select:focus {
-    outline: none;
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(10, 77, 162, 0.1);
-  }
-
-  .inputs-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--blue);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-
-  .btn:hover { 
-    background: #07376f; 
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(10, 77, 162, 0.2);
-  }
-
-  /* Результат */
-  .result-box {
-    margin-top: 20px;
-    padding: 20px;
-    background: linear-gradient(135deg, var(--blue), #083b7c);
-    color: white;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 8px 20px rgba(10, 77, 162, 0.2);
-  }
-
-  .result-box h2 {
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0.8;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .result-number {
-    font-size: 46px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 10px;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .progress-container {
-    height: 6px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 3px;
-    margin-bottom: 15px;
-    overflow: hidden;
-  }
-
-  .progress-bar {
-    height: 100%;
-    width: 0%;
-    background: #fff;
-    border-radius: 3px;
-    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .result-desc {
-    font-size: 13px;
-    font-weight: 600;
-    padding: 8px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 6px;
-  }
-
-  /* Подвал */
-  footer {
-    padding: 15px 25px;
-    background: #fafafa;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--gray);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  footer b { color: var(--text); }
-  footer code { background: #e2e8f0; padding: 3px 6px; border-radius: 4px; color: var(--blue); font-weight: 600; }
-
-  /* Маркеры */
-  .custom-marker {
-    background: var(--blue);
-    border: 2px solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    width: 18px; height: 18px;
-    display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: bold; font-size: 10px;
-    transition: all 0.3s;
-    cursor: pointer;
-  }
-  
-  .custom-marker.active {
-    background: var(--red);
-    transform: scale(1.3);
-    box-shadow: 0 0 0 10px rgba(230, 57, 70, 0.3);
-    animation: pulse 1.5s infinite;
-  }
-
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.5); }
-    70% { box-shadow: 0 0 0 15px rgba(230, 57, 70, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); }
-  }
-
-  /* Адаптив */
-  @media (max-width: 800px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .map-section { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-    #map { height: 350px; }
-    .inputs-row { grid-template-columns: 1fr; }
-    header { flex-direction: column; text-align: center; gap: 8px; }
-    footer { flex-direction: column; align-items: center; text-align: center; }
-    .result-number { font-size: 36px; }
-  }
+:root{
+ --teal:#13b8a6;
+ --dark:#087f79;
+ --bg:#f0f7f5;
+ --text:#153039;
+ --muted:#7b9094;
+ --line:#e1ece9;
+ --red:#e46e68;
+ --orange:#f2a65a;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Manrope,Arial,sans-serif;
+}
+.app{max-width:1350px;margin:auto;padding:22px}
+header{
+ display:flex;justify-content:space-between;align-items:center;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+ width:45px;height:45px;border-radius:14px;
+ background:var(--teal);display:grid;place-items:center;
+ font-size:23px;font-weight:800;color:#063b3b;
+}
+.brand-name{font-weight:800;font-size:19px}
+.brand-sub{font-size:10px;color:var(--muted)}
+.live{
+ background:white;border:1px solid var(--line);
+ padding:10px 15px;border-radius:30px;
+ font-size:11px;font-weight:800;
+}
+.dot{
+ display:inline-block;width:8px;height:8px;
+ background:var(--teal);border-radius:50%;
+ margin-right:7px;animation:blink 1.5s infinite;
+}
+.intro{margin:35px 0 22px}
+.eyebrow{
+ font-size:10px;letter-spacing:1.5px;
+ color:var(--dark);font-weight:800;
+}
+h1{font-size:clamp(26px,4vw,38px);line-height:1.2;margin:9px 0}
+.intro p{font-size:13px;color:var(--muted)}
+.metrics{
+ display:grid;grid-template-columns:repeat(4,1fr);
+ gap:13px;margin-bottom:16px;
+}
+.metric,.panel{
+ background:white;border:1px solid var(--line);
+ border-radius:17px;box-shadow:0 8px 25px #123b3b0b;
+}
+.metric{padding:17px;animation:appear .6s both}
+.metric-label{font-size:11px;color:var(--muted);font-weight:700}
+.metric-value{font-size:24px;font-weight:800;margin-top:5px}
+.metric-foot{font-size:10px;color:#8a9b9e;margin-top:3px}
+.layout{
+ display:grid;grid-template-columns:1.5fr .85fr;gap:16px;
+}
+.panel{overflow:hidden;animation:appear .7s both}
+.panel-head{
+ display:flex;align-items:center;justify-content:space-between;
+ padding:18px;gap:10px;
+}
+.panel-title{font-size:14px;font-weight:800}
+.panel-note{font-size:10px;color:var(--muted);margin-top:4px}
+.pill{
+ background:#dff8f3;color:var(--dark);
+ padding:8px 12px;border-radius:30px;
+ font-size:10px;font-weight:800;white-space:nowrap;
+}
+.map-wrap{padding:0 12px 14px}
+#map{
+ width:100%;height:510px;
+ border-radius:12px;overflow:hidden;
+ background:#e5eeeb;z-index:1;
+}
+.leaflet-container{font-family:Manrope,Arial,sans-serif}
+.leaflet-control-zoom a{
+ color:var(--dark)!important;
+}
+.leaflet-control-attribution{
+ font-size:9px!important;
+ background:rgba(255,255,255,.9)!important;
+ border-radius:5px 0 0 0;
+ padding:3px 6px!important;
+}
+.map-legend{
+ display:flex;gap:15px;flex-wrap:wrap;
+ padding:12px 7px 2px;
+ font-size:10px;color:var(--muted);
+}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:9px;height:9px;border-radius:50%;background:var(--teal)}
+.orange{background:var(--orange)}
+.red{background:var(--red)}
+.side{display:flex;flex-direction:column;gap:16px}
+.select-wrap{padding:0 18px 13px}
+select{
+ width:100%;padding:13px;
+ border:1px solid var(--line);border-radius:10px;
+ background:#f9fcfb;font:700 12px Manrope;
+ color:var(--text);outline:none;
+}
+select:focus,input:focus{border-color:var(--teal)}
+.summary{
+ margin:0 18px 18px;padding:16px;
+ background:#f3faf8;border:1px solid #e0f1ed;
+ border-radius:12px;
+}
+.station-top{display:flex;justify-content:space-between;gap:8px}
+.station-name{font-size:21px;font-weight:800}
+.station-line{font-size:10px;color:var(--muted);margin-top:4px}
+.status{
+ background:#dff8f3;color:var(--dark);
+ border-radius:20px;padding:7px 10px;
+ font-size:10px;font-weight:800;height:max-content;
+}
+.big-number{font-size:30px;font-weight:800;margin-top:15px}
+.caption{font-size:10px;color:var(--muted)}
+.split-stats{
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:9px;margin-top:14px;
+}
+.mini{background:white;border:1px solid var(--line);padding:11px;border-radius:9px}
+.mini span{display:block;font-size:9px;color:var(--muted)}
+.mini b{font-size:14px}
+.load-row{
+ display:flex;justify-content:space-between;
+ margin:14px 0 6px;font-size:10px;color:var(--muted);
+}
+.track{height:7px;background:#e4eeeb;border-radius:10px;overflow:hidden}
+.fill{
+ height:100%;width:0;
+ background:linear-gradient(90deg,var(--teal),#70dfc7);
+ transition:width 1s;
+}
+.calc{padding:0 18px 18px}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field label{
+ display:block;font-size:10px;color:var(--muted);
+ font-weight:800;margin-bottom:5px;
+}
+.field input{
+ width:100%;padding:11px;
+ border:1px solid var(--line);border-radius:8px;
+ background:#fbfdfc;font:700 12px Manrope;outline:none;
+}
+.actions{display:flex;gap:8px;margin-top:13px}
+button{
+ border:0;border-radius:9px;padding:12px;
+ font:800 11px Manrope;cursor:pointer;transition:.2s;
+}
+.primary{background:var(--teal);color:#063b3b;flex:1}
+.primary:hover{background:#0da895;transform:translateY(-2px)}
+.ghost{background:#edf5f3;color:#577078}
+.chart-panel{margin-top:16px}
+.chart-area{padding:0 18px 17px}
+.chart-top{font-size:10px;color:var(--muted);margin-bottom:10px}
+canvas{width:100%;height:190px;display:block}
+.bottom-grid{
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:16px;margin-top:16px;
+}
+.rank-list{padding:0 18px 12px}
+.rank-row{
+ display:grid;grid-template-columns:25px 1fr auto;
+ gap:10px;align-items:center;padding:11px 0;
+ border-bottom:1px solid #edf2f1;cursor:pointer;
+ transition:.2s;
+}
+.rank-row:hover{transform:translateX(4px)}
+.rank-num{
+ background:#edf7f5;color:var(--dark);
+ border-radius:7px;padding:5px;text-align:center;
+ font-size:10px;font-weight:800;
+}
+.rank-name{font-size:11px;font-weight:800}
+.rank-line{font-size:9px;color:var(--muted)}
+.rank-value{font-size:11px;font-weight:800}
+.method{
+ padding:5px 18px 19px;font-size:10px;
+ line-height:1.8;color:#60777c;
+}
+.method strong{color:var(--text)}
+footer{
+ display:flex;justify-content:space-between;
+ flex-wrap:wrap;gap:10px;
+ padding:20px 3px 0;font-size:9px;color:#829397;
+}
+@keyframes appear{
+ from{opacity:0;transform:translateY(12px)}
+ to{opacity:1;transform:translateY(0)}
+}
+@keyframes blink{50%{opacity:.3}}
+@media(max-width:950px){
+ .layout{grid-template-columns:1fr}
+ .side{display:grid;grid-template-columns:1fr 1fr}
+ .metrics{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+ .app{padding:14px 12px}
+ .side{display:flex}
+ .bottom-grid{grid-template-columns:1fr}
+ #map{height:410px}
+ .metric{padding:12px}
+ .metric-value{font-size:20px}
+ .intro{margin-top:25px}
+}
 </style>
 </head>
+
 <body>
+<div class="app">
 
-<div class="container">
-  <header>
-    <div style="display:flex; gap:10px; align-items:center;">
-      <img src="https://sch2087uv.mskobr.ru/attach_files/logo/логопнг-51.png" alt="Школа" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%230A4DA2%22/><text x=%2250%22 y=%2265%22 text-anchor=%22middle%22 font-size=%2240%22 fill=%22white%22>Ш</text></svg>'">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Moscow_Metro_logo.svg/1024px-Moscow_Metro_logo.svg.png" alt="Метро" onerror="this.style.display='none'" style="height: 32px;">
-    </div>
-    <div>
-      <h1>MetroFlow</h1>
-      <p>Интерактивная модель пассажиропотока</p>
-    </div>
-  </header>
-
-  <div class="main-grid">
-    <!-- Левая часть: КАРТА -->
-    <div class="map-section">
-      <div class="map-header">
-        <div class="map-title">🗺️ Карта станций</div>
-        <button class="btn-reset" onclick="resetMap()">Показать всю Москву</button>
-      </div>
-      <div id="map"></div>
-      <div class="map-hint">Нажмите на метку, чтобы загрузить данные</div>
-    </div>
-
-    <!-- Правая часть: КАЛЬКУЛЯТОР -->
-    <div class="calc-section">
-      <div class="form-group">
-        <label>Выберите станцию из списка:</label>
-        <select id="stationSelect" onchange="changeStation(this.value)">
-          <option value="custom">-- Свои параметры --</option>
-          <optgroup label="Спальные районы">
-            <option value="maryino">Марьино</option>
-            <option value="vyhino">Выхино</option>
-            <option value="yasenevo">Ясенево</option>
-            <option value="otradnoe">Отрадное</option>
-            <option value="strogino">Строгино</option>
-          </optgroup>
-          <optgroup label="Центр и деловые кластеры">
-            <option value="delovoy">Деловой центр</option>
-            <option value="ohotny">Охотный Ряд</option>
-            <option value="arbatskaya">Арбатская</option>
-            <option value="kitay">Китай-город</option>
-            <option value="tverskaya">Тверская</option>
-          </optgroup>
-          <optgroup label="Пересадочные хабы">
-            <option value="pobedy">Парк Победы</option>
-            <option value="komsomol">Комсомольская</option>
-            <option value="kievskaya">Киевская</option>
-            <option value="belorusskaya">Белорусская</option>
-            <option value="kurskaya">Курская</option>
-          </optgroup>
-          <optgroup label="Выставочные и ВУЗы">
-            <option value="vdnh">ВДНХ</option>
-            <option value="universitet">Университет</option>
-            <option value="sportivnaya">Спортивная</option>
-          </optgroup>
-        </select>
-      </div>
-
-      <div class="inputs-row">
-        <div class="form-group">
-          <label>Население (чел.)</label>
-          <input type="number" id="pop" value="35000" oninput="calculate()">
-        </div>
-        <div class="form-group">
-          <label>Рабочие места (чел.)</label>
-          <input type="number" id="jobs" value="15000" oninput="calculate()">
-        </div>
-        <div class="form-group">
-          <label>Точки притяжения (шт.)</label>
-          <input type="number" id="attr" value="3" oninput="calculate()">
-        </div>
-        <div class="form-group">
-          <label>Пересадки (шт.)</label>
-          <input type="number" id="trans" value="1" oninput="calculate()">
-        </div>
-      </div>
-
-      <button class="btn" onclick="calculate(true)">Рассчитать прогноз</button>
-
-      <div class="result-box">
-        <h2>Нагрузка в час пик</h2>
-        <div class="result-number" id="resultValue">0</div>
-        <div class="progress-container">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <div class="result-desc" id="resultStatus">Ожидание расчета...</div>
-      </div>
-    </div>
+<header>
+ <div class="brand">
+  <div class="logo">M</div>
+  <div>
+   <div class="brand-name">metroflow</div>
+   <div class="brand-sub">городская аналитика · Москва</div>
   </div>
+ </div>
+ <div class="live"><span class="dot"></span>МОДЕЛЬ АКТИВНА</div>
+</header>
 
-  <footer>
-    <div><b>Автор:</b> Максим Крылов, 10 «О» класс</div>
-    <div><b>Формула:</b> <code>Y = 0.15P + 0.25J + 1500A + 5000T</code></div>
-  </footer>
+<section class="intro">
+ <div class="eyebrow">ТРАНСПОРТНАЯ АНАЛИТИКА / 01</div>
+ <h1>Пассажиропоток<br>Московского метро</h1>
+ <p>Интерактивная модель загруженности станций. Выберите станцию на карте или в списке.</p>
+</section>
+
+<section class="metrics">
+ <div class="metric">
+  <div class="metric-label">Станций в модели</div>
+  <div class="metric-value" id="mStations">18</div>
+  <div class="metric-foot">на карте Москвы</div>
+ </div>
+ <div class="metric">
+  <div class="metric-label">Суммарный поток</div>
+  <div class="metric-value" id="mTotal">—</div>
+  <div class="metric-foot">человек за сутки · оценка</div>
+ </div>
+ <div class="metric">
+  <div class="metric-label">Самая загруженная</div>
+  <div class="metric-value" id="mTop">—</div>
+  <div class="metric-foot">по оценке модели</div>
+ </div>
+ <div class="metric">
+  <div class="metric-label">Средний поток</div>
+  <div class="metric-value" id="mAvg">—</div>
+  <div class="metric-foot">человек на станцию</div>
+ </div>
+</section>
+
+<main class="layout">
+<section class="panel">
+ <div class="panel-head">
+  <div>
+   <div class="panel-title">Карта станций</div>
+   <div class="panel-note">Нажмите на круг, чтобы открыть показатели</div>
+  </div>
+  <span class="pill">MOSCOW / MAP</span>
+ </div>
+ <div class="map-wrap">
+  <div id="map"></div>
+  <div class="map-legend">
+   <span class="legend-item"><i class="legend-dot"></i>умеренная</span>
+   <span class="legend-item"><i class="legend-dot orange"></i>высокая</span>
+   <span class="legend-item"><i class="legend-dot red"></i>очень высокая</span>
+   <span>Размер круга зависит от потока</span>
+  </div>
+ </div>
+</section>
+
+<aside class="side">
+<section class="panel">
+ <div class="panel-head">
+  <div>
+   <div class="panel-title">Показатели станции</div>
+   <div class="panel-note">Данные выбранной станции</div>
+  </div>
+  <span class="pill">СТАНЦИЯ</span>
+ </div>
+
+ <div class="select-wrap">
+  <select id="stationSelect"></select>
+ </div>
+
+ <div class="summary">
+  <div class="station-top">
+   <div>
+    <div class="station-name" id="stationName">Марьино</div>
+    <div class="station-line" id="stationLine">Люблинско-Дмитровская линия</div>
+   </div>
+   <span class="status" id="stationStatus">Умеренная</span>
+  </div>
+  <div class="big-number" id="stationFlow">—</div>
+  <div class="caption">расчётный поток за сутки, чел.</div>
+  <div class="split-stats">
+   <div class="mini"><span>Утренний пик</span><b id="morning">—</b></div>
+   <div class="mini"><span>Вечерний пик</span><b id="evening">—</b></div>
+  </div>
+  <div class="load-row">
+   <span>Относительная нагрузка</span>
+   <b id="loadText">—</b>
+  </div>
+  <div class="track"><div class="fill" id="loadFill"></div></div>
+ </div>
+</section>
+
+<section class="panel">
+ <div class="panel-head">
+  <div>
+   <div class="panel-title">Настройка сценария</div>
+   <div class="panel-note">Измените условия и пересчитайте прогноз</div>
+  </div>
+  <span class="pill">КАЛЬКУЛЯТОР</span>
+ </div>
+ <div class="calc">
+  <div class="calc-grid">
+   <div class="field">
+    <label>Население района</label>
+    <input id="population" type="number" min="0">
+   </div>
+   <div class="field">
+    <label>Рабочие места</label>
+    <input id="jobs" type="number" min="0">
+   </div>
+   <div class="field">
+    <label>Точки притяжения</label>
+    <input id="attractions" type="number" min="0">
+   </div>
+   <div class="field">
+    <label>Пересадки</label>
+    <input id="transfers" type="number" min="0">
+   </div>
+  </div>
+  <div class="actions">
+   <button class="primary" id="recalc">Пересчитать модель ↗</button>
+   <button class="ghost" id="reset">Сбросить</button>
+  </div>
+ </div>
+</section>
+</aside>
+</main>
+
+<section class="panel chart-panel">
+ <div class="panel-head">
+  <div>
+   <div class="panel-title">Распределение нагрузки в течение дня</div>
+   <div class="panel-note">Условный профиль типичного буднего дня</div>
+  </div>
+  <span class="pill">24 ЧАСА</span>
+ </div>
+ <div class="chart-area">
+  <div class="chart-top">Пассажиропоток · выбранная станция</div>
+  <canvas id="flowChart"></canvas>
+ </div>
+</section>
+
+<section class="bottom-grid">
+ <section class="panel">
+  <div class="panel-head">
+   <div>
+    <div class="panel-title">Наиболее загруженные станции</div>
+    <div class="panel-note">Первые пять по оценке модели</div>
+   </div>
+   <span class="pill">ТОП-5</span>
+  </div>
+  <div class="rank-list" id="ranking"></div>
+ </section>
+
+ <section class="panel">
+  <div class="panel-head">
+   <div>
+    <div class="panel-title">О модели и данных</div>
+    <div class="panel-note">Методика расчёта</div>
+   </div>
+   <span class="pill">СПРАВКА</span>
+  </div>
+  <div class="method">
+   <strong>Важно:</strong> показатели являются учебными расчётными оценками, а не официальной статистикой Московского метрополитена. Реальный пассажиропоток зависит от дня недели, времени, пересадок, событий и других факторов.
+  </div>
+ </section>
+</section>
+
+<footer>
+ <div>MetroFlow · учебный проект · Максим Крылов, 10 «О» класс</div>
+ <div>Картографические данные © OpenStreetMap contributors</div>
+</footer>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-  const stations = {
-    maryino: { name: "Марьино", lat: 55.650, lon: 37.750, pop: 45000, jobs: 5000, attr: 2, trans: 0 },
-    vyhino: { name: "Выхино", lat: 55.715, lon: 37.818, pop: 60000, jobs: 10000, attr: 1, trans: 1 },
-    yasenevo: { name: "Ясенево", lat: 55.606, lon: 37.533, pop: 40000, jobs: 4000, attr: 2, trans: 0 },
-    otradnoe: { name: "Отрадное", lat: 55.863, lon: 37.604, pop: 38000, jobs: 6000, attr: 1, trans: 0 },
-    strogino: { name: "Строгино", lat: 55.803, lon: 37.403, pop: 35000, jobs: 8000, attr: 2, trans: 0 },
-    
-    delovoy: { name: "Деловой центр", lat: 55.749, lon: 37.539, pop: 5000, jobs: 85000, attr: 4, trans: 2 },
-    ohotny: { name: "Охотный Ряд", lat: 55.757, lon: 37.615, pop: 10000, jobs: 50000, attr: 5, trans: 2 },
-    arbatskaya: { name: "Арбатская", lat: 55.752, lon: 37.601, pop: 15000, jobs: 40000, attr: 4, trans: 1 },
-    kitay: { name: "Китай-город", lat: 55.756, lon: 37.632, pop: 12000, jobs: 55000, attr: 5, trans: 2 },
-    tverskaya: { name: "Тверская", lat: 55.765, lon: 37.605, pop: 14000, jobs: 45000, attr: 3, trans: 1 },
-    
-    pobedy: { name: "Парк Победы", lat: 55.736, lon: 37.518, pop: 25000, jobs: 15000, attr: 2, trans: 2 },
-    komsomol: { name: "Комсомольская", lat: 55.775, lon: 37.655, pop: 20000, jobs: 60000, attr: 3, trans: 3 },
-    kievskaya: { name: "Киевская", lat: 55.743, lon: 37.566, pop: 22000, jobs: 35000, attr: 3, trans: 2 },
-    belorusskaya: { name: "Белорусская", lat: 55.777, lon: 37.584, pop: 18000, jobs: 30000, attr: 2, trans: 2 },
-    kurskaya: { name: "Курская", lat: 55.758, lon: 37.660, pop: 19000, jobs: 28000, attr: 2, trans: 2 },
-    
-    vdnh: { name: "ВДНХ", lat: 55.821, lon: 37.641, pop: 30000, jobs: 20000, attr: 4, trans: 1 },
-    universitet: { name: "Университет", lat: 55.692, lon: 37.537, pop: 50000, jobs: 25000, attr: 3, trans: 0 },
-    sportivnaya: { name: "Спортивная", lat: 55.723, lon: 37.564, pop: 28000, jobs: 12000, attr: 2, trans: 1 }
-  };
+const stations={
+ maryino:{name:"Марьино",line:"Люблинско-Дмитровская линия",lat:55.6504,lon:37.7437,flow:92000,pop:45000,jobs:5000,attr:2,trans:0},
+ vyhino:{name:"Выхино",line:"Таганско-Краснопресненская линия",lat:55.7158,lon:37.8178,flow:175000,pop:60000,jobs:10000,attr:2,trans:1},
+ yasenevo:{name:"Ясенево",line:"Калужско-Рижская линия",lat:55.6062,lon:37.5332,flow:71000,pop:40000,jobs:4000,attr:2,trans:0},
+ otradnoe:{name:"Отрадное",line:"Серпуховско-Тимирязевская линия",lat:55.8631,lon:37.6047,flow:84000,pop:38000,jobs:6000,attr:1,trans:0},
+ strogino:{name:"Строгино",line:"Арбатско-Покровская линия",lat:55.8038,lon:37.4024,flow:69000,pop:35000,jobs:8000,attr:2,trans:0},
+ delovoy:{name:"Деловой центр",line:"Большая кольцевая линия",lat:55.7491,lon:37.5395,flow:125000,pop:5000,jobs:85000,attr:4,trans:2},
+ ohotny:{name:"Охотный Ряд",line:"Сокольническая линия",lat:55.7577,lon:37.6156,flow:155000,pop:10000,jobs:50000,attr:5,trans:2},
+ arbatskaya:{name:"Арбатская",line:"Арбатско-Покровская линия",lat:55.7521,lon:37.6015,flow:112000,pop:15000,jobs:40000,attr:4,trans:1},
+ kitay:{name:"Китай-город",line:"Таганско-Краснопресненская линия",lat:55.7559,lon:37.6333,flow:168000,pop:12000,jobs:55000,attr:5,trans:2},
+ tverskaya:{name:"Тверская",line:"Замоскворецкая линия",lat:55.7648,lon:37.6053,flow:119000,pop:14000,jobs:45000,attr:3,trans:1},
+ pobedy:{name:"Парк Победы",line:"Арбатско-Покровская линия",lat:55.7362,lon:37.5168,flow:98000,pop:25000,jobs:15000,attr:2,trans:2},
+ komsomol:{name:"Комсомольская",line:"Кольцевая линия",lat:55.7757,lon:37.6554,flow:190000,pop:20000,jobs:60000,attr:3,trans:3},
+ kievskaya:{name:"Киевская",line:"Кольцевая линия",lat:55.7436,lon:37.5655,flow:162000,pop:22000,jobs:35000,attr:3,trans:2},
+ belorusskaya:{name:"Белорусская",line:"Кольцевая линия",lat:55.7774,lon:37.5826,flow:145000,pop:18000,jobs:30000,attr:2,trans:2},
+ kurskaya:{name:"Курская",line:"Кольцевая линия",lat:55.7585,lon:37.6598,flow:138000,pop:19000,jobs:28000,attr:2,trans:2},
+ vdnh:{name:"ВДНХ",line:"Калужско-Рижская линия",lat:55.8209,lon:37.6411,flow:150000,pop:30000,jobs:20000,attr:4,trans:1},
+ universitet:{name:"Университет",line:"Сокольническая линия",lat:55.6925,lon:37.5347,flow:106000,pop:50000,jobs:25000,attr:3,trans:0},
+ sportivnaya:{name:"Спортивная",line:"Сокольническая линия",lat:55.7233,lon:37.5654,flow:78000,pop:28000,jobs:12000,attr:2,trans:1}
+};
 
-  let map;
-  let markers = {};
+const keys=Object.keys(stations);
+const original=JSON.parse(JSON.stringify(stations));
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(n).toLocaleString("ru-RU");
 
-  function initMap() {
-    map = L.map('map', { 
-      zoomControl: false,
-      attributionControl: false
-    }).setView([55.755, 37.617], 10);
+let map;
+let markers={};
+let selected="maryino";
 
-    // ИСПОЛЬЗУЕМ ОФИЦИАЛЬНЫЙ СЕРВЕР OPENSTREETMAP (БЕЗ КЛЮЧЕЙ И ОШИБОК)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
-    }).addTo(map);
+function color(flow){
+ return flow>=150000?"#e46e68":
+ flow>=100000?"#f2a65a":"#13b8a6";
+}
+function radius(flow){
+ return 8+Math.sqrt(flow/200000)*10;
+}
+function status(flow){
+ return flow>=150000?"Очень высокая":
+ flow>=100000?"Высокая":"Умеренная";
+}
 
-    for (let key in stations) {
-      const s = stations[key];
-      const icon = L.divIcon({
-        className: 'custom-wrapper',
-        html: `<div class="custom-marker" id="marker-${key}">M</div>`,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9]
-      });
+function init(){
+ map=L.map("map",{
+  zoomControl:false,
+  scrollWheelZoom:true
+ }).setView([55.755,37.617],10);
 
-      const marker = L.marker([s.lat, s.lon], { icon: icon }).addTo(map);
-      
-      marker.on('click', () => {
-        document.getElementById('stationSelect').value = key;
-        changeStation(key);
-      });
+ // Бесплатная карта OpenStreetMap
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+  maxZoom:19,
+  attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>'
+ }).addTo(map);
 
-      markers[key] = marker;
-    }
-  }
+ L.control.zoom({position:"topright"}).addTo(map);
 
-  function resetMap() {
-    map.flyTo([55.755, 37.617], 10, { duration: 1 });
-  }
+ keys.forEach(k=>{
+  const s=stations[k];
 
-  function changeStation(key) {
-    document.querySelectorAll('.custom-marker').forEach(el => el.classList.remove('active'));
+  const marker=L.circleMarker([s.lat,s.lon],{
+   radius:radius(s.flow),
+   color:"#ffffff",
+   weight:3,
+   fillColor:color(s.flow),
+   fillOpacity:.94
+  }).addTo(map);
 
-    if (key !== 'custom' && stations[key]) {
-      const s = stations[key];
-      
-      document.getElementById('pop').value = s.pop;
-      document.getElementById('jobs').value = s.jobs;
-      document.getElementById('attr').value = s.attr;
-      document.getElementById('trans').value = s.trans;
+  marker.bindPopup(
+   `<b>${s.name}</b><br>${fmt(s.flow)} чел./сутки`
+  );
 
-      const markerEl = document.getElementById('marker-' + key);
-      if (markerEl) markerEl.classList.add('active');
+  marker.on("click",()=>{
+   selectStation(k,true);
+  });
 
-      // Зум 12 — оптимально для просмотра района
-      map.flyTo([s.lat, s.lon], 12, { duration: 1 });
-    } else {
-      resetMap();
-    }
-    
-    calculate(true);
-  }
+  markers[k]=marker;
 
-  function animateValue(obj, start, end, duration) {
-    let startTimestamp = null;
-    const step = (timestamp) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      const easeOut = 1 - Math.pow(1 - progress, 3); 
-      const current = Math.floor(easeOut * (end - start) + start);
-      obj.innerHTML = current.toLocaleString('ru-RU');
-      if (progress < 1) window.requestAnimationFrame(step);
-      else obj.innerHTML = end.toLocaleString('ru-RU');
-    };
-    window.requestAnimationFrame(step);
-  }
+  const option=document.createElement("option");
+  option.value=k;
+  option.textContent=s.name;
+  $("stationSelect").appendChild(option);
+ });
 
-  function calculate(animate = false) {
-    const pop = Number(document.getElementById('pop').value) || 0;
-    const jobs = Number(document.getElementById('jobs').value) || 0;
-    const attr = Number(document.getElementById('attr').value) || 0;
-    const trans = Number(document.getElementById('trans').value) || 0;
+ $("stationSelect").addEventListener("change",e=>{
+  selectStation(e.target.value,true);
+ });
 
-    const total = Math.round(pop * 0.15) + Math.round(jobs * 0.25) + (attr * 1500) + (trans * 5000);
-    const resultEl = document.getElementById('resultValue');
-    
-    if (animate) {
-      animateValue(resultEl, 0, total, 800);
-    } else {
-      resultEl.innerText = total.toLocaleString('ru-RU');
-    }
+ $("recalc").addEventListener("click",recalculate);
+ $("reset").addEventListener("click",resetScenario);
 
-    const maxLoad = 80000;
-    let percent = Math.min((total / maxLoad) * 100, 100);
-    document.getElementById('progressBar').style.width = percent + '%';
+ renderMetrics();
+ renderRanking();
+ selectStation("maryino",false);
 
-    const statusBox = document.getElementById('resultStatus');
-    if (total > 50000) {
-      statusBox.innerText = "⚠️ Высокая нагрузка. Возможна давка.";
-      statusBox.style.color = "#FF8A80";
-    } else if (total > 25000) {
-      statusBox.innerText = "⚡ Средняя нагрузка. Будут очереди в пик.";
-      statusBox.style.color = "#FFD54F";
-    } else {
-      statusBox.innerText = "✅ Комфортная нагрузка. Станция справится.";
-      statusBox.style.color = "#A5D6A7";
-    }
-  }
+ setTimeout(()=>map.invalidateSize(),300);
+}
 
-  window.onload = () => {
-    initMap();
-    document.getElementById('stationSelect').value = 'maryino';
-    changeStation('maryino');
-    setTimeout(resetMap, 800);
-  };
+function selectStation(k,fly){
+ selected=k;
+ const s=stations[k];
+
+ $("stationSelect").value=k;
+ $("population").value=s.pop;
+ $("jobs").value=s.jobs;
+ $("attractions").value=s.attr;
+ $("transfers").value=s.trans;
+
+ keys.forEach(key=>{
+  const item=stations[key];
+  markers[key].setStyle({
+   radius:radius(item.flow),
+   fillColor:color(item.flow),
+   weight:key===k?5:3,
+   color:key===k?"#087f79":"#ffffff"
+  });
+ });
+
+ if(fly){
+  map.flyTo([s.lat,s.lon],13,{duration:1.1});
+  markers[k].openPopup();
+ }
+
+ renderStation();
+}
+
+function animateNumber(el,n){
+ const start=Number(el.dataset.value||0);
+ const t0=performance.now();
+ const duration=600;
+ el.dataset.value=n;
+
+ function frame(t){
+  const p=Math.min(1,(t-t0)/duration);
+  const value=start+(n-start)*(1-Math.pow(1-p,3));
+  el.textContent=fmt(value);
+  if(p<1)requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
+}
+
+function renderStation(){
+ const s=stations[selected];
+ $("stationName").textContent=s.name;
+ $("stationLine").textContent=s.line;
+ $("stationStatus").textContent=status(s.flow);
+ $("stationStatus").style.color=color(s.flow);
+
+ animateNumber($("stationFlow"),s.flow);
+
+ $("morning").textContent=fmt(s.flow*.22);
+ $("evening").textContent=fmt(s.flow*.19);
+
+ const pct=Math.min(100,s.flow/200000*100);
+ $("loadText").textContent=Math.round(pct)+"%";
+
+ requestAnimationFrame(()=>{
+  $("loadFill").style.width=pct+"%";
+ });
+
+ drawChart(s.flow);
+}
+
+function renderMetrics(){
+ const total=keys.reduce((sum,k)=>sum+stations[k].flow,0);
+ const top=keys.slice().sort(
+  (a,b)=>stations[b].flow-stations[a].flow
+ )[0];
+
+ $("mStations").textContent=keys.length;
+ $("mTotal").textContent=(total/1000000).toFixed(2).replace(".",",")+" млн";
+ $("mTop").textContent=stations[top].name;
+ $("mAvg").textContent=fmt(total/keys.length);
+}
+
+function renderRanking(){
+ const sorted=keys.slice().sort(
+  (a,b)=>stations[b].flow-stations[a].flow
+ ).slice(0,5);
+
+ $("ranking").innerHTML=sorted.map((k,i)=>`
+  <div class="rank-row" data-key="${k}">
+   <div class="rank-num">${i+1}</div>
+   <div>
+    <div class="rank-name">${stations[k].name}</div>
+    <div class="rank-line">${stations[k].line}</div>
+   </div>
+   <div class="rank-value">${fmt(stations[k].flow)}</div>
+  </div>
+ `).join("");
+
+ document.querySelectorAll(".rank-row").forEach(row=>{
+  row.addEventListener("click",()=>{
+   selectStation(row.dataset.key,true);
+  });
+ });
+}
+
+function recalculate(){
+ const s=stations[selected];
+ const base=original[selected];
+
+ const p=Math.max(0,Number($("population").value)||0);
+ const j=Math.max(0,Number($("jobs").value)||0);
+ const a=Math.max(0,Number($("attractions").value)||0);
+ const t=Math.max(0,Number($("transfers").value)||0);
+
+ const oldBase=base.pop*.15+base.jobs*.25+
+ base.attr*1500+base.trans*5000;
+
+ const newBase=p*.15+j*.25+a*1500+t*5000;
+
+ s.flow=Math.max(1000,
+ Math.round(base.flow*newBase/Math.max(1,oldBase)));
+
+ s.pop=p;
+ s.jobs=j;
+ s.attr=a;
+ s.trans=t;
+
+ markers[selected].setStyle({
+  radius:radius(s.flow),
+  fillColor:color(s.flow)
+ });
+
+ markers[selected].setPopupContent(
+  `<b>${s.name}</b><br>${fmt(s.flow)} чел./сутки`
+ );
+
+ renderStation();
+ renderMetrics();
+ renderRanking();
+
+ $("recalc").textContent="Готово ✓";
+ setTimeout(()=>{
+  $("recalc").textContent="Пересчитать модель ↗";
+ },1300);
+}
+
+function resetScenario(){
+ Object.assign(stations[selected],
+ JSON.parse(JSON.stringify(original[selected])));
+
+ const s=stations[selected];
+
+ $("population").value=s.pop;
+ $("jobs").value=s.jobs;
+ $("attractions").value=s.attr;
+ $("transfers").value=s.trans;
+
+ markers[selected].setStyle({
+  radius:radius(s.flow),
+  fillColor:color(s.flow)
+ });
+
+ markers[selected].setPopupContent(
+  `<b>${s.name}</b><br>${fmt(s.flow)} чел./сутки`
+ );
+
+ renderStation();
+ renderMetrics();
+ renderRanking();
+}
+
+function drawChart(flow){
+ const canvas=$("flowChart");
+ const ctx=canvas.getContext("2d");
+ const rect=canvas.getBoundingClientRect();
+ const dpr=window.devicePixelRatio||1;
+
+ canvas.width=rect.width*dpr;
+ canvas.height=190*dpr;
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+
+ const w=rect.width,h=190;
+ const pad={l:38,r:8,t:12,b:25};
+ const cw=w-pad.l-pad.r;
+ const ch=h-pad.t-pad.b;
+
+ ctx.clearRect(0,0,w,h);
+
+ const profile=[
+ .025,.012,.025,.12,.22,.105,.09,.19,
+ .16,.06,.035,.025,.025,.035,.055,.085,
+ .14,.20,.19,.12,.07,.045,.03,.02
+ ];
+
+ const max=flow*.055;
+
+ for(let i=0;i<5;i++){
+  const y=pad.t+ch*i/4;
+  ctx.strokeStyle="#eaf1ef";
+  ctx.beginPath();
+  ctx.moveTo(pad.l,y);
+  ctx.lineTo(w-pad.r,y);
+  ctx.stroke();
+
+  ctx.fillStyle="#8ca0a2";
+  ctx.font="9px Manrope";
+  ctx.textAlign="right";
+  ctx.fillText(Math.round(max*(1-i/4)/1000)+"k",pad.l-7,y+3);
+ }
+
+ function line(factor,stroke,fill){
+  ctx.beginPath();
+  profile.forEach((v,i)=>{
+   const x=pad.l+cw*i/(profile.length-1);
+   const y=pad.t+ch-(v*flow*factor/max)*ch;
+   if(i===0)ctx.moveTo(x,y);
+   else ctx.lineTo(x,y);
+  });
+
+  ctx.lineTo(pad.l+cw,pad.t+ch);
+  ctx.lineTo(pad.l,pad.t+ch);
+  ctx.closePath();
+  ctx.fillStyle=fill;
+  ctx.fill();
+
+  ctx.beginPath();
+  profile.forEach((v,i)=>{
+   const x=pad.l+cw*i/(profile.length-1);
+   const y=pad.t+ch-(v*flow*factor/max)*ch;
+   if(i===0)ctx.moveTo(x,y);
+   else ctx.lineTo(x,y);
+  });
+
+  ctx.strokeStyle=stroke;
+  ctx.lineWidth=2;
+  ctx.stroke();
+ }
+
+ line(.52,"#a6dcd3","rgba(166,220,211,.12)");
+ line(.48,"#13b8a6","rgba(19,184,166,.13)");
+
+ ["00","03","06","09","12","15","18","21","24"].forEach((v,i)=>{
+  ctx.fillStyle="#8ca0a2";
+  ctx.font="9px Manrope";
+  ctx.textAlign="center";
+  ctx.fillText(v,pad.l+cw*i/8,h-6);
+ });
+}
+
+window.addEventListener("resize",()=>{
+ if(map)map.invalidateSize();
+ if(stations[selected])drawChart(stations[selected].flow);
+});
+
+window.addEventListener("load",()=>{
+ if(typeof L!=="undefined"){
+  init();
+ }else{
+  $("map").textContent="Не удалось загрузить карту. Проверь интернет.";
+ }
+});
 </script>
-
 </body>
 </html>
