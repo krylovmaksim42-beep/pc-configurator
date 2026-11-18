@@ -3,222 +3,646 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#eff8f6">
-<title>MetroFlow — Москва</title>
+<title>MetroFlow — Пассажиропоток Москвы</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-:root{
- --teal:#13b8a6;
- --dark:#087f79;
- --bg:#f0f7f5;
- --text:#153039;
- --muted:#7b9094;
- --line:#e1ece9;
- --red:#e46e68;
- --orange:#f2a65a;
+:root {
+  --teal:#13b8a6;
+  --dark:#087f79;
+  --bg:#eff7f5;
+  --text:#18343a;
+  --muted:#819397;
+  --line:#e2ece9;
+  --red:#e76e70;
+  --orange:#f2a65a;
+  --green:#13b8a6;
 }
-*{box-sizing:border-box}
-body{
- margin:0;background:var(--bg);color:var(--text);
- font-family:Manrope,Arial,sans-serif;
+
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
-.app{max-width:1350px;margin:auto;padding:22px}
-header{
- display:flex;justify-content:space-between;align-items:center;
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:Manrope,Arial,sans-serif;
 }
-.brand{display:flex;align-items:center;gap:12px}
-.logo{
- width:45px;height:45px;border-radius:14px;
- background:var(--teal);display:grid;place-items:center;
- font-size:23px;font-weight:800;color:#063b3b;
+
+button,input,select {
+  font:inherit;
 }
-.brand-name{font-weight:800;font-size:19px}
-.brand-sub{font-size:10px;color:var(--muted)}
-.live{
- background:white;border:1px solid var(--line);
- padding:10px 15px;border-radius:30px;
- font-size:11px;font-weight:800;
+
+.app {
+  max-width:1350px;
+  padding:24px;
+  margin:auto;
 }
-.dot{
- display:inline-block;width:8px;height:8px;
- background:var(--teal);border-radius:50%;
- margin-right:7px;animation:blink 1.5s infinite;
+
+/* HEADER */
+
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
-.intro{margin:35px 0 22px}
-.eyebrow{
- font-size:10px;letter-spacing:1.5px;
- color:var(--dark);font-weight:800;
+
+.brand {
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
-h1{font-size:clamp(26px,4vw,38px);line-height:1.2;margin:9px 0}
-.intro p{font-size:13px;color:var(--muted)}
-.metrics{
- display:grid;grid-template-columns:repeat(4,1fr);
- gap:13px;margin-bottom:16px;
+
+.logo {
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  background:var(--teal);
+  color:white;
+  font-size:25px;
+  font-weight:800;
+  box-shadow:0 5px 15px #13b8a644;
 }
-.metric,.panel{
- background:white;border:1px solid var(--line);
- border-radius:17px;box-shadow:0 8px 25px #123b3b0b;
+
+.brand-name {
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-1px;
 }
-.metric{padding:17px;animation:appear .6s both}
-.metric-label{font-size:11px;color:var(--muted);font-weight:700}
-.metric-value{font-size:24px;font-weight:800;margin-top:5px}
-.metric-foot{font-size:10px;color:#8a9b9e;margin-top:3px}
-.layout{
- display:grid;grid-template-columns:1.5fr .85fr;gap:16px;
+
+.brand-sub {
+  font-size:10px;
+  color:var(--muted);
 }
-.panel{overflow:hidden;animation:appear .7s both}
-.panel-head{
- display:flex;align-items:center;justify-content:space-between;
- padding:18px;gap:10px;
+
+.live {
+  background:white;
+  border:1px solid var(--line);
+  padding:10px 15px;
+  border-radius:30px;
+  font-size:10px;
+  font-weight:800;
 }
-.panel-title{font-size:14px;font-weight:800}
-.panel-note{font-size:10px;color:var(--muted);margin-top:4px}
-.pill{
- background:#dff8f3;color:var(--dark);
- padding:8px 12px;border-radius:30px;
- font-size:10px;font-weight:800;white-space:nowrap;
+
+.dot {
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--teal);
+  margin-right:7px;
+  animation:blink 1.5s infinite;
 }
-.map-wrap{padding:0 12px 14px}
-#map{
- width:100%;height:510px;
- border-radius:12px;overflow:hidden;
- background:#e5eeeb;z-index:1;
+
+/* INTRO */
+
+.intro {
+  margin:35px 0 22px;
 }
-.leaflet-container{font-family:Manrope,Arial,sans-serif}
-.leaflet-control-zoom a{
- color:var(--dark)!important;
+
+.eyebrow {
+  color:var(--dark);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.5px;
 }
-.leaflet-control-attribution{
- font-size:9px!important;
- background:rgba(255,255,255,.9)!important;
- border-radius:5px 0 0 0;
- padding:3px 6px!important;
+
+h1 {
+  font-size:clamp(27px,4vw,39px);
+  line-height:1.2;
+  margin:10px 0;
+  letter-spacing:-1.3px;
 }
-.map-legend{
- display:flex;gap:15px;flex-wrap:wrap;
- padding:12px 7px 2px;
- font-size:10px;color:var(--muted);
+
+.intro p {
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.8;
 }
-.legend-item{display:flex;align-items:center;gap:6px}
-.legend-dot{width:9px;height:9px;border-radius:50%;background:var(--teal)}
-.orange{background:var(--orange)}
-.red{background:var(--red)}
-.side{display:flex;flex-direction:column;gap:16px}
-.select-wrap{padding:0 18px 13px}
-select{
- width:100%;padding:13px;
- border:1px solid var(--line);border-radius:10px;
- background:#f9fcfb;font:700 12px Manrope;
- color:var(--text);outline:none;
+
+/* METRICS */
+
+.metrics {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:13px;
+  margin-bottom:17px;
 }
-select:focus,input:focus{border-color:var(--teal)}
-.summary{
- margin:0 18px 18px;padding:16px;
- background:#f3faf8;border:1px solid #e0f1ed;
- border-radius:12px;
+
+.metric {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 5px 20px #173b3508;
+  animation:appear .6s both;
+  transition:.25s;
 }
-.station-top{display:flex;justify-content:space-between;gap:8px}
-.station-name{font-size:21px;font-weight:800}
-.station-line{font-size:10px;color:var(--muted);margin-top:4px}
-.status{
- background:#dff8f3;color:var(--dark);
- border-radius:20px;padding:7px 10px;
- font-size:10px;font-weight:800;height:max-content;
+
+.metric:hover {
+  transform:translateY(-4px);
+  box-shadow:0 10px 25px #173b3510;
 }
-.big-number{font-size:30px;font-weight:800;margin-top:15px}
-.caption{font-size:10px;color:var(--muted)}
-.split-stats{
- display:grid;grid-template-columns:1fr 1fr;
- gap:9px;margin-top:14px;
+
+.metric-label {
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
 }
-.mini{background:white;border:1px solid var(--line);padding:11px;border-radius:9px}
-.mini span{display:block;font-size:9px;color:var(--muted)}
-.mini b{font-size:14px}
-.load-row{
- display:flex;justify-content:space-between;
- margin:14px 0 6px;font-size:10px;color:var(--muted);
+
+.metric-value {
+  font-size:24px;
+  font-weight:800;
+  margin-top:6px;
+  letter-spacing:-1px;
 }
-.track{height:7px;background:#e4eeeb;border-radius:10px;overflow:hidden}
-.fill{
- height:100%;width:0;
- background:linear-gradient(90deg,var(--teal),#70dfc7);
- transition:width 1s;
+
+.metric-foot {
+  color:#a0adae;
+  font-size:9px;
+  margin-top:4px;
 }
-.calc{padding:0 18px 18px}
-.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.field label{
- display:block;font-size:10px;color:var(--muted);
- font-weight:800;margin-bottom:5px;
+
+/* LAYOUT */
+
+.layout {
+  display:grid;
+  grid-template-columns:1.45fr .85fr;
+  gap:16px;
 }
-.field input{
- width:100%;padding:11px;
- border:1px solid var(--line);border-radius:8px;
- background:#fbfdfc;font:700 12px Manrope;outline:none;
+
+.panel {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 7px 25px #173b3508;
+  animation:appear .7s both;
 }
-.actions{display:flex;gap:8px;margin-top:13px}
-button{
- border:0;border-radius:9px;padding:12px;
- font:800 11px Manrope;cursor:pointer;transition:.2s;
+
+.panel-head {
+  padding:19px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
 }
-.primary{background:var(--teal);color:#063b3b;flex:1}
-.primary:hover{background:#0da895;transform:translateY(-2px)}
-.ghost{background:#edf5f3;color:#577078}
-.chart-panel{margin-top:16px}
-.chart-area{padding:0 18px 17px}
-.chart-top{font-size:10px;color:var(--muted);margin-bottom:10px}
-canvas{width:100%;height:190px;display:block}
-.bottom-grid{
- display:grid;grid-template-columns:1fr 1fr;
- gap:16px;margin-top:16px;
+
+.panel-title {
+  font-size:14px;
+  font-weight:800;
 }
-.rank-list{padding:0 18px 12px}
-.rank-row{
- display:grid;grid-template-columns:25px 1fr auto;
- gap:10px;align-items:center;padding:11px 0;
- border-bottom:1px solid #edf2f1;cursor:pointer;
- transition:.2s;
+
+.panel-note {
+  font-size:10px;
+  color:var(--muted);
+  margin-top:4px;
 }
-.rank-row:hover{transform:translateX(4px)}
-.rank-num{
- background:#edf7f5;color:var(--dark);
- border-radius:7px;padding:5px;text-align:center;
- font-size:10px;font-weight:800;
+
+.pill {
+  background:#ddf8f2;
+  color:var(--dark);
+  padding:8px 12px;
+  border-radius:30px;
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
 }
-.rank-name{font-size:11px;font-weight:800}
-.rank-line{font-size:9px;color:var(--muted)}
-.rank-value{font-size:11px;font-weight:800}
-.method{
- padding:5px 18px 19px;font-size:10px;
- line-height:1.8;color:#60777c;
+
+/* MAP */
+
+.map-wrap {
+  padding:0 12px 14px;
 }
-.method strong{color:var(--text)}
-footer{
- display:flex;justify-content:space-between;
- flex-wrap:wrap;gap:10px;
- padding:20px 3px 0;font-size:9px;color:#829397;
+
+#map {
+  width:100%;
+  height:510px;
+  border-radius:12px;
+  background:#e8f0ed;
+  z-index:1;
 }
-@keyframes appear{
- from{opacity:0;transform:translateY(12px)}
- to{opacity:1;transform:translateY(0)}
+
+.leaflet-container {
+  font-family:Manrope,Arial,sans-serif;
 }
-@keyframes blink{50%{opacity:.3}}
-@media(max-width:950px){
- .layout{grid-template-columns:1fr}
- .side{display:grid;grid-template-columns:1fr 1fr}
- .metrics{grid-template-columns:repeat(2,1fr)}
+
+.leaflet-control-attribution {
+  font-size:9px!important;
+  background:#ffffffeb!important;
+  border-radius:5px 0 0 0;
 }
-@media(max-width:650px){
- .app{padding:14px 12px}
- .side{display:flex}
- .bottom-grid{grid-template-columns:1fr}
- #map{height:410px}
- .metric{padding:12px}
- .metric-value{font-size:20px}
- .intro{margin-top:25px}
+
+.leaflet-control-zoom a {
+  color:var(--dark)!important;
+}
+
+.map-legend {
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  padding:13px 7px 3px;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.legend-item {
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.legend-dot {
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--green);
+}
+
+.legend-orange {background:var(--orange)}
+.legend-red {background:var(--red)}
+
+.map-tools {
+  display:flex;
+  gap:7px;
+  padding:0 18px 14px;
+}
+
+.small-btn {
+  padding:9px 12px;
+  background:#eef7f5;
+  color:var(--dark);
+  border-radius:8px;
+  border:0;
+  cursor:pointer;
+  font-size:10px;
+  font-weight:800;
+  transition:.2s;
+}
+
+.small-btn:hover {
+  background:#d9f4ed;
+  transform:translateY(-2px);
+}
+
+/* SIDEBAR */
+
+.side {
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.select-wrap {
+  padding:0 18px 13px;
+}
+
+select {
+  width:100%;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#f9fcfb;
+  color:var(--text);
+  font-size:12px;
+  font-weight:700;
+  outline:none;
+}
+
+select:focus,input:focus {
+  border-color:var(--teal);
+}
+
+.search-wrap {
+  padding:0 18px 12px;
+}
+
+.search-wrap input {
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#fbfdfc;
+  outline:none;
+  font-size:12px;
+}
+
+.summary {
+  margin:0 18px 18px;
+  padding:16px;
+  border-radius:12px;
+  background:#f3faf8;
+  border:1px solid #e0f1ed;
+  transition:.3s;
+}
+
+.station-top {
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.station-name {
+  font-size:21px;
+  font-weight:800;
+}
+
+.station-line {
+  color:var(--muted);
+  font-size:10px;
+  margin-top:5px;
+}
+
+.status {
+  background:#ddf8f2;
+  color:var(--dark);
+  border-radius:20px;
+  padding:7px 10px;
+  height:max-content;
+  font-size:9px;
+  font-weight:800;
+}
+
+.big-number {
+  font-size:29px;
+  font-weight:800;
+  margin-top:17px;
+  letter-spacing:-1px;
+}
+
+.caption {
+  font-size:10px;
+  color:var(--muted);
+}
+
+.split-stats {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:15px;
+}
+
+.mini {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:11px;
+}
+
+.mini span {
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.mini b {
+  font-size:14px;
+}
+
+.load-row {
+  display:flex;
+  justify-content:space-between;
+  margin:15px 0 7px;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.track {
+  height:7px;
+  background:#e5efec;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.fill {
+  width:0;
+  height:100%;
+  background:linear-gradient(90deg,var(--teal),#77dfc8);
+  transition:width 1s;
+}
+
+/* CALCULATOR */
+
+.calc {
+  padding:0 18px 18px;
+}
+
+.calc-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.field label {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  margin-bottom:5px;
+}
+
+.field input {
+  width:100%;
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fbfdfc;
+  outline:none;
+  font-size:12px;
+  font-weight:700;
+}
+
+.actions {
+  display:flex;
+  gap:8px;
+  margin-top:13px;
+}
+
+.primary,.ghost {
+  padding:12px;
+  border:0;
+  border-radius:9px;
+  cursor:pointer;
+  font-size:10px;
+  font-weight:800;
+  transition:.2s;
+}
+
+.primary {
+  flex:1;
+  color:#063b3b;
+  background:var(--teal);
+}
+
+.primary:hover {
+  background:#0da895;
+  transform:translateY(-2px);
+}
+
+.ghost {
+  color:#577078;
+  background:#edf5f3;
+}
+
+.ghost:hover {
+  background:#dcece8;
+}
+
+/* CHART */
+
+.chart-panel {
+  margin-top:16px;
+}
+
+.chart-area {
+  padding:0 18px 17px;
+}
+
+.chart-top {
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:10px;
+}
+
+canvas {
+  width:100%;
+  height:190px;
+  display:block;
+}
+
+/* RANKING */
+
+.bottom-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:16px;
+}
+
+.rank-list {
+  padding:0 18px 12px;
+}
+
+.rank-row {
+  display:grid;
+  grid-template-columns:25px 1fr auto;
+  align-items:center;
+  gap:10px;
+  padding:11px 0;
+  border-bottom:1px solid #edf2f1;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.rank-row:hover {
+  transform:translateX(4px);
+}
+
+.rank-num {
+  background:#edf7f5;
+  color:var(--dark);
+  border-radius:7px;
+  padding:5px;
+  text-align:center;
+  font-size:10px;
+  font-weight:800;
+}
+
+.rank-name {
+  font-size:11px;
+  font-weight:800;
+}
+
+.rank-line {
+  font-size:9px;
+  color:var(--muted);
+}
+
+.rank-value {
+  font-size:11px;
+  font-weight:800;
+}
+
+.method {
+  padding:0 18px 18px;
+  color:#72878a;
+  font-size:10px;
+  line-height:1.9;
+}
+
+.method strong {
+  color:var(--text);
+}
+
+/* LOADING */
+
+.loading {
+  min-height:200px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:13px;
+  color:var(--dark);
+  font-size:12px;
+  font-weight:800;
+}
+
+.spinner {
+  width:35px;
+  height:35px;
+  border:3px solid #dcefeb;
+  border-top-color:var(--teal);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+footer {
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px;
+  padding:20px 3px 0;
+  color:#829397;
+  font-size:9px;
+}
+
+@keyframes spin {
+  to {transform:rotate(360deg)}
+}
+
+@keyframes appear {
+  from {opacity:0;transform:translateY(12px)}
+  to {opacity:1;transform:translateY(0)}
+}
+
+@keyframes blink {
+  50% {opacity:.3}
+}
+
+@media(max-width:950px) {
+  .layout {grid-template-columns:1fr}
+  .metrics {grid-template-columns:repeat(2,1fr)}
+  .side {display:grid;grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:650px) {
+  .app {padding:14px 12px}
+  .side {display:flex}
+  .bottom-grid {grid-template-columns:1fr}
+  #map {height:410px}
+  .metric {padding:12px}
+  .metric-value {font-size:20px}
+  .intro {margin-top:25px}
+  .live {font-size:9px;padding:8px}
 }
 </style>
 </head>
@@ -227,539 +651,1221 @@ footer{
 <div class="app">
 
 <header>
- <div class="brand">
-  <div class="logo">M</div>
-  <div>
-   <div class="brand-name">metroflow</div>
-   <div class="brand-sub">городская аналитика · Москва</div>
+  <div class="brand">
+    <div class="logo">M</div>
+    <div>
+      <div class="brand-name">metroflow</div>
+      <div class="brand-sub">городская транспортная аналитика</div>
+    </div>
   </div>
- </div>
- <div class="live"><span class="dot"></span>МОДЕЛЬ АКТИВНА</div>
+  <div class="live"><span class="dot"></span>МОДЕЛЬ АКТИВНА</div>
 </header>
 
 <section class="intro">
- <div class="eyebrow">ТРАНСПОРТНАЯ АНАЛИТИКА / 01</div>
- <h1>Пассажиропоток<br>Московского метро</h1>
- <p>Интерактивная модель загруженности станций. Выберите станцию на карте или в списке.</p>
+  <div class="eyebrow">ТРАНСПОРТНАЯ АНАЛИТИКА / МОСКВА</div>
+  <h1>Пассажиропоток<br>Московского метро</h1>
+  <p>Интерактивная модель загруженности станций. Исследуйте транспортную сеть Москвы и изменяйте параметры модели.</p>
 </section>
 
 <section class="metrics">
- <div class="metric">
-  <div class="metric-label">Станций в модели</div>
-  <div class="metric-value" id="mStations">18</div>
-  <div class="metric-foot">на карте Москвы</div>
- </div>
- <div class="metric">
-  <div class="metric-label">Суммарный поток</div>
-  <div class="metric-value" id="mTotal">—</div>
-  <div class="metric-foot">человек за сутки · оценка</div>
- </div>
- <div class="metric">
-  <div class="metric-label">Самая загруженная</div>
-  <div class="metric-value" id="mTop">—</div>
-  <div class="metric-foot">по оценке модели</div>
- </div>
- <div class="metric">
-  <div class="metric-label">Средний поток</div>
-  <div class="metric-value" id="mAvg">—</div>
-  <div class="metric-foot">человек на станцию</div>
- </div>
+  <div class="metric">
+    <div class="metric-label">Найдено станций</div>
+    <div class="metric-value" id="mStations">—</div>
+    <div class="metric-foot">по данным OpenStreetMap</div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Суммарный поток</div>
+    <div class="metric-value" id="mTotal">—</div>
+    <div class="metric-foot">человек в сутки · модель</div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Самая загруженная</div>
+    <div class="metric-value" id="mTop">—</div>
+    <div class="metric-foot">по расчёту модели</div>
+  </div>
+
+  <div class="metric">
+    <div class="metric-label">Средний поток</div>
+    <div class="metric-value" id="mAvg">—</div>
+    <div class="metric-foot">человек на станцию</div>
+  </div>
 </section>
 
 <main class="layout">
+
 <section class="panel">
- <div class="panel-head">
-  <div>
-   <div class="panel-title">Карта станций</div>
-   <div class="panel-note">Нажмите на круг, чтобы открыть показатели</div>
+  <div class="panel-head">
+    <div>
+      <div class="panel-title">Карта станций</div>
+      <div class="panel-note">Нажмите на круг, чтобы открыть показатели</div>
+    </div>
+    <span class="pill">MOSCOW / LIVE MODEL</span>
   </div>
-  <span class="pill">MOSCOW / MAP</span>
- </div>
- <div class="map-wrap">
-  <div id="map"></div>
-  <div class="map-legend">
-   <span class="legend-item"><i class="legend-dot"></i>умеренная</span>
-   <span class="legend-item"><i class="legend-dot orange"></i>высокая</span>
-   <span class="legend-item"><i class="legend-dot red"></i>очень высокая</span>
-   <span>Размер круга зависит от потока</span>
+
+  <div class="map-wrap">
+    <div id="map">
+      <div class="loading">
+        <div class="spinner"></div>
+        Загрузка карты...
+      </div>
+    </div>
+
+    <div class="map-legend">
+      <span class="legend-item"><i class="legend-dot"></i>Умеренная</span>
+      <span class="legend-item"><i class="legend-dot legend-orange"></i>Высокая</span>
+      <span class="legend-item"><i class="legend-dot legend-red"></i>Очень высокая</span>
+    </div>
   </div>
- </div>
+
+  <div class="map-tools">
+    <button class="small-btn" id="showAll">Вся Москва ↗</button>
+    <button class="small-btn" id="locateSelected">Выбранная станция</button>
+  </div>
 </section>
 
 <aside class="side">
+
 <section class="panel">
- <div class="panel-head">
-  <div>
-   <div class="panel-title">Показатели станции</div>
-   <div class="panel-note">Данные выбранной станции</div>
+  <div class="panel-head">
+    <div>
+      <div class="panel-title">Показатели станции</div>
+      <div class="panel-note">Данные выбранной станции</div>
+    </div>
+    <span class="pill">СТАНЦИЯ</span>
   </div>
-  <span class="pill">СТАНЦИЯ</span>
- </div>
 
- <div class="select-wrap">
-  <select id="stationSelect"></select>
- </div>
+  <div class="search-wrap">
+    <input id="searchStation" type="search" placeholder="Поиск станции...">
+  </div>
 
- <div class="summary">
-  <div class="station-top">
-   <div>
-    <div class="station-name" id="stationName">Марьино</div>
-    <div class="station-line" id="stationLine">Люблинско-Дмитровская линия</div>
-   </div>
-   <span class="status" id="stationStatus">Умеренная</span>
+  <div class="select-wrap">
+    <select id="stationSelect">
+      <option value="">Ожидание данных...</option>
+    </select>
   </div>
-  <div class="big-number" id="stationFlow">—</div>
-  <div class="caption">расчётный поток за сутки, чел.</div>
-  <div class="split-stats">
-   <div class="mini"><span>Утренний пик</span><b id="morning">—</b></div>
-   <div class="mini"><span>Вечерний пик</span><b id="evening">—</b></div>
+
+  <div class="summary">
+    <div class="station-top">
+      <div>
+        <div class="station-name" id="stationName">—</div>
+        <div class="station-line" id="stationLine">—</div>
+      </div>
+      <span class="status" id="stationStatus">—</span>
+    </div>
+
+    <div class="big-number" id="stationFlow">—</div>
+    <div class="caption">расчётный поток за сутки, чел.</div>
+
+    <div class="split-stats">
+      <div class="mini">
+        <span>Утренний пик</span>
+        <b id="morning">—</b>
+      </div>
+      <div class="mini">
+        <span>Вечерний пик</span>
+        <b id="evening">—</b>
+      </div>
+    </div>
+
+    <div class="load-row">
+      <span>Относительная нагрузка</span>
+      <b id="loadText">—</b>
+    </div>
+
+    <div class="track">
+      <div class="fill" id="loadFill"></div>
+    </div>
   </div>
-  <div class="load-row">
-   <span>Относительная нагрузка</span>
-   <b id="loadText">—</b>
-  </div>
-  <div class="track"><div class="fill" id="loadFill"></div></div>
- </div>
 </section>
 
 <section class="panel">
- <div class="panel-head">
-  <div>
-   <div class="panel-title">Настройка сценария</div>
-   <div class="panel-note">Измените условия и пересчитайте прогноз</div>
+  <div class="panel-head">
+    <div>
+      <div class="panel-title">Настройка сценария</div>
+      <div class="panel-note">Изменение исходных параметров</div>
+    </div>
+    <span class="pill">КАЛЬКУЛЯТОР</span>
   </div>
-  <span class="pill">КАЛЬКУЛЯТОР</span>
- </div>
- <div class="calc">
-  <div class="calc-grid">
-   <div class="field">
-    <label>Население района</label>
-    <input id="population" type="number" min="0">
-   </div>
-   <div class="field">
-    <label>Рабочие места</label>
-    <input id="jobs" type="number" min="0">
-   </div>
-   <div class="field">
-    <label>Точки притяжения</label>
-    <input id="attractions" type="number" min="0">
-   </div>
-   <div class="field">
-    <label>Пересадки</label>
-    <input id="transfers" type="number" min="0">
-   </div>
+
+  <div class="calc">
+    <div class="calc-grid">
+      <div class="field">
+        <label>Население района</label>
+        <input id="population" type="number" min="0" value="40000">
+      </div>
+
+      <div class="field">
+        <label>Рабочие места</label>
+        <input id="jobs" type="number" min="0" value="20000">
+      </div>
+
+      <div class="field">
+        <label>Точки притяжения</label>
+        <input id="attractions" type="number" min="0" value="2">
+      </div>
+
+      <div class="field">
+        <label>Пересадки</label>
+        <input id="transfers" type="number" min="0" value="1">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" id="recalc">Пересчитать модель ↗</button>
+      <button class="ghost" id="reset">Сбросить</button>
+    </div>
   </div>
-  <div class="actions">
-   <button class="primary" id="recalc">Пересчитать модель ↗</button>
-   <button class="ghost" id="reset">Сбросить</button>
-  </div>
- </div>
 </section>
+
 </aside>
 </main>
 
 <section class="panel chart-panel">
- <div class="panel-head">
-  <div>
-   <div class="panel-title">Распределение нагрузки в течение дня</div>
-   <div class="panel-note">Условный профиль типичного буднего дня</div>
+  <div class="panel-head">
+    <div>
+      <div class="panel-title">Распределение нагрузки в течение дня</div>
+      <div class="panel-note">Условный профиль типичного буднего дня</div>
+    </div>
+    <span class="pill">24 ЧАСА</span>
   </div>
-  <span class="pill">24 ЧАСА</span>
- </div>
- <div class="chart-area">
-  <div class="chart-top">Пассажиропоток · выбранная станция</div>
-  <canvas id="flowChart"></canvas>
- </div>
+
+  <div class="chart-area">
+    <div class="chart-top">Пассажиропоток · выбранная станция</div>
+    <canvas id="flowChart"></canvas>
+  </div>
 </section>
 
 <section class="bottom-grid">
- <section class="panel">
+
+<section class="panel">
   <div class="panel-head">
-   <div>
-    <div class="panel-title">Наиболее загруженные станции</div>
-    <div class="panel-note">Первые пять по оценке модели</div>
-   </div>
-   <span class="pill">ТОП-5</span>
+    <div>
+      <div class="panel-title">Самые загруженные станции</div>
+      <div class="panel-note">Топ-5 по расчётной модели</div>
+    </div>
+    <span class="pill">ТОП-5</span>
   </div>
   <div class="rank-list" id="ranking"></div>
- </section>
+</section>
 
- <section class="panel">
+<section class="panel">
   <div class="panel-head">
-   <div>
-    <div class="panel-title">О модели и данных</div>
-    <div class="panel-note">Методика расчёта</div>
-   </div>
-   <span class="pill">СПРАВКА</span>
+    <div>
+      <div class="panel-title">О проекте</div>
+      <div class="panel-note">Информация и методика</div>
+    </div>
+    <span class="pill">СПРАВКА</span>
   </div>
+
   <div class="method">
-   <strong>Важно:</strong> показатели являются учебными расчётными оценками, а не официальной статистикой Московского метрополитена. Реальный пассажиропоток зависит от дня недели, времени, пересадок, событий и других факторов.
+    <strong>MetroFlow</strong> — учебная интерактивная модель анализа пассажиропотока Московского метрополитена.
+
+    <br><br>
+
+    Координаты и названия станций загружаются из OpenStreetMap с помощью Overpass API.
+
+    <br><br>
+
+    Показатели пассажиропотока являются расчётными оценками, а не официальной статистикой Московского метрополитена.
+
+    <br><br>
+
+    <strong>Формула модели:</strong><br>
+    Y = 0.15P + 0.25J + 1500A + 5000T
+
+    <br><br>
+
+    P — население района;<br>
+    J — рабочие места;<br>
+    A — точки притяжения;<br>
+    T — количество пересадок.
   </div>
- </section>
+</section>
+
 </section>
 
 <footer>
- <div>MetroFlow · учебный проект · Максим Крылов, 10 «О» класс</div>
- <div>Картографические данные © OpenStreetMap contributors</div>
+  <div>MetroFlow · Максим Крылов, 10 «О» класс</div>
+  <div>© OpenStreetMap contributors · Учебный проект</div>
 </footer>
+
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-const stations={
- maryino:{name:"Марьино",line:"Люблинско-Дмитровская линия",lat:55.6504,lon:37.7437,flow:92000,pop:45000,jobs:5000,attr:2,trans:0},
- vyhino:{name:"Выхино",line:"Таганско-Краснопресненская линия",lat:55.7158,lon:37.8178,flow:175000,pop:60000,jobs:10000,attr:2,trans:1},
- yasenevo:{name:"Ясенево",line:"Калужско-Рижская линия",lat:55.6062,lon:37.5332,flow:71000,pop:40000,jobs:4000,attr:2,trans:0},
- otradnoe:{name:"Отрадное",line:"Серпуховско-Тимирязевская линия",lat:55.8631,lon:37.6047,flow:84000,pop:38000,jobs:6000,attr:1,trans:0},
- strogino:{name:"Строгино",line:"Арбатско-Покровская линия",lat:55.8038,lon:37.4024,flow:69000,pop:35000,jobs:8000,attr:2,trans:0},
- delovoy:{name:"Деловой центр",line:"Большая кольцевая линия",lat:55.7491,lon:37.5395,flow:125000,pop:5000,jobs:85000,attr:4,trans:2},
- ohotny:{name:"Охотный Ряд",line:"Сокольническая линия",lat:55.7577,lon:37.6156,flow:155000,pop:10000,jobs:50000,attr:5,trans:2},
- arbatskaya:{name:"Арбатская",line:"Арбатско-Покровская линия",lat:55.7521,lon:37.6015,flow:112000,pop:15000,jobs:40000,attr:4,trans:1},
- kitay:{name:"Китай-город",line:"Таганско-Краснопресненская линия",lat:55.7559,lon:37.6333,flow:168000,pop:12000,jobs:55000,attr:5,trans:2},
- tverskaya:{name:"Тверская",line:"Замоскворецкая линия",lat:55.7648,lon:37.6053,flow:119000,pop:14000,jobs:45000,attr:3,trans:1},
- pobedy:{name:"Парк Победы",line:"Арбатско-Покровская линия",lat:55.7362,lon:37.5168,flow:98000,pop:25000,jobs:15000,attr:2,trans:2},
- komsomol:{name:"Комсомольская",line:"Кольцевая линия",lat:55.7757,lon:37.6554,flow:190000,pop:20000,jobs:60000,attr:3,trans:3},
- kievskaya:{name:"Киевская",line:"Кольцевая линия",lat:55.7436,lon:37.5655,flow:162000,pop:22000,jobs:35000,attr:3,trans:2},
- belorusskaya:{name:"Белорусская",line:"Кольцевая линия",lat:55.7774,lon:37.5826,flow:145000,pop:18000,jobs:30000,attr:2,trans:2},
- kurskaya:{name:"Курская",line:"Кольцевая линия",lat:55.7585,lon:37.6598,flow:138000,pop:19000,jobs:28000,attr:2,trans:2},
- vdnh:{name:"ВДНХ",line:"Калужско-Рижская линия",lat:55.8209,lon:37.6411,flow:150000,pop:30000,jobs:20000,attr:4,trans:1},
- universitet:{name:"Университет",line:"Сокольническая линия",lat:55.6925,lon:37.5347,flow:106000,pop:50000,jobs:25000,attr:3,trans:0},
- sportivnaya:{name:"Спортивная",line:"Сокольническая линия",lat:55.7233,lon:37.5654,flow:78000,pop:28000,jobs:12000,attr:2,trans:1}
+"use strict";
+
+/* =================================
+   НАСТРОЙКИ
+================================= */
+
+const BOUNDS = {
+  south:55.25,
+  west:36.65,
+  north:56.05,
+  east:38.25
 };
 
-const keys=Object.keys(stations);
-const original=JSON.parse(JSON.stringify(stations));
-const $=id=>document.getElementById(id);
-const fmt=n=>Math.round(n).toLocaleString("ru-RU");
+const OVERPASS_SERVERS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter"
+];
 
-let map;
-let markers={};
-let selected="maryino";
+const $ = id => document.getElementById(id);
 
-function color(flow){
- return flow>=150000?"#e46e68":
- flow>=100000?"#f2a65a":"#13b8a6";
+const fmt = n => Math.round(n).toLocaleString("ru-RU");
+
+let stations = {};
+let original = {};
+let markers = {};
+let map = null;
+let selected = null;
+let chartAnimation = null;
+
+/* =================================
+   ДАННЫЕ ИЗ OPENSTREETMAP
+================================= */
+
+async function loadStations() {
+
+  const box = [
+    BOUNDS.south,
+    BOUNDS.west,
+    BOUNDS.north,
+    BOUNDS.east
+  ].join(",");
+
+  const query = `
+    [out:json][timeout:60];
+    (
+      nwr["station"="subway"](${box});
+      nwr["railway"="station"]["station"="subway"](${box});
+      nwr["railway"="halt"]["station"="subway"](${box});
+    );
+    out center tags;
+  `;
+
+  let lastError = null;
+
+  for (const server of OVERPASS_SERVERS) {
+
+    try {
+
+      const response = await fetch(server, {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"
+        },
+        body:"data=" + encodeURIComponent(query)
+      });
+
+      if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+      }
+
+      const data = await response.json();
+
+      if (!data.elements) {
+        throw new Error("Некорректный ответ сервера");
+      }
+
+      return normalizeStations(data.elements);
+
+    } catch(error) {
+
+      lastError = error;
+      console.warn("Overpass error:",server,error);
+
+    }
+  }
+
+  throw lastError || new Error("Не удалось загрузить данные");
 }
-function radius(flow){
- return 8+Math.sqrt(flow/200000)*10;
-}
-function status(flow){
- return flow>=150000?"Очень высокая":
- flow>=100000?"Высокая":"Умеренная";
-}
 
-function init(){
- map=L.map("map",{
-  zoomControl:false,
-  scrollWheelZoom:true
- }).setView([55.755,37.617],10);
+/* =================================
+   ОБРАБОТКА СТАНЦИЙ
+================================= */
 
- // Бесплатная карта OpenStreetMap
- L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-  maxZoom:19,
-  attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>'
- }).addTo(map);
+function normalizeStations(elements) {
 
- L.control.zoom({position:"topright"}).addTo(map);
+  const result = [];
 
- keys.forEach(k=>{
-  const s=stations[k];
+  const seen = new Set();
 
-  const marker=L.circleMarker([s.lat,s.lon],{
-   radius:radius(s.flow),
-   color:"#ffffff",
-   weight:3,
-   fillColor:color(s.flow),
-   fillOpacity:.94
-  }).addTo(map);
+  elements.forEach(el => {
 
-  marker.bindPopup(
-   `<b>${s.name}</b><br>${fmt(s.flow)} чел./сутки`
+    const tags = el.tags || {};
+
+    const name =
+      tags["name:ru"] ||
+      tags.name ||
+      tags["name:en"];
+
+    const lat = el.lat ?? el.center?.lat;
+    const lon = el.lon ?? el.center?.lon;
+
+    if (!name || !Number.isFinite(lat) || !Number.isFinite(lon)) {
+      return;
+    }
+
+    const normalizedName = name
+      .toLowerCase()
+      .replace(/ё/g,"е")
+      .replace(/\s+/g," ")
+      .trim();
+
+    /*
+      OSM иногда содержит одновременно
+      точку и полигон одной станции.
+      Убираем дубли в пределах 180 метров.
+    */
+
+    const duplicate = result.some(s => {
+
+      if (s.normalizedName !== normalizedName) return false;
+
+      const distance = mapDistance(
+        lat,lon,s.lat,s.lon
+      );
+
+      return distance < 180;
+
+    });
+
+    if (duplicate) return;
+
+    const line =
+      tags["subway:line"] ||
+      tags.line ||
+      tags["railway:ref"] ||
+      tags.ref ||
+      "Московский метрополитен";
+
+    result.push({
+      name,
+      normalizedName,
+      line,
+      lat,
+      lon
+    });
+
+  });
+
+  result.sort((a,b) =>
+    a.name.localeCompare(b.name,"ru")
   );
 
-  marker.on("click",()=>{
-   selectStation(k,true);
+  return result;
+}
+
+function mapDistance(lat1,lon1,lat2,lon2) {
+
+  const R = 6371000;
+
+  const toRad = x => x * Math.PI / 180;
+
+  const dLat = toRad(lat2-lat1);
+  const dLon = toRad(lon2-lon1);
+
+  const a =
+    Math.sin(dLat/2)**2 +
+    Math.cos(toRad(lat1)) *
+    Math.cos(toRad(lat2)) *
+    Math.sin(dLon/2)**2;
+
+  return 2 * R * Math.atan2(
+    Math.sqrt(a),
+    Math.sqrt(1-a)
+  );
+}
+
+/* =================================
+   РАСЧЁТНАЯ МОДЕЛЬ
+================================= */
+
+function generateFlow(name) {
+
+  let hash = 2166136261;
+
+  for (const char of name) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash,16777619);
+  }
+
+  hash >>>= 0;
+
+  return 35000 + (hash % 145000);
+}
+
+function buildDatabase(list) {
+
+  stations = {};
+
+  list.forEach((s,index) => {
+
+    const key = "station_" + index;
+
+    const flow = generateFlow(s.name);
+
+    stations[key] = {
+
+      ...s,
+
+      flow,
+
+      pop:40000,
+      jobs:20000,
+      attr:2,
+      trans:1
+
+    };
+
   });
 
-  markers[k]=marker;
+  original = JSON.parse(JSON.stringify(stations));
 
-  const option=document.createElement("option");
-  option.value=k;
-  option.textContent=s.name;
-  $("stationSelect").appendChild(option);
- });
-
- $("stationSelect").addEventListener("change",e=>{
-  selectStation(e.target.value,true);
- });
-
- $("recalc").addEventListener("click",recalculate);
- $("reset").addEventListener("click",resetScenario);
-
- renderMetrics();
- renderRanking();
- selectStation("maryino",false);
-
- setTimeout(()=>map.invalidateSize(),300);
 }
 
-function selectStation(k,fly){
- selected=k;
- const s=stations[k];
+/* =================================
+   КАРТА
+================================= */
 
- $("stationSelect").value=k;
- $("population").value=s.pop;
- $("jobs").value=s.jobs;
- $("attractions").value=s.attr;
- $("transfers").value=s.trans;
+function initMap() {
 
- keys.forEach(key=>{
-  const item=stations[key];
-  markers[key].setStyle({
-   radius:radius(item.flow),
-   fillColor:color(item.flow),
-   weight:key===k?5:3,
-   color:key===k?"#087f79":"#ffffff"
+  map = L.map("map",{
+    zoomControl:false,
+    preferCanvas:true
+  }).setView([55.755,37.617],10);
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom:19,
+      attribution:
+        '© <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>'
+    }
+  ).addTo(map);
+
+  L.control.zoom({
+    position:"topright"
+  }).addTo(map);
+
+  $("showAll").addEventListener("click",showAll);
+
+  $("locateSelected").addEventListener("click",() => {
+    if (selected) selectStation(selected,true);
   });
- });
 
- if(fly){
-  map.flyTo([s.lat,s.lon],13,{duration:1.1});
-  markers[k].openPopup();
- }
-
- renderStation();
 }
 
-function animateNumber(el,n){
- const start=Number(el.dataset.value||0);
- const t0=performance.now();
- const duration=600;
- el.dataset.value=n;
+function markerColor(flow) {
 
- function frame(t){
-  const p=Math.min(1,(t-t0)/duration);
-  const value=start+(n-start)*(1-Math.pow(1-p,3));
-  el.textContent=fmt(value);
-  if(p<1)requestAnimationFrame(frame);
- }
- requestAnimationFrame(frame);
+  if (flow >= 150000) return "#e76e70";
+
+  if (flow >= 100000) return "#f2a65a";
+
+  return "#13b8a6";
+
 }
 
-function renderStation(){
- const s=stations[selected];
- $("stationName").textContent=s.name;
- $("stationLine").textContent=s.line;
- $("stationStatus").textContent=status(s.flow);
- $("stationStatus").style.color=color(s.flow);
+function markerRadius(flow) {
 
- animateNumber($("stationFlow"),s.flow);
+  return 7 + Math.sqrt(flow/200000)*10;
 
- $("morning").textContent=fmt(s.flow*.22);
- $("evening").textContent=fmt(s.flow*.19);
-
- const pct=Math.min(100,s.flow/200000*100);
- $("loadText").textContent=Math.round(pct)+"%";
-
- requestAnimationFrame(()=>{
-  $("loadFill").style.width=pct+"%";
- });
-
- drawChart(s.flow);
 }
 
-function renderMetrics(){
- const total=keys.reduce((sum,k)=>sum+stations[k].flow,0);
- const top=keys.slice().sort(
-  (a,b)=>stations[b].flow-stations[a].flow
- )[0];
+function markerStatus(flow) {
 
- $("mStations").textContent=keys.length;
- $("mTotal").textContent=(total/1000000).toFixed(2).replace(".",",")+" млн";
- $("mTop").textContent=stations[top].name;
- $("mAvg").textContent=fmt(total/keys.length);
+  if (flow >= 150000) return "Очень высокая";
+
+  if (flow >= 100000) return "Высокая";
+
+  return "Умеренная";
+
 }
 
-function renderRanking(){
- const sorted=keys.slice().sort(
-  (a,b)=>stations[b].flow-stations[a].flow
- ).slice(0,5);
+function createMarkers() {
 
- $("ranking").innerHTML=sorted.map((k,i)=>`
-  <div class="rank-row" data-key="${k}">
-   <div class="rank-num">${i+1}</div>
-   <div>
-    <div class="rank-name">${stations[k].name}</div>
-    <div class="rank-line">${stations[k].line}</div>
-   </div>
-   <div class="rank-value">${fmt(stations[k].flow)}</div>
-  </div>
- `).join("");
+  markers = {};
 
- document.querySelectorAll(".rank-row").forEach(row=>{
-  row.addEventListener("click",()=>{
-   selectStation(row.dataset.key,true);
+  Object.keys(stations).forEach(key => {
+
+    const s = stations[key];
+
+    const marker = L.circleMarker(
+      [s.lat,s.lon],
+      {
+        radius:markerRadius(s.flow),
+        color:"#ffffff",
+        weight:2.5,
+        fillColor:markerColor(s.flow),
+        fillOpacity:.94
+      }
+    );
+
+    marker.addTo(map);
+
+    marker.bindPopup(
+      `<b>${escapeHTML(s.name)}</b><br>
+       ${fmt(s.flow)} чел./сутки<br>
+       <small>Расчётная оценка</small>`
+    );
+
+    marker.on("click",() => {
+      selectStation(key,true);
+    });
+
+    markers[key] = marker;
+
   });
- });
+
 }
 
-function recalculate(){
- const s=stations[selected];
- const base=original[selected];
+function updateMarker(key) {
 
- const p=Math.max(0,Number($("population").value)||0);
- const j=Math.max(0,Number($("jobs").value)||0);
- const a=Math.max(0,Number($("attractions").value)||0);
- const t=Math.max(0,Number($("transfers").value)||0);
+  const s = stations[key];
+  const marker = markers[key];
 
- const oldBase=base.pop*.15+base.jobs*.25+
- base.attr*1500+base.trans*5000;
+  if (!marker) return;
 
- const newBase=p*.15+j*.25+a*1500+t*5000;
+  marker.setStyle({
+    radius:markerRadius(s.flow),
+    fillColor:markerColor(s.flow)
+  });
 
- s.flow=Math.max(1000,
- Math.round(base.flow*newBase/Math.max(1,oldBase)));
+  marker.setPopupContent(
+    `<b>${escapeHTML(s.name)}</b><br>
+     ${fmt(s.flow)} чел./сутки<br>
+     <small>Расчётная оценка</small>`
+  );
 
- s.pop=p;
- s.jobs=j;
- s.attr=a;
- s.trans=t;
-
- markers[selected].setStyle({
-  radius:radius(s.flow),
-  fillColor:color(s.flow)
- });
-
- markers[selected].setPopupContent(
-  `<b>${s.name}</b><br>${fmt(s.flow)} чел./сутки`
- );
-
- renderStation();
- renderMetrics();
- renderRanking();
-
- $("recalc").textContent="Готово ✓";
- setTimeout(()=>{
-  $("recalc").textContent="Пересчитать модель ↗";
- },1300);
 }
 
-function resetScenario(){
- Object.assign(stations[selected],
- JSON.parse(JSON.stringify(original[selected])));
+function showAll() {
 
- const s=stations[selected];
+  if (!map) return;
 
- $("population").value=s.pop;
- $("jobs").value=s.jobs;
- $("attractions").value=s.attr;
- $("transfers").value=s.trans;
+  map.flyTo(
+    [55.755,37.617],
+    10,
+    {duration:1}
+  );
 
- markers[selected].setStyle({
-  radius:radius(s.flow),
-  fillColor:color(s.flow)
- });
-
- markers[selected].setPopupContent(
-  `<b>${s.name}</b><br>${fmt(s.flow)} чел./сутки`
- );
-
- renderStation();
- renderMetrics();
- renderRanking();
 }
 
-function drawChart(flow){
- const canvas=$("flowChart");
- const ctx=canvas.getContext("2d");
- const rect=canvas.getBoundingClientRect();
- const dpr=window.devicePixelRatio||1;
+/* =================================
+   СПИСОК И ПОИСК
+================================= */
 
- canvas.width=rect.width*dpr;
- canvas.height=190*dpr;
- ctx.setTransform(dpr,0,0,dpr,0,0);
+function fillSelect() {
 
- const w=rect.width,h=190;
- const pad={l:38,r:8,t:12,b:25};
- const cw=w-pad.l-pad.r;
- const ch=h-pad.t-pad.b;
+  const select = $("stationSelect");
 
- ctx.clearRect(0,0,w,h);
+  select.innerHTML = "";
 
- const profile=[
- .025,.012,.025,.12,.22,.105,.09,.19,
- .16,.06,.035,.025,.025,.035,.055,.085,
- .14,.20,.19,.12,.07,.045,.03,.02
- ];
+  Object.keys(stations).forEach(key => {
 
- const max=flow*.055;
+    const option = document.createElement("option");
 
- for(let i=0;i<5;i++){
-  const y=pad.t+ch*i/4;
-  ctx.strokeStyle="#eaf1ef";
+    option.value = key;
+    option.textContent = stations[key].name;
+
+    select.appendChild(option);
+
+  });
+
+  select.addEventListener("change",e => {
+
+    selectStation(e.target.value,true);
+
+  });
+
+  $("searchStation").addEventListener("input",e => {
+
+    const value = e.target.value
+      .toLowerCase()
+      .trim();
+
+    const select = $("stationSelect");
+
+    select.innerHTML = "";
+
+    const found = Object.keys(stations).filter(key =>
+      stations[key].name.toLowerCase().includes(value)
+    );
+
+    found.forEach(key => {
+
+      const option = document.createElement("option");
+
+      option.value = key;
+      option.textContent = stations[key].name;
+
+      select.appendChild(option);
+
+    });
+
+    if (found.length) {
+
+      selectStation(found[0],false);
+
+    } else {
+
+      $("stationName").textContent = "Не найдено";
+      $("stationLine").textContent = "Попробуйте изменить запрос";
+      $("stationFlow").textContent = "—";
+
+    }
+
+  });
+
+}
+
+/* =================================
+   ВЫБОР СТАНЦИИ
+================================= */
+
+function selectStation(key,fly=true) {
+
+  const s = stations[key];
+
+  if (!s) return;
+
+  selected = key;
+
+  $("stationSelect").value = key;
+
+  $("population").value = s.pop;
+  $("jobs").value = s.jobs;
+  $("attractions").value = s.attr;
+  $("transfers").value = s.trans;
+
+  if (fly && map) {
+
+    map.flyTo(
+      [s.lat,s.lon],
+      14,
+      {duration:1.1}
+    );
+
+    markers[key].openPopup();
+
+  }
+
+  renderStation();
+
+}
+
+/* =================================
+   АНИМАЦИЯ ЧИСЕЛ
+================================= */
+
+function animateNumber(element,target) {
+
+  if (element._animation) {
+    cancelAnimationFrame(element._animation);
+  }
+
+  const start = Number(element.dataset.value || 0);
+
+  const startTime = performance.now();
+
+  const duration = 650;
+
+  function frame(time) {
+
+    const p = Math.min(
+      (time-startTime)/duration,
+      1
+    );
+
+    const eased = 1-Math.pow(1-p,3);
+
+    const value = start+(target-start)*eased;
+
+    element.textContent = fmt(value);
+
+    if (p < 1) {
+
+      element._animation = requestAnimationFrame(frame);
+
+    } else {
+
+      element.textContent = fmt(target);
+
+      element.dataset.value = target;
+
+    }
+
+  }
+
+  element._animation = requestAnimationFrame(frame);
+
+}
+
+/* =================================
+   ПОКАЗАТЕЛИ СТАНЦИИ
+================================= */
+
+function renderStation() {
+
+  const s = stations[selected];
+
+  if (!s) return;
+
+  $("stationName").textContent = s.name;
+
+  $("stationLine").textContent = s.line;
+
+  $("stationStatus").textContent =
+    markerStatus(s.flow);
+
+  $("stationStatus").style.color =
+    markerColor(s.flow);
+
+  animateNumber(
+    $("stationFlow"),
+    s.flow
+  );
+
+  $("morning").textContent =
+    fmt(s.flow*.22);
+
+  $("evening").textContent =
+    fmt(s.flow*.19);
+
+  const percent = Math.min(
+    100,
+    s.flow/200000*100
+  );
+
+  $("loadText").textContent =
+    Math.round(percent)+"%";
+
+  $("loadFill").style.width =
+    percent+"%";
+
+  drawChart(s.flow);
+
+}
+
+/* =================================
+   ОБЩАЯ СТАТИСТИКА
+================================= */
+
+function renderMetrics() {
+
+  const keys = Object.keys(stations);
+
+  if (!keys.length) return;
+
+  const total = keys.reduce(
+    (sum,key) => sum+stations[key].flow,
+    0
+  );
+
+  const top = keys.slice().sort(
+    (a,b) => stations[b].flow-stations[a].flow
+  )[0];
+
+  $("mStations").textContent = keys.length;
+
+  $("mTotal").textContent =
+    (total/1000000).toFixed(2).replace(".",",")+" млн";
+
+  $("mTop").textContent =
+    stations[top].name;
+
+  $("mAvg").textContent =
+    fmt(total/keys.length);
+
+}
+
+/* =================================
+   РЕЙТИНГ
+================================= */
+
+function renderRanking() {
+
+  const keys = Object.keys(stations);
+
+  const sorted = keys.slice().sort(
+    (a,b) => stations[b].flow-stations[a].flow
+  ).slice(0,5);
+
+  $("ranking").innerHTML = sorted.map((key,index) => {
+
+    const s = stations[key];
+
+    return `
+      <div class="rank-row" data-key="${key}">
+        <div class="rank-num">${index+1}</div>
+
+        <div>
+          <div class="rank-name">${escapeHTML(s.name)}</div>
+          <div class="rank-line">${escapeHTML(s.line)}</div>
+        </div>
+
+        <div class="rank-value">${fmt(s.flow)}</div>
+      </div>
+    `;
+
+  }).join("");
+
+  document.querySelectorAll(".rank-row").forEach(row => {
+
+    row.addEventListener("click",() => {
+
+      selectStation(row.dataset.key,true);
+
+    });
+
+  });
+
+}
+
+/* =================================
+   КАЛЬКУЛЯТОР
+================================= */
+
+function recalculate() {
+
+  if (!selected) return;
+
+  const s = stations[selected];
+
+  const base = original[selected];
+
+  const p = Math.max(
+    0,
+    Number($("population").value)||0
+  );
+
+  const j = Math.max(
+    0,
+    Number($("jobs").value)||0
+  );
+
+  const a = Math.max(
+    0,
+    Number($("attractions").value)||0
+  );
+
+  const t = Math.max(
+    0,
+    Number($("transfers").value)||0
+  );
+
+  const oldBase =
+    base.pop*.15+
+    base.jobs*.25+
+    base.attr*1500+
+    base.trans*5000;
+
+  const newBase =
+    p*.15+
+    j*.25+
+    a*1500+
+    t*5000;
+
+  s.flow = Math.max(
+    1000,
+    Math.round(
+      base.flow*newBase/Math.max(1,oldBase)
+    )
+  );
+
+  s.pop=p;
+  s.jobs=j;
+  s.attr=a;
+  s.trans=t;
+
+  updateMarker(selected);
+
+  renderStation();
+  renderMetrics();
+  renderRanking();
+
+  $("recalc").textContent = "Готово ✓";
+
+  setTimeout(() => {
+    $("recalc").textContent = "Пересчитать модель ↗";
+  },1300);
+
+}
+
+function resetScenario() {
+
+  if (!selected) return;
+
+  stations[selected] =
+    JSON.parse(JSON.stringify(original[selected]));
+
+  const s = stations[selected];
+
+  $("population").value = s.pop;
+  $("jobs").value = s.jobs;
+  $("attractions").value = s.attr;
+  $("transfers").value = s.trans;
+
+  updateMarker(selected);
+
+  renderStation();
+  renderMetrics();
+  renderRanking();
+
+}
+
+/* =================================
+   ГРАФИК
+================================= */
+
+function drawChart(flow) {
+
+  const canvas = $("flowChart");
+
+  const ctx = canvas.getContext("2d");
+
+  const rect = canvas.getBoundingClientRect();
+
+  if (!rect.width) return;
+
+  const dpr = window.devicePixelRatio||1;
+
+  canvas.width = rect.width*dpr;
+  canvas.height = 190*dpr;
+
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  const w = rect.width;
+  const h = 190;
+
+  const pad = {
+    l:40,
+    r:10,
+    t:12,
+    b:25
+  };
+
+  const cw = w-pad.l-pad.r;
+  const ch = h-pad.t-pad.b;
+
+  ctx.clearRect(0,0,w,h);
+
+  const profile = [
+    .015,.01,.01,.02,.04,.10,
+    .19,.22,.17,.10,.07,.055,
+    .05,.05,.06,.08,.12,.19,
+    .22,.17,.12,.075,.04,.025
+  ];
+
+  const max = flow*.24;
+
+  for(let i=0;i<=4;i++) {
+
+    const y = pad.t+ch*i/4;
+
+    ctx.strokeStyle = "#eaf1ef";
+
+    ctx.beginPath();
+    ctx.moveTo(pad.l,y);
+    ctx.lineTo(w-pad.r,y);
+    ctx.stroke();
+
+    ctx.fillStyle = "#8ca0a2";
+    ctx.font = "9px Manrope";
+    ctx.textAlign = "right";
+
+    ctx.fillText(
+      Math.round(max*(1-i/4)/1000)+"k",
+      pad.l-7,
+      y+3
+    );
+
+  }
+
+  const points = profile.map((v,i) => ({
+
+    x:pad.l+cw*i/(profile.length-1),
+
+    y:pad.t+ch-(v*flow/max)*ch
+
+  }));
+
+  // Градиент
+  const gradient = ctx.createLinearGradient(
+    0,pad.t,0,pad.t+ch
+  );
+
+  gradient.addColorStop(0,"rgba(19,184,166,.30)");
+  gradient.addColorStop(1,"rgba(19,184,166,0)");
+
   ctx.beginPath();
-  ctx.moveTo(pad.l,y);
-  ctx.lineTo(w-pad.r,y);
-  ctx.stroke();
 
-  ctx.fillStyle="#8ca0a2";
-  ctx.font="9px Manrope";
-  ctx.textAlign="right";
-  ctx.fillText(Math.round(max*(1-i/4)/1000)+"k",pad.l-7,y+3);
- }
+  points.forEach((p,i) => {
 
- function line(factor,stroke,fill){
-  ctx.beginPath();
-  profile.forEach((v,i)=>{
-   const x=pad.l+cw*i/(profile.length-1);
-   const y=pad.t+ch-(v*flow*factor/max)*ch;
-   if(i===0)ctx.moveTo(x,y);
-   else ctx.lineTo(x,y);
+    if(i===0) ctx.moveTo(p.x,p.y);
+
+    else ctx.lineTo(p.x,p.y);
+
   });
 
-  ctx.lineTo(pad.l+cw,pad.t+ch);
-  ctx.lineTo(pad.l,pad.t+ch);
+  ctx.lineTo(points[points.length-1].x,pad.t+ch);
+  ctx.lineTo(points[0].x,pad.t+ch);
   ctx.closePath();
-  ctx.fillStyle=fill;
+
+  ctx.fillStyle = gradient;
   ctx.fill();
 
+  // Линия
   ctx.beginPath();
-  profile.forEach((v,i)=>{
-   const x=pad.l+cw*i/(profile.length-1);
-   const y=pad.t+ch-(v*flow*factor/max)*ch;
-   if(i===0)ctx.moveTo(x,y);
-   else ctx.lineTo(x,y);
+
+  points.forEach((p,i) => {
+
+    if(i===0) ctx.moveTo(p.x,p.y);
+
+    else ctx.lineTo(p.x,p.y);
+
   });
 
-  ctx.strokeStyle=stroke;
-  ctx.lineWidth=2;
+  ctx.strokeStyle = "#13b8a6";
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = "round";
   ctx.stroke();
- }
 
- line(.52,"#a6dcd3","rgba(166,220,211,.12)");
- line(.48,"#13b8a6","rgba(19,184,166,.13)");
+  // Точки
+  points.forEach((p,i) => {
 
- ["00","03","06","09","12","15","18","21","24"].forEach((v,i)=>{
-  ctx.fillStyle="#8ca0a2";
-  ctx.font="9px Manrope";
-  ctx.textAlign="center";
-  ctx.fillText(v,pad.l+cw*i/8,h-6);
- });
+    if(i%3!==0) return;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,3,0,Math.PI*2);
+
+    ctx.fillStyle = "#13b8a6";
+    ctx.fill();
+
+  });
+
+  ["00","03","06","09","12","15","18","21","24"]
+    .forEach((value,i) => {
+
+      ctx.fillStyle = "#8ca0a2";
+      ctx.font = "9px Manrope";
+      ctx.textAlign = "center";
+
+      ctx.fillText(
+        value,
+        pad.l+cw*i/8,
+        h-6
+      );
+
+    });
+
 }
 
-window.addEventListener("resize",()=>{
- if(map)map.invalidateSize();
- if(stations[selected])drawChart(stations[selected].flow);
+/* =================================
+   БЕЗОПАСНОЕ ОТОБРАЖЕНИЕ ТЕКСТА
+================================= */
+
+function escapeHTML(value) {
+
+  return String(value).replace(/[&<>"']/g,char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+
+}
+
+/* =================================
+   ЗАПУСК
+================================= */
+
+async function start() {
+
+  $("map").innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      Загружаем транспортную сеть Москвы...
+    </div>
+  `;
+
+  try {
+
+    const list = await loadStations();
+
+    if (!list.length) {
+      throw new Error("Станции не найдены");
+    }
+
+    buildDatabase(list);
+
+    $("map").innerHTML = "";
+
+    initMap();
+
+    createMarkers();
+
+    fillSelect();
+
+    renderMetrics();
+
+    renderRanking();
+
+    const first = Object.keys(stations).find(
+      key => stations[key].name.toLowerCase() === "марьино"
+    ) || Object.keys(stations)[0];
+
+    selectStation(first,false);
+
+    $("mStations").textContent =
+      Object.keys(stations).length;
+
+    setTimeout(() => {
+      map.invalidateSize();
+    },300);
+
+  } catch(error) {
+
+    console.error(error);
+
+    $("map").innerHTML = `
+      <div class="loading">
+        <div style="font-size:28px">!</div>
+        Не удалось загрузить станции.
+        <button class="small-btn" onclick="start()">
+          Повторить загрузку
+        </button>
+        <span style="font-size:10px;color:#819397">
+          Проверьте интернет-соединение.
+        </span>
+      </div>
+    `;
+
+  }
+
+}
+
+$("recalc").addEventListener("click",recalculate);
+$("reset").addEventListener("click",resetScenario);
+
+window.addEventListener("resize",() => {
+
+  if(map) map.invalidateSize();
+
+  if(selected && stations[selected]) {
+    drawChart(stations[selected].flow);
+  }
+
 });
 
-window.addEventListener("load",()=>{
- if(typeof L!=="undefined"){
-  init();
- }else{
-  $("map").textContent="Не удалось загрузить карту. Проверь интернет.";
- }
-});
+start();
+
 </script>
 </body>
 </html>
