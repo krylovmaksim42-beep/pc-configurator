@@ -676,7 +676,7 @@ footer {
 @keyframes blink {
   50% {opacity:.3}
 }
-.support-fab{position:fixed;right:22px;bottom:22px;z-index:1200;border:0;border-radius:999px;background:var(--teal);color:#063b3b;padding:14px 19px;font-weight:800;font-size:12px;box-shadow:0 10px 30px #087f7944;cursor:pointer;display:flex;align-items:center;gap:9px;transition:transform .2s,box-shadow .2s}
+.support-fab{position:fixed;right:22px;bottom:22px;z-index:1200;border:0;border-radius:999px;background:var(--teal);color:#063b3b;padding:14px 19px;font-weight:800;font-size:12px;text-decoration:none;box-shadow:0 10px 30px #087f7944;cursor:pointer;display:flex;align-items:center;gap:9px;transition:transform .2s,box-shadow .2s}
 .support-fab:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 15px 36px #087f7955}
 .support-fab span{font-size:17px}
 .support-hint{position:fixed;right:22px;bottom:82px;z-index:1200;max-width:280px;padding:12px 15px;background:var(--text);color:var(--bg);border-radius:12px;font-size:11px;line-height:1.5;box-shadow:0 8px 28px #0002;display:none}
@@ -786,9 +786,7 @@ footer {
     </div>
 
     <div class="map-legend">
-      <span class="legend-item"><i class="legend-dot"></i>Умеренная</span>
-      <span class="legend-item"><i class="legend-dot legend-orange"></i>Высокая</span>
-      <span class="legend-item"><i class="legend-dot legend-red"></i>Очень высокая</span>
+      <span class="legend-item"><i class="legend-dot" style="background:#64748b"></i>Станции метро</span>
     </div>
   </div>
 
@@ -937,12 +935,11 @@ footer {
 
 </section>
 
-<button class="support-fab" id="supportFab" type="button"><span>✉</span> Поддержка</button>
-<div class="support-hint" id="supportHint" role="status">Пришлите публичную ссылку или @username Telegram-бота, чтобы подключить чат.</div>
+<a class="support-fab" id="supportFab" href="https://t.me/soberi_Sam_support_bot" target="_blank" rel="noopener noreferrer"><span>✉</span> Поддержка</a>
 
 <footer>
   <div>MetroFlow · Учебный аналитический прототип</div>
-  <div>© OpenStreetMap contributors · Учебный проект</div>
+  <div>© OpenStreetMap contributors · Логотип: Mos.ru (CC BY 4.0) · Учебный проект</div>
 </footer>
 
 </div>
@@ -1255,21 +1252,13 @@ function initMap() {
 }
 
 function markerColor(flow) {
-
-  if (!Number.isFinite(flow)) return "#9aa8aa";
-  if (flow >= 150000) return "#e76e70";
-
-  if (flow >= 100000) return "#f2a65a";
-
-  return "#13b8a6";
-
+  // Единый нейтральный цвет: цвет точки не должен создавать видимость точных данных.
+  return "#64748b";
 }
 
 function markerRadius(flow) {
-
-  if (!Number.isFinite(flow)) return 6;
-  return 7 + Math.sqrt(flow/200000)*10;
-
+  // Все станции отображаются точками одинакового размера.
+  return 7.5;
 }
 
 function markerStatus(flow) {
@@ -1297,7 +1286,7 @@ function createMarkers() {
         radius:markerRadius(s.flow),
         color:"#ffffff",
         weight:2.5,
-        fillColor:s.scenario ? "#5b8def" : markerColor(s.flow),
+        fillColor:markerColor(s.flow),
         fillOpacity:.94
       }
     );
@@ -1329,7 +1318,7 @@ function updateMarker(key) {
 
   marker.setStyle({
     radius:markerRadius(s.flow),
-    fillColor:s.scenario ? "#5b8def" : markerColor(s.flow)
+    fillColor:markerColor(s.flow)
   });
 
   marker.setPopupContent(
@@ -1912,9 +1901,6 @@ $("themeToggle").addEventListener("click",()=>{
   const next=document.body.classList.contains("dark-theme")?"light":"dark";
   localStorage.setItem("metroflow-theme",next);
   applyTheme(next);
-});
-$("supportFab").addEventListener("click",()=>{
-  $("supportHint").classList.toggle("show");
 });
 
 window.addEventListener("resize",() => {
