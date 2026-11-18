@@ -679,6 +679,24 @@ footer {
 .support-fab{position:fixed;right:22px;bottom:22px;z-index:1200;border:0;border-radius:999px;background:var(--teal);color:#063b3b;padding:14px 19px;font-weight:800;font-size:12px;text-decoration:none;box-shadow:0 10px 30px #087f7944;cursor:pointer;display:flex;align-items:center;gap:9px;transition:transform .2s,box-shadow .2s}
 .support-fab:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 15px 36px #087f7955}
 .support-fab span{font-size:17px}
+.support-backdrop{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;padding:16px;background:#071417aa;backdrop-filter:blur(6px)}
+.support-backdrop.open{display:flex;animation:fadeIn .2s ease}
+.support-card{width:min(460px,100%);padding:22px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 80px #0004}
+.support-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.support-title{font-size:18px;font-weight:800}
+.support-subtitle{font-size:11px;color:var(--muted);margin-top:4px}
+.support-close{border:0;background:transparent;color:var(--text);font-size:28px;line-height:1;cursor:pointer}
+.support-label{display:block;font-size:11px;font-weight:800;margin:14px 0 6px}
+.support-input,.support-textarea{display:block;width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#18343a;font:inherit;font-size:13px;outline:none}
+.support-textarea{min-height:120px;resize:vertical}
+body.dark-theme .support-input,body.dark-theme .support-textarea{background:#142124;color:var(--text);border-color:var(--line)}
+.support-input:focus,.support-textarea:focus{border-color:var(--teal)}
+.support-help,.support-privacy{font-size:10px;line-height:1.5;color:var(--muted);margin-top:6px}
+.support-send{width:100%;margin-top:16px;padding:13px;border:0;border-radius:10px;background:var(--teal);color:#063b3b;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.support-send:disabled{opacity:.6;cursor:wait}
+.support-feedback{min-height:18px;margin-top:10px;font-size:11px;line-height:1.5}
+.support-feedback.error{color:#d34e52}.support-feedback.success{color:#087f79}
+
 .support-hint{position:fixed;right:22px;bottom:82px;z-index:1200;max-width:280px;padding:12px 15px;background:var(--text);color:var(--bg);border-radius:12px;font-size:11px;line-height:1.5;box-shadow:0 8px 28px #0002;display:none}
 .support-hint.show{display:block;animation:modalIn .2s ease}
 @media(max-width:650px){.header-actions{margin-left:0;margin-right:0}.live{display:none}.support-fab{right:14px;bottom:14px}.support-hint{right:14px;bottom:74px}}
@@ -935,7 +953,29 @@ footer {
 
 </section>
 
-<a class="support-fab" id="supportFab" href="https://t.me/soberi_Sam_support_bot" target="_blank" rel="noopener noreferrer"><span>✉</span> Поддержка</a>
+<button class="support-fab" id="supportFab" type="button"><span>✉</span> Поддержка</button>
+
+<div class="support-backdrop" id="supportModal" aria-hidden="true">
+  <section class="support-card" role="dialog" aria-modal="true" aria-labelledby="supportTitle">
+    <div class="support-head">
+      <div>
+        <div class="support-title" id="supportTitle">Поддержка MetroFlow</div>
+        <div class="support-subtitle">Оставьте обращение автору проекта</div>
+      </div>
+      <button class="support-close" id="supportClose" type="button" aria-label="Закрыть">×</button>
+    </div>
+    <form id="supportForm">
+      <label class="support-label" for="supportUsername">Ваш Telegram</label>
+      <input class="support-input" id="supportUsername" name="username" type="text" placeholder="@username" autocomplete="off" maxlength="33" required>
+      <div class="support-help">Укажите именно username, начинающийся с @, чтобы автор мог найти ваш профиль.</div>
+      <label class="support-label" for="supportMessage">Сообщение</label>
+      <textarea class="support-textarea" id="supportMessage" name="message" placeholder="Опишите вопрос, ошибку или предложение..." maxlength="2000" required></textarea>
+      <button class="support-send" id="supportSend" type="submit">Отправить обращение</button>
+      <div class="support-feedback" id="supportFeedback" role="status" aria-live="polite"></div>
+      <div class="support-privacy">Telegram-ник и текст обращения будут отправлены автору MetroFlow.</div>
+    </form>
+  </section>
+</div>
 
 <footer>
   <div>MetroFlow · Учебный аналитический прототип</div>
@@ -1911,6 +1951,79 @@ window.addEventListener("resize",() => {
     drawChart(stations[selected].flow);
   }
 
+});
+
+/* =================================
+   ФОРМА ПОДДЕРЖКИ
+================================= */
+// После публикации Cloudflare Worker вставьте сюда его публичный URL.
+// URL не является секретом; токен Telegram хранится только в настройках Worker.
+const SUPPORT_API_URL = "PASTE_CLOUDFLARE_WORKER_URL_HERE";
+const supportModal = $("supportModal");
+const supportForm = $("supportForm");
+const supportFeedback = $("supportFeedback");
+const supportFab = $("supportFab");
+
+function closeSupport() {
+  supportModal.classList.remove("open");
+  supportModal.setAttribute("aria-hidden","true");
+}
+supportFab.addEventListener("click",() => {
+  supportModal.classList.add("open");
+  supportModal.setAttribute("aria-hidden","false");
+  setTimeout(() => $("supportUsername").focus(),50);
+});
+$("supportClose").addEventListener("click",closeSupport);
+supportModal.addEventListener("click",e => {
+  if(e.target===supportModal) closeSupport();
+});
+document.addEventListener("keydown",e => {
+  if(e.key==="Escape") closeSupport();
+});
+supportForm.addEventListener("submit",async e => {
+  e.preventDefault();
+  const username=$("supportUsername").value.trim();
+  const message=$("supportMessage").value.trim();
+  supportFeedback.className="support-feedback";
+  supportFeedback.textContent="";
+  if(!/^@[A-Za-z0-9_]{5,32}$/.test(username)){
+    supportFeedback.classList.add("error");
+    supportFeedback.textContent="Введите корректный Telegram username в формате @username.";
+    return;
+  }
+  if(message.length<3){
+    supportFeedback.classList.add("error");
+    supportFeedback.textContent="Напишите сообщение (минимум 3 символа).";
+    return;
+  }
+  if(SUPPORT_API_URL==="PASTE_CLOUDFLARE_WORKER_URL_HERE"){
+    supportFeedback.classList.add("error");
+    supportFeedback.textContent="Форма почти готова, но сервер отправки ещё не подключён.";
+    return;
+  }
+  const send=$("supportSend");
+  send.disabled=true;
+  send.textContent="Отправляем...";
+  try{
+    const response=await fetch(SUPPORT_API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,message})
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok || !result.ok) throw new Error(result.error||"Не удалось отправить обращение.");
+    supportFeedback.classList.add("success");
+    supportFeedback.textContent="Обращение отправлено! Автор получил ваше сообщение в Telegram.";
+    $("supportMessage").value="";
+  }catch(error){
+    supportFeedback.classList.add("error");
+    supportFeedback.textContent=error.message==="Failed to fetch"
+      ?"Не удалось связаться с сервером. Попробуйте позже."
+      :(error.message||"Ошибка отправки. Попробуйте позже.");
+  }finally{
+    send.disabled=false;
+    send.textContent="Отправить обращение";
+  }
 });
 
 start();
