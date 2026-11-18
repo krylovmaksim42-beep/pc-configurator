@@ -33,7 +33,32 @@ body {
   background:var(--bg);
   color:var(--text);
   font-family:Manrope,Arial,sans-serif;
+  transition:background .35s ease,color .35s ease;
 }
+body.dark-theme {
+  --bg:#10191d;
+  --text:#e5f0ef;
+  --muted:#91a5a7;
+  --line:#26383b;
+}
+body.dark-theme .panel,
+body.dark-theme .metric,
+body.dark-theme .live {background:#172428;border-color:var(--line);color:var(--text)}
+body.dark-theme .summary {background:#1b302f;border-color:#294644}
+body.dark-theme .mini,
+body.dark-theme select,
+body.dark-theme input {background:#142124;color:var(--text);border-color:var(--line)}
+body.dark-theme .small-btn,
+body.dark-theme .ghost {background:#243638;color:#b8d9d3}
+body.dark-theme .rank-num {background:#243638;color:#9ce2d6}
+body.dark-theme .pill,
+body.dark-theme .status {background:#21433f;color:#9ce2d6}
+body.dark-theme .track {background:#2a3b3d}
+body.dark-theme .leaflet-control-attribution {background:#172428eF!important;color:#d7e4e2}
+body.dark-theme .leaflet-control-attribution a {color:#8ed8ce}
+body.dark-theme .method {color:#a4b5b5}
+body.dark-theme .method strong {color:var(--text)}
+
 
 button,input,select {
   font:inherit;
@@ -46,6 +71,20 @@ button,input,select {
 }
 
 /* HEADER */
+.header-actions{display:flex;gap:8px;align-items:center;margin-left:auto;margin-right:14px}
+.modal-backdrop{position:fixed;inset:0;background:#07141799;backdrop-filter:blur(7px);z-index:5000;display:none;align-items:center;justify-content:center;padding:18px}
+.modal-backdrop.open{display:flex;animation:fadeIn .22s ease}
+.modal-card{width:min(560px,100%);background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 25px 90px #0004;animation:modalIn .28s cubic-bezier(.2,.8,.2,1)}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.modal-card p{font-size:13px;line-height:1.75;margin:12px 0;color:var(--muted)}
+.modal-card strong{color:var(--text)}
+.modal-card a{color:var(--dark)}
+.modal-close{border:0;background:transparent;color:var(--text);font-size:28px;cursor:pointer;line-height:1}
+.source-links{font-size:11px!important}
+.metric,.panel{transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease}
+.panel:hover{box-shadow:0 12px 34px #173b3512}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 header {
   display:flex;
@@ -627,6 +666,13 @@ footer {
 @keyframes blink {
   50% {opacity:.3}
 }
+.support-fab{position:fixed;right:22px;bottom:22px;z-index:1200;border:0;border-radius:999px;background:var(--teal);color:#063b3b;padding:14px 19px;font-weight:800;font-size:12px;box-shadow:0 10px 30px #087f7944;cursor:pointer;display:flex;align-items:center;gap:9px;transition:transform .2s,box-shadow .2s}
+.support-fab:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 15px 36px #087f7955}
+.support-fab span{font-size:17px}
+.support-hint{position:fixed;right:22px;bottom:82px;z-index:1200;max-width:280px;padding:12px 15px;background:var(--text);color:var(--bg);border-radius:12px;font-size:11px;line-height:1.5;box-shadow:0 8px 28px #0002;display:none}
+.support-hint.show{display:block;animation:modalIn .2s ease}
+@media(max-width:650px){.header-actions{margin-left:0;margin-right:0}.live{display:none}.support-fab{right:14px;bottom:14px}.support-hint{right:14px;bottom:74px}}
+
 
 @media(max-width:950px) {
   .layout {grid-template-columns:1fr}
@@ -658,8 +704,25 @@ footer {
       <div class="brand-sub">городская транспортная аналитика</div>
     </div>
   </div>
-  <div class="live"><span class="dot"></span>МОДЕЛЬ АКТИВНА</div>
+  <nav class="header-actions">
+    <button class="small-btn" id="aboutOpen">О проекте</button>
+    <button class="small-btn" id="themeToggle" aria-label="Сменить тему">☾ Тёмная тема</button>
+  </nav>
+  <div class="live"><span class="dot"></span>АНАЛИТИЧЕСКИЙ РЕЖИМ</div>
 </header>
+
+<div class="modal-backdrop" id="aboutModal" aria-hidden="true">
+  <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div class="modal-head">
+      <div><div class="panel-title" id="aboutTitle">О проекте MetroFlow</div><div class="panel-note">Назначение и ограничения данных</div></div>
+      <button class="modal-close" id="aboutClose" aria-label="Закрыть">×</button>
+    </div>
+    <p><strong>MetroFlow</strong> — прототип визуализации пассажиропотока и пользовательских сценариев Московского транспорта.</p>
+    <p>Публичные показатели сопровождаются источником и периодом. Если значение не опубликовано, интерфейс показывает «Нет открытых данных», а не придумывает число.</p>
+    <p><strong>Важно:</strong> прототип не является диспетчерской системой и не предназначен для принятия эксплуатационных решений без проверки и согласования с владельцем данных.</p>
+    <p class="source-links">Источники: <a href="https://data.mos.ru/opendata/62743/" target="_blank" rel="noopener">портал открытых данных Москвы</a> · <a href="https://mosmetro.ru/news/details/10000" target="_blank" rel="noopener">Московский метрополитен</a></p>
+  </section>
+</div>
 
 <section class="intro">
   <div class="eyebrow">ТРАНСПОРТНАЯ АНАЛИТИКА / МОСКВА</div>
@@ -677,7 +740,7 @@ footer {
   <div class="metric">
     <div class="metric-label">Суммарный поток</div>
     <div class="metric-value" id="mTotal">—</div>
-    <div class="metric-foot">человек в сутки · модель</div>
+    <div class="metric-foot">только опубликованные показатели</div>
   </div>
 
   <div class="metric">
@@ -756,7 +819,7 @@ footer {
     </div>
 
     <div class="big-number" id="stationFlow">—</div>
-    <div class="caption">расчётный поток за сутки, чел.</div>
+    <div class="caption">поездки за сутки · факт или сценарий указаны отдельно</div>
 
     <div class="split-stats">
       <div class="mini">
@@ -810,6 +873,10 @@ footer {
         <label>Пересадки</label>
         <input id="transfers" type="number" min="0" value="1">
       </div>
+      <div class="field" style="grid-column:1/-1">
+        <label>Название сценария</label>
+        <input id="scenarioName" type="text" maxlength="48" placeholder="Например: Своя станция">
+      </div>
     </div>
 
     <div class="actions">
@@ -832,7 +899,7 @@ footer {
   </div>
 
   <div class="chart-area">
-    <div class="chart-top">Пассажиропоток · выбранная станция</div>
+    <div class="chart-top">Профиль сценария · не фактическое почасовое измерение</div>
     <canvas id="flowChart"></canvas>
   </div>
 </section>
@@ -843,7 +910,7 @@ footer {
   <div class="panel-head">
     <div>
       <div class="panel-title">Самые загруженные станции</div>
-      <div class="panel-note">Топ-5 по расчётной модели</div>
+      <div class="panel-note">по опубликованным числовым данным</div>
     </div>
     <span class="pill">ТОП-5</span>
   </div>
@@ -852,42 +919,21 @@ footer {
 
 <section class="panel">
   <div class="panel-head">
-    <div>
-      <div class="panel-title">О проекте</div>
-      <div class="panel-note">Информация и методика</div>
-    </div>
-    <span class="pill">СПРАВКА</span>
+    <div><div class="panel-title">Качество данных</div><div class="panel-note">Проверяемость важнее красивых цифр</div></div>
+    <span class="pill">DATA QUALITY</span>
   </div>
-
-  <div class="method">
-    <strong>MetroFlow</strong> — учебная интерактивная модель анализа пассажиропотока Московского метрополитена.
-
-    <br><br>
-
-    Координаты и названия станций загружаются из OpenStreetMap с помощью Overpass API.
-
-    <br><br>
-
-    Показатели пассажиропотока являются расчётными оценками, а не официальной статистикой Московского метрополитена.
-
-    <br><br>
-
-    <strong>Формула модели:</strong><br>
-    Y = 0.15P + 0.25J + 1500A + 5000T
-
-    <br><br>
-
-    P — население района;<br>
-    J — рабочие места;<br>
-    A — точки притяжения;<br>
-    T — количество пересадок.
-  </div>
+  <div class="method">Каждое опубликованное значение должно иметь источник, период и единицу измерения. Для остальных станций доступен отдельный пользовательский сценарий.</div>
 </section>
 
 </section>
+
+</section>
+
+<button class="support-fab" id="supportFab" type="button"><span>✉</span> Поддержка</button>
+<div class="support-hint" id="supportHint" role="status">Пришлите публичную ссылку или @username Telegram-бота, чтобы подключить чат.</div>
 
 <footer>
-  <div>MetroFlow · Максим Крылов, 10 «О» класс</div>
+  <div>MetroFlow · Учебный аналитический прототип</div>
   <div>© OpenStreetMap contributors · Учебный проект</div>
 </footer>
 
@@ -1121,18 +1167,18 @@ function mapDistance(lat1,lon1,lat2,lon2) {
    РАСЧЁТНАЯ МОДЕЛЬ
 ================================= */
 
-function generateFlow(name) {
+// Публичные значения здесь относятся к пересадочным узлам целиком,
+// а не к каждой отдельной платформе/линии. Неизвестные значения не выдумываем.
+const PUBLIC_NODE_DATA = {
+  "Комсомольская": {flow:131000, note:"Пересадочный узел Комсомольская (линии 1 и 5)", source:"Московский метрополитен, 01.07.2026"},
+  "Курская": {flow:103000, note:"Пересадочный узел Курская — Чкаловская", source:"Московский метрополитен, 08.07.2026"},
+  "Павелецкая": {flow:98500, note:"Пересадочный узел Павелецкая", source:"Московский метрополитен, 08.07.2026"},
+  "Белорусская": {flow:92500, note:"Пересадочный узел Белорусская", source:"Московский метрополитен, 08.07.2026"},
+  "Текстильщики": {flow:85500, note:"Пересадочный узел Текстильщики", source:"Московский метрополитен, 08.07.2026"}
+};
 
-  let hash = 2166136261;
-
-  for (const char of name) {
-    hash ^= char.charCodeAt(0);
-    hash = Math.imul(hash,16777619);
-  }
-
-  hash >>>= 0;
-
-  return 35000 + (hash % 145000);
+function getPublicData(name) {
+  return PUBLIC_NODE_DATA[name] || null;
 }
 
 function buildDatabase(list) {
@@ -1143,19 +1189,19 @@ function buildDatabase(list) {
 
     const key = "station_" + index;
 
-    const flow = generateFlow(s.name);
+    const publicData = getPublicData(s.name);
 
     stations[key] = {
-
       ...s,
-
-      flow,
-
+      flow: publicData ? publicData.flow : null,
+      dataNote: publicData ? publicData.note : "",
+      dataSource: publicData ? publicData.source : "",
+      scenario: false,
+      scenarioName: "",
       pop:40000,
       jobs:20000,
       attr:2,
       trans:1
-
     };
 
   });
@@ -1202,6 +1248,7 @@ function initMap() {
 
 function markerColor(flow) {
 
+  if (!Number.isFinite(flow)) return "#9aa8aa";
   if (flow >= 150000) return "#e76e70";
 
   if (flow >= 100000) return "#f2a65a";
@@ -1212,12 +1259,14 @@ function markerColor(flow) {
 
 function markerRadius(flow) {
 
+  if (!Number.isFinite(flow)) return 6;
   return 7 + Math.sqrt(flow/200000)*10;
 
 }
 
 function markerStatus(flow) {
 
+  if (!Number.isFinite(flow)) return "Нет данных";
   if (flow >= 150000) return "Очень высокая";
 
   if (flow >= 100000) return "Высокая";
@@ -1249,8 +1298,8 @@ function createMarkers() {
 
     marker.bindPopup(
       `<b>${escapeHTML(s.name)}</b><br>
-       ${fmt(s.flow)} чел./сутки<br>
-       <small>Расчётная оценка</small>`
+       ${Number.isFinite(s.flow) ? fmt(s.flow)+" поездок/сутки" : "Нет открытых данных"}<br>
+       <small>${escapeHTML(s.dataNote || (s.scenario ? "Пользовательский сценарий" : "Публичное значение не найдено"))}</small>`
     );
 
     marker.on("click",() => {
@@ -1277,8 +1326,8 @@ function updateMarker(key) {
 
   marker.setPopupContent(
     `<b>${escapeHTML(s.name)}</b><br>
-     ${fmt(s.flow)} чел./сутки<br>
-     <small>Расчётная оценка</small>`
+     ${Number.isFinite(s.flow) ? fmt(s.flow)+" поездок/сутки" : "Нет открытых данных"}<br>
+     <small>${escapeHTML(s.dataNote || (s.scenario ? "Пользовательский сценарий" : "Публичное значение не найдено"))}</small>`
   );
 
 }
@@ -1381,6 +1430,8 @@ function selectStation(key,fly=true) {
   $("jobs").value = s.jobs;
   $("attractions").value = s.attr;
   $("transfers").value = s.trans;
+  $("scenarioName").value = s.scenarioName || "";
+  $("stationName").textContent = s.scenario ? (s.scenarioName || "Своя станция") : s.name;
 
   if (fly && map) {
 
@@ -1455,39 +1506,29 @@ function renderStation() {
 
   if (!s) return;
 
-  $("stationName").textContent = s.name;
-
-  $("stationLine").textContent = s.line;
+  $("stationName").textContent = s.scenario ? (s.scenarioName || "Своя станция") : s.name;
+  $("stationLine").textContent = s.scenario
+    ? "Пользовательский сценарий · базовая станция: " + s.name
+    : (s.dataNote ? s.dataNote + " · " + s.dataSource : s.line);
 
   $("stationStatus").textContent =
-    markerStatus(s.flow);
+    s.scenario ? "Сценарий" : markerStatus(s.flow);
 
-  $("stationStatus").style.color =
-    markerColor(s.flow);
+  $("stationStatus").style.color = markerColor(s.flow);
+  if (Number.isFinite(s.flow)) {
+    animateNumber($("stationFlow"), s.flow);
+    $("morning").textContent = fmt(s.flow*.22);
+    $("evening").textContent = fmt(s.flow*.19);
+  } else {
+    $("stationFlow").textContent = "Нет данных";
+    $("morning").textContent = "—";
+    $("evening").textContent = "—";
+  }
 
-  animateNumber(
-    $("stationFlow"),
-    s.flow
-  );
-
-  $("morning").textContent =
-    fmt(s.flow*.22);
-
-  $("evening").textContent =
-    fmt(s.flow*.19);
-
-  const percent = Math.min(
-    100,
-    s.flow/200000*100
-  );
-
-  $("loadText").textContent =
-    Math.round(percent)+"%";
-
-  $("loadFill").style.width =
-    percent+"%";
-
-  drawChart(s.flow);
+  const percent = Number.isFinite(s.flow) ? Math.min(100, s.flow/200000*100) : 0;
+  $("loadText").textContent = Number.isFinite(s.flow) ? Math.round(percent)+"%" : "Нет данных";
+  $("loadFill").style.width = percent+"%";
+  drawChart(Number.isFinite(s.flow) ? s.flow : 0);
 
 }
 
@@ -1501,25 +1542,18 @@ function renderMetrics() {
 
   if (!keys.length) return;
 
-  const total = keys.reduce(
-    (sum,key) => sum+stations[key].flow,
-    0
-  );
-
-  const top = keys.slice().sort(
-    (a,b) => stations[b].flow-stations[a].flow
-  )[0];
+  const measured = keys.filter(key => Number.isFinite(stations[key].flow));
+  const total = measured.reduce((sum,key) => sum+stations[key].flow,0);
+  const top = measured.slice().sort((a,b) => stations[b].flow-stations[a].flow)[0];
 
   $("mStations").textContent = keys.length;
-
-  $("mTotal").textContent =
-    (total/1000000).toFixed(2).replace(".",",")+" млн";
-
-  $("mTop").textContent =
-    stations[top].name;
-
-  $("mAvg").textContent =
-    fmt(total/keys.length);
+  $("mTotal").textContent = measured.length
+    ? (total/1000000).toFixed(2).replace(".",",")+" млн"
+    : "Нет данных";
+  $("mTop").textContent = top ? stations[top].name : "—";
+  $("mAvg").textContent = measured.length ? fmt(total/measured.length) : "—";
+  $("mStations").parentElement.querySelector(".metric-foot").textContent = "координаты из OpenStreetMap";
+  $("mTotal").parentElement.querySelector(".metric-foot").textContent = measured.length + " станций/узлов с числовыми данными";
 
 }
 
@@ -1531,7 +1565,7 @@ function renderRanking() {
 
   const keys = Object.keys(stations);
 
-  const sorted = keys.slice().sort(
+  const sorted = keys.filter(key => Number.isFinite(stations[key].flow)).slice().sort(
     (a,b) => stations[b].flow-stations[a].flow
   ).slice(0,5);
 
@@ -1571,91 +1605,40 @@ function renderRanking() {
 ================================= */
 
 function recalculate() {
-
   if (!selected) return;
-
   const s = stations[selected];
+  const p = Math.max(0, Number($("population").value) || 0);
+  const j = Math.max(0, Number($("jobs").value) || 0);
+  const a = Math.max(0, Number($("attractions").value) || 0);
+  const t = Math.max(0, Number($("transfers").value) || 0);
 
-  const base = original[selected];
-
-  const p = Math.max(
-    0,
-    Number($("population").value)||0
-  );
-
-  const j = Math.max(
-    0,
-    Number($("jobs").value)||0
-  );
-
-  const a = Math.max(
-    0,
-    Number($("attractions").value)||0
-  );
-
-  const t = Math.max(
-    0,
-    Number($("transfers").value)||0
-  );
-
-  const oldBase =
-    base.pop*.15+
-    base.jobs*.25+
-    base.attr*1500+
-    base.trans*5000;
-
-  const newBase =
-    p*.15+
-    j*.25+
-    a*1500+
-    t*5000;
-
-  s.flow = Math.max(
-    1000,
-    Math.round(
-      base.flow*newBase/Math.max(1,oldBase)
-    )
-  );
-
-  s.pop=p;
-  s.jobs=j;
-  s.attr=a;
-  s.trans=t;
-
+  // Сценарная формула: результат не выдаётся за фактический пассажиропоток.
+  s.flow = Math.round(0.15*p + 0.25*j + 1500*a + 5000*t);
+  s.pop=p; s.jobs=j; s.attr=a; s.trans=t;
+  s.scenario=true;
+  s.scenarioName=$("scenarioName").value.trim() || "Своя станция";
+  $("stationName").textContent=s.scenarioName;
   updateMarker(selected);
-
   renderStation();
   renderMetrics();
   renderRanking();
-
-  $("recalc").textContent = "Готово ✓";
-
-  setTimeout(() => {
-    $("recalc").textContent = "Пересчитать модель ↗";
-  },1300);
-
+  $("recalc").textContent="Сценарий рассчитан ✓";
+  setTimeout(() => $("recalc").textContent="Пересчитать модель ↗",1500);
 }
 
 function resetScenario() {
-
   if (!selected) return;
-
-  stations[selected] =
-    JSON.parse(JSON.stringify(original[selected]));
-
-  const s = stations[selected];
-
-  $("population").value = s.pop;
-  $("jobs").value = s.jobs;
-  $("attractions").value = s.attr;
-  $("transfers").value = s.trans;
-
+  stations[selected]=JSON.parse(JSON.stringify(original[selected]));
+  const s=stations[selected];
+  $("population").value=s.pop;
+  $("jobs").value=s.jobs;
+  $("attractions").value=s.attr;
+  $("transfers").value=s.trans;
+  $("scenarioName").value="";
   updateMarker(selected);
-
   renderStation();
   renderMetrics();
   renderRanking();
-
 }
 
 /* =================================
@@ -1667,8 +1650,19 @@ function drawChart(flow) {
   const canvas = $("flowChart");
 
   const ctx = canvas.getContext("2d");
-
   const rect = canvas.getBoundingClientRect();
+  if (!flow) {
+    const dpr0=window.devicePixelRatio||1;
+    canvas.width=Math.max(1,rect.width)*dpr0;
+    canvas.height=190*dpr0;
+    ctx.setTransform(dpr0,0,0,dpr0,0,0);
+    ctx.clearRect(0,0,rect.width,190);
+    ctx.fillStyle="#8ca0a2";
+    ctx.font="12px Manrope";
+    ctx.textAlign="center";
+    ctx.fillText("Нет опубликованных данных для этой станции",rect.width/2,95);
+    return;
+  }
 
   if (!rect.width) return;
 
@@ -1892,6 +1886,28 @@ async function start() {
 
 $("recalc").addEventListener("click",recalculate);
 $("reset").addEventListener("click",resetScenario);
+
+const aboutModal=$("aboutModal");
+$("aboutOpen").addEventListener("click",()=>{aboutModal.classList.add("open");aboutModal.setAttribute("aria-hidden","false");});
+$("aboutClose").addEventListener("click",()=>{aboutModal.classList.remove("open");aboutModal.setAttribute("aria-hidden","true");});
+aboutModal.addEventListener("click",e=>{if(e.target===aboutModal){aboutModal.classList.remove("open");aboutModal.setAttribute("aria-hidden","true");}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){aboutModal.classList.remove("open");aboutModal.setAttribute("aria-hidden","true");}});
+
+function applyTheme(theme){
+  document.body.classList.toggle("dark-theme",theme==="dark");
+  $("themeToggle").textContent=theme==="dark"?"☀ Светлая тема":"☾ Тёмная тема";
+  document.querySelector('meta[name="theme-color"]').content=theme==="dark"?"#10191d":"#eff8f6";
+}
+const savedTheme=localStorage.getItem("metroflow-theme")||"light";
+applyTheme(savedTheme);
+$("themeToggle").addEventListener("click",()=>{
+  const next=document.body.classList.contains("dark-theme")?"light":"dark";
+  localStorage.setItem("metroflow-theme",next);
+  applyTheme(next);
+});
+$("supportFab").addEventListener("click",()=>{
+  $("supportHint").classList.toggle("show");
+});
 
 window.addEventListener("resize",() => {
 
