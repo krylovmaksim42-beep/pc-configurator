@@ -750,9 +750,9 @@ footer {
   </div>
 
   <div class="metric">
-    <div class="metric-label">Средний поток</div>
+    <div class="metric-label">Средний по узлам</div>
     <div class="metric-value" id="mAvg">—</div>
-    <div class="metric-foot">человек на станцию</div>
+    <div class="metric-foot">только по узлам с опубликованными данными</div>
   </div>
 </section>
 
@@ -1287,7 +1287,7 @@ function createMarkers() {
         radius:markerRadius(s.flow),
         color:"#ffffff",
         weight:2.5,
-        fillColor:markerColor(s.flow),
+        fillColor:s.scenario ? "#5b8def" : markerColor(s.flow),
         fillOpacity:.94
       }
     );
@@ -1319,7 +1319,7 @@ function updateMarker(key) {
 
   marker.setStyle({
     radius:markerRadius(s.flow),
-    fillColor:markerColor(s.flow)
+    fillColor:s.scenario ? "#5b8def" : markerColor(s.flow)
   });
 
   marker.setPopupContent(
@@ -1540,7 +1540,7 @@ function renderMetrics() {
 
   if (!keys.length) return;
 
-  const measured = keys.filter(key => Number.isFinite(stations[key].flow));
+  const measured = keys.filter(key => Number.isFinite(stations[key].flow) && !stations[key].scenario);
   const total = measured.reduce((sum,key) => sum+stations[key].flow,0);
   const top = measured.slice().sort((a,b) => stations[b].flow-stations[a].flow)[0];
 
@@ -1563,7 +1563,7 @@ function renderRanking() {
 
   const keys = Object.keys(stations);
 
-  const sorted = keys.filter(key => Number.isFinite(stations[key].flow)).slice().sort(
+  const sorted = keys.filter(key => Number.isFinite(stations[key].flow) && !stations[key].scenario).slice().sort(
     (a,b) => stations[b].flow-stations[a].flow
   ).slice(0,5);
 
