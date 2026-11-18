@@ -929,60 +929,95 @@ let chartAnimation = null;
    ДАННЫЕ ИЗ OPENSTREETMAP
 ================================= */
 
+async function fetchJSON(url, options = {}, timeout = 16000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal, cache: "no-store" });
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    return await response.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function loadStations() {
+  const errors = [];
 
-  const box = [
-    BOUNDS.south,
-    BOUNDS.west,
-    BOUNDS.north,
-    BOUNDS.east
-  ].join(",");
+  // Основной источник — готовый открытый список координат станций.
+  // Он не требует тяжёлого запроса к Overpass при каждом открытии сайта.
+  const staticSources = [
+    "https://mangtronix.github.io/moscow_metro_p5/moscow_metro_stations.json"
+  ];
 
+  for (const url of staticSources) {
+    try {
+      const data = await fetchJSON(url, {}, 12000);
+      if (!Array.isArray(data) || !data.length) {
+        throw new Error("Пустой или неверный список станций");
+      }
+
+      const list = data
+        .filter(s => s && s.name && Number.isFinite(Number(s.lat)) && Number.isFinite(Number(s.lon)))
+        .map(s => ({
+          name: String(s.name),
+          "name:ru": String(s.name),
+          lat: Number(s.lat),
+          lon: Number(s.lon),
+          line: s.line ? "Линия " + s.line : (s.lineName || "Московский метрополитен")
+        }))
+        .filter(s =>
+          s.lat >= BOUNDS.south && s.lat <= BOUNDS.north &&
+          s.lon >= BOUNDS.west && s.lon <= BOUNDS.east
+        );
+
+      const normalized = normalizeStations(list.map(s => ({
+        lat: s.lat, lon: s.lon,
+        tags: { name: s.name, "name:ru": s["name:ru"], line: s.line }
+      })));
+
+      if (normalized.length >= 100) return normalized;
+      throw new Error("В источнике найдено слишком мало станций: " + normalized.length);
+    } catch (error) {
+      errors.push("Статический список: " + (error.name === "AbortError" ? "тайм-аут" : error.message));
+      console.warn("Station dataset error:", error);
+    }
+  }
+
+  // Резервный вариант — Overpass. Для каждого сервера установлен тайм-аут,
+  // поэтому индикатор загрузки не зависнет на несколько минут.
+  const box = [BOUNDS.south, BOUNDS.west, BOUNDS.north, BOUNDS.east].join(",");
   const query = `
-    [out:json][timeout:60];
+    [out:json][timeout:18];
     (
-      nwr["station"="subway"](${box});
-      nwr["railway"="station"]["station"="subway"](${box});
-      nwr["railway"="halt"]["station"="subway"](${box});
+      node["station"="subway"](${box});
+      way["station"="subway"](${box});
+      relation["station"="subway"](${box});
+      node["railway"="station"]["station"="subway"](${box});
+      way["railway"="station"]["station"="subway"](${box});
+      relation["railway"="station"]["station"="subway"](${box});
     );
     out center tags;
   `;
 
-  let lastError = null;
-
   for (const server of OVERPASS_SERVERS) {
-
     try {
-
-      const response = await fetch(server, {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"
-        },
-        body:"data=" + encodeURIComponent(query)
-      });
-
-      if (!response.ok) {
-        throw new Error("HTTP " + response.status);
-      }
-
-      const data = await response.json();
-
-      if (!data.elements) {
-        throw new Error("Некорректный ответ сервера");
-      }
-
-      return normalizeStations(data.elements);
-
-    } catch(error) {
-
-      lastError = error;
-      console.warn("Overpass error:",server,error);
-
+      const data = await fetchJSON(
+        server + "?data=" + encodeURIComponent(query),
+        {},
+        20000
+      );
+      if (!data.elements) throw new Error("Некорректный ответ Overpass");
+      const list = normalizeStations(data.elements);
+      if (list.length) return list;
+      throw new Error("Overpass вернул пустой список");
+    } catch (error) {
+      errors.push(server + ": " + (error.name === "AbortError" ? "тайм-аут" : error.message));
+      console.warn("Overpass error:", server, error);
     }
   }
 
-  throw lastError || new Error("Не удалось загрузить данные");
+  throw new Error("Не удалось получить станции. " + errors.join(" | "));
 }
 
 /* =================================
