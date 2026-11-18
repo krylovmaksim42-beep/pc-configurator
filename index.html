@@ -1170,6 +1170,10 @@ function buildDatabase(list) {
 
 function initMap() {
 
+  if (!window.L) {
+    throw new Error("Не загрузилась библиотека карты Leaflet. Проверьте доступ к unpkg.com и обновите страницу.");
+  }
+
   map = L.map("map",{
     zoomControl:false,
     preferCanvas:true
@@ -1876,8 +1880,8 @@ async function start() {
         <button class="small-btn" onclick="start()">
           Повторить загрузку
         </button>
-        <span style="font-size:10px;color:#819397">
-          Проверьте интернет-соединение.
+        <span style="font-size:10px;color:#819397;text-align:center;padding:0 14px">
+          ${escapeHTML(error.message || "Проверьте интернет-соединение.")}
         </span>
       </div>
     `;
